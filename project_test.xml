@@ -2,7 +2,7 @@
 <project>
 	<meta title="TPUQuest" package="com.tpuquest" version="1.0.0" company="" />
 
- 	<app file="TPUQuest" main="com.tpuquest.Main" path="bin" />
+ 	<app file="TPUQuest" main="com.tpuquest.Test" path="bin_test" />
 
 	<window fps="30" background="0x333333" />
 	<window width="800" height="600" resizable="false" unless="mobile" />
@@ -19,6 +19,6 @@
 	<assets path="assets/audio" rename="audio" include="*.wav|*.ogg|*.mp3" />
 	<assets path="assets/font" rename="font" include="*.ttf|*.otf" />
 	<assets path="assets/cfg" rename="" include="*.xml" />
-	
+
 	<icon path="assets/HaxePunk.svg" />
 </project>

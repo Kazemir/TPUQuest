@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <item id="mainMenu_newGame">
+        <ru>Новая игра</ru>
+        <en>New Game</en>
+    </item>
+    <item id="mainMenu_continue">
+        <ru>Продолжить игру</ru>
+        <en>Continue Game</en>
+    </item>
+    <item id="mainMenu_settings">
+        <ru>Настройки</ru>
+        <en>Settings</en>
+    </item>
+    <item id="mainMenu_score">
+        <ru>Рекорды</ru>
+        <en>Score</en>
+    </item>
+    <item id="mainMenu_authors">
+        <ru>Авторы</ru>
+        <en>Authors</en>
+    </item>
+    <item id="mainMenu_exit">
+        <ru>Выход</ru>
+        <en>Exit</en>
+    </item>
+
+    <item id="authorsMenu_dasha">
+        <ru>Горбунова Дарья aka "tommy-zola"</ru>
+        <en>Gorbunova Dasha</en>
+    </item>
+    <item id="authorsMenu_vova">
+        <ru>Кержин Владимир aka "konzhut"</ru>
+        <en>Kerzhin Vladimir</en>
+    </item>
+    <item id="authorsMenu_misha">
+        <ru>Четвериков Михаил aka "kazemir"</ru>
+        <en>Chetverikov Mikhail</en>
+    </item>
+
+    <item id="settingsMenu_sound">
+        <ru>Звук:</ru>
+        <en>Sound:</en>
+    </item>
+    <item id="settingsMenu_music">
+        <ru>Музыка:</ru>
+        <en>Music:</en>
+    </item>
+    <item id="settingsMenu_language">
+        <ru>Язык:</ru>
+        <en>Language:</en>
+    </item>
+</data>
