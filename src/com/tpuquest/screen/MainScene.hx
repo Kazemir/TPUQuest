@@ -20,8 +20,8 @@ class MainScene extends Screen
 	
 	public override function begin()
 	{
-		tommy = new Sfx("audio/Tommy-zola.ogg");
-		music = new Sfx("audio/WouldntItBeNice.ogg");
+		tommy = new Sfx("audio/Tommy-zola.mp3");
+		music = new Sfx("audio/WouldntItBeNice.mp3");
 		img = new Image("graphics/girl.jpg");
 		
 		//infoText = new Text("TPUQuest. Альфа v. 0.0.1", 5, 5);

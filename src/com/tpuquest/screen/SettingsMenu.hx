@@ -17,7 +17,7 @@ class SettingsMenu extends Screen
 	
 	public static var soudVolume:Int = 6;
 	public static var musicVolume:Int = 9;
-	public static var isRussian:Bool = true;
+	public static var language:String = "ru";
 	
 	public function new() 
 	{
@@ -80,18 +80,14 @@ class SettingsMenu extends Screen
 			temp += "-";
 		textMenuElements[1].ChangeStr(temp, false);
 		
-		temp = "";
-		if (isRussian)
+		switch( language )
 		{
-			temp = "Русский";
-			CLocals.set( "ru" );
+			case "ru":
+				textMenuElements[2].ChangeStr("Русский", false);
+			case "en":
+				textMenuElements[2].ChangeStr("English", false);
 		}
-		else
-		{
-			temp = "English";
-			CLocals.set( "en" );
-		}
-		textMenuElements[2].ChangeStr(temp, false);
+		CLocals.set( language );
 	}
 	
 	public function actionMenu(positive:Bool)
@@ -117,7 +113,10 @@ class SettingsMenu extends Screen
 				if (musicVolume > 10)
 					musicVolume = 10;
 			case 2:
-				isRussian = !isRussian;
+				if ( language == "ru" )
+					language = "en";
+				else
+					language = "ru";
 		}
 		updateMenu();
 	}

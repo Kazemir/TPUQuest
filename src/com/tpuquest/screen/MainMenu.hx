@@ -74,7 +74,7 @@ class MainMenu extends Screen
 			case 4:
 				HXP.scene = new AuthorsMenu();
 			case 5:
-				System.exit(0);
+				ExitGame();
 		}
 	}
 	
@@ -82,7 +82,7 @@ class MainMenu extends Screen
 	{
 		if (Input.pressed("esc"))
 		{
-			System.exit(0);
+			ExitGame();
 		}
 		if (Input.pressed("up"))
 		{
