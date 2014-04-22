@@ -5,7 +5,6 @@ import com.tpuquest.screen.*;
 import com.tpuquest.unitTests.*;
 import com.haxepunk.RenderMode;
 import com.tpuquest.utils.CLocals;
-import haxe.io.Error;
 
 import haxe.xml.*;
 import sys.FileSystem;

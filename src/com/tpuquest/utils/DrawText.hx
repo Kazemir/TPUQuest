@@ -7,6 +7,7 @@ enum GameFont {
         Molot;
 		Arial;
 		PixelCyr;
+		JoystixMonospace;
     }
 
 class DrawText
@@ -30,6 +31,8 @@ class DrawText
 				fnt = "font/arial.ttf";
 			case PixelCyr:
 				fnt = "font/PixelCyr.ttf";
+			case JoystixMonospace:
+				fnt = "font/JoystixMonospace.ttf";
 		}
 		label = new Text(str, x, y);
 		label.color = color;
@@ -85,6 +88,8 @@ class DrawText
 				fnt = "font/arial.ttf";
 			case PixelCyr:
 				fnt = "font/PixelCyr.ttf";
+			case JoystixMonospace:
+				fnt = "font/JoystixMonospace.ttf";
 		}
 		var fastText:Text = new Text(str, x, y);
 		fastText.color = color;
