@@ -1,0 +1,17 @@
+﻿<level name="map1">
+    <items>
+        <element x="0" y="0" type="coin" amount="5"/>
+        <element x="1" y="0" type="potion" amount="5" p_type="1"/>
+        <i x="-1" y="0" type="weapon" damage="5" w_type="1"/>
+    </items>
+    <characters>
+        <element x="3" y="50" type="talker"/>
+        <element x="4" y="0" type="trader"/>
+        <element x="5" y="0" type="enemy"/>
+    </characters>
+    <tiles>
+        <element x="0" y="0" type="coin" amount="5"/>
+        <element x="1" y="0" type="potion" amount="5" p_type="1"/>
+        <element x="-1" y="0" type="weapon" damage="5" w_type="1"/>
+    </tiles>
+</level>

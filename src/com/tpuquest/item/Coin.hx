@@ -1,16 +1,18 @@
 package com.tpuquest.item;
 
-/**
- * ...
- * @author mix
- */
 class Coin extends Item
 {
-	private var amount:Int;
+	public var coinAmount:Int;
 	
-	public function new() 
+	public function new(x:Int, y:Int, amount:Int) 
 	{
+		super(x, y);
 		
+		this.coinAmount = amount;
 	}
 	
+	public override function update()
+	{
+		super.update();
+	}
 }

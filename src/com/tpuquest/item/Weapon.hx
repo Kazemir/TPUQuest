@@ -1,16 +1,20 @@
 package com.tpuquest.item;
 
-/**
- * ...
- * @author mix
- */
 class Weapon extends Item
 {
-	private var damage:Int;
+	public var weaponDamage:Int;
+	public var weaponType:Int;
 	
-	public function new() 
+	public function new(x:Int, y:Int, damage:Int, type:Int) 
 	{
+		super(x, y);
 		
+		this.weaponDamage = damage;
+		this.weaponType = type;
 	}
 	
+	public override function update()
+	{
+		super.update();
+	}
 }
