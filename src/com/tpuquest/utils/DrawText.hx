@@ -15,7 +15,7 @@ class DrawText
 	public var label:Text;
 	public var center:Bool;
 	
-	public function new(str:String, font:GameFont, size:Int, x:Float, y:Float, color:Int = 0xFFFFFF, centred:Bool = true)
+	public function new(str:String, font:GameFont, size:Int, x:Float, y:Float, color:Int = 0xFFFFFF, centred:Bool = true, width:Int = -1, height:Int = -1)
 	{
 		if (size <= 0 || color < 0 || color > 0xFFFFFF)
 			throw "Error! Incorrect parameters!";
@@ -34,7 +34,17 @@ class DrawText
 			case JoystixMonospace:
 				fnt = "font/JoystixMonospace.ttf";
 		}
-		label = new Text(str, x, y);
+		
+		if(width == -1 || height == -1)
+			label = new Text(str, x, y);
+		else
+		{
+			label = new Text(str, x, y, width, height);
+			label.wordWrap = true;
+			label.resizable = false;
+			label.align = flash.text.TextFormatAlign.CENTER;
+		}
+
 		label.color = color;
 		label.font = fnt;
 		label.size = size;

@@ -17,7 +17,7 @@ class GameScreen extends Screen
 		var test:Talker = new Talker(20, 50, 1, "Vince");
 		add(test);
 		addGraphic(test.underText.label);
-		
+	
 		test = new Talker(20, 100, 1.1, "Howard");
 		add(test);
 		addGraphic(test.underText.label);

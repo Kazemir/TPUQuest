@@ -5,7 +5,7 @@ import com.haxepunk.Entity;
 class Character extends Entity
 {
 	public var nameCh:String;
-	public var coordsCh:Point;
+	public var characterPoint:Point;
 	public var hpCh:Int;
 	
 	private var velocity:Float;
@@ -14,6 +14,7 @@ class Character extends Entity
 	{
 		super(x, y);
 		
+		characterPoint = new Point(x, y);
 	}
 
 	public override function update()

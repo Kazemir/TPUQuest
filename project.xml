@@ -19,6 +19,7 @@
 	<assets path="assets/audio" rename="audio" include="*.wav|*.ogg|*.mp3" />
 	<assets path="assets/font" rename="font" include="*.ttf|*.otf" />
 	<assets path="assets/cfg" rename="" include="*.xml" />
+	<assets path="assets/levels" rename="levels" include="*.xml" />
 	
 	<icon path="assets/HaxePunk.svg" />
 </project>

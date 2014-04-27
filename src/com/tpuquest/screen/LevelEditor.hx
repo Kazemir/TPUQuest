@@ -7,11 +7,13 @@ import com.tpuquest.character.Player;
 import com.haxepunk.utils.Input;
 import com.haxepunk.HXP;
 import com.tpuquest.utils.DrawText;
+import com.tpuquest.world.Level;
 import flash.display.Sprite;
 import flash.geom.Point;
 import com.haxepunk.utils.Key;
 import flash.geom.Rectangle;
 import com.haxepunk.graphics.Image;
+import com.haxepunk.Entity;
 
 import haxe.io.Eof;
 import sys.io.File;
@@ -66,6 +68,13 @@ class LevelEditor extends Screen
 		var t1:MessageBox = new MessageBox(200, 200, "Caption", "SampleText");
 		//add(t1.text.overlay);
 		add(t1);
+		
+		var lvl:Level = Level.LoadLevel( "levels/map1.xml" );
+		lvl.SaveLevel( "levels/map2.xml" );
+		addList( lvl.getEntities() );
+		//removeList( lvl.getEntities() );
+		//addGraphic(DrawText.CreateTextEntity(Std.string(lvl.items[2].itemPoint.x), GameFont.Imperial, 16, 200, 200, 0xFFFFFF, false));
+		
 		
 		super.begin();
 	}
