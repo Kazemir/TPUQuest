@@ -3,10 +3,12 @@ import com.tpuquest.character.Player;
 import com.tpuquest.character.Talker;
 import com.haxepunk.utils.Input;
 import com.haxepunk.HXP;
+import com.tpuquest.world.Level;
 
 class GameScreen extends Screen
 {
-
+	private var lvl:Level;
+	
 	public function new() 
 	{
 		super();
@@ -14,6 +16,14 @@ class GameScreen extends Screen
 	
 	public override function begin()
 	{
+		lvl = Level.LoadLevel( "levels/new.xml" );
+		addList( lvl.getEntities() );
+		
+		var base = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
+        base.color = lvl.bgcolor;
+        base.scrollX = base.scrollY = 0;
+        addGraphic(base).layer = 100; 
+		
 		var test:Talker = new Talker(20, 50, 1, "Vince");
 		add(test);
 		addGraphic(test.underText.label);

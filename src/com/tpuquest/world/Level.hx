@@ -12,6 +12,7 @@ import com.tpuquest.item.Weapon;
 import com.tpuquest.utils.PointXY;
 import com.tpuquest.world.Tile;
 import com.haxepunk.Entity;
+import com.haxepunk.HXP;
 
 import haxe.xml.*;
 import sys.FileSystem;
@@ -26,26 +27,31 @@ class Level
 	
 	public var cameraPos:PointXY;
 	
-	/*public function ScreenToWorld(vector:PointXY):PointXY
+	public var bgcolor:Int;
+	public var levelName:String;
+	
+	public static function ScreenToWorld(vector:PointXY):PointXY
 	{
-		var rvect:PointXY;
-		rvect = PointXY.Add(cameraPos, vector);
-		return rvect;
+		vector.x = Std.int(vector.x / 40) - 9;
+		vector.y = Std.int(vector.y / 40) - 9;
+		return vector;
 	}
 
-	public function WorldToScreen(vector:PointXY):PointXY
+	public static function WorldToScreen(vector:PointXY):PointXY
 	{
-		var rvect:PointXY;
-		rvect = PointXY.Subtract(vector, cameraPos);
-		return rvect;
-	}*/
+		vector.x = (vector.x + 9) * 40;
+		vector.y = (vector.y + 7) * 40;
+		return vector;
+	}
 	
-	public function new() 
+	public function new( name:String = "New Level" ) 
 	{
 		items = new Array<Dynamic>();
 		characters = new Array<Dynamic>();
 		tiles = new Array<Dynamic>();
 		cameraPos = new PointXY(0, 0);
+		bgcolor = 0x61c3ff;
+		levelName = name;
 	}
 	
 	public static function LoadLevel( path:String ):Level
@@ -53,6 +59,8 @@ class Level
 		var lvl:Level = new Level();
 		
 		var lvlXML:Xml = Xml.parse(File.getContent( path )).firstElement();
+		lvl.bgcolor = Std.parseInt(lvlXML.get("bgcolor"));
+		lvl.levelName = lvlXML.get("name");
 		for (section in lvlXML.elements())
 		{
 			switch( section.nodeName )
@@ -104,10 +112,15 @@ class Level
 				case "tiles":
 					for (element in section.elements())
 					{
-						var temp:Tile;
 						var tX = Std.parseInt(element.get("x"));
 						var tY = Std.parseInt(element.get("y"));
-						temp = new Tile(tX, tY);
+						var tC = Std.parseInt(element.get("collidability"));
+						var tCb:Bool = false;
+						if (tC == 1)
+							tCb = true;
+						var tP = element.get("path");
+			
+						var temp:Tile = new Tile(WorldToScreen(new PointXY(tX, tY)), tCb, tP);
 						lvl.tiles.push( temp );
 					}
 			}
@@ -119,7 +132,9 @@ class Level
 	public function SaveLevel( path:String )
 	{
 		var lvlXML:Xml = Xml.createElement( "level" );
-		
+		lvlXML.set("bgcolor", Std.string(bgcolor));
+		lvlXML.set("name", levelName);
+
 		var itemsXML:Xml = Xml.createElement( "items" );
 		for (x in items)
 		{
@@ -167,8 +182,18 @@ class Level
 		for (x in tiles)
 		{
 			var temp:Xml = Xml.createElement( "element" );
-			temp.set("x", Std.string(x.tilePoint.x));
-			temp.set("y", Std.string(x.tilePoint.y));
+			var tX = x.tilePoint.x;
+			var tY = x.tilePoint.y;
+			
+			tX = Std.int((tX / 40) - 9);
+			tY = Std.int((tY / 40) - 7);
+			temp.set("x", Std.string(tX));
+			temp.set("y", Std.string(tY));
+			temp.set("path", x.imgPath);
+			var t = 0;
+			if (x.collidability == true)
+				t = 1;
+			temp.set("collidability", Std.string(t));
 			tilesXML.addChild(temp);
 		}
 		

@@ -27,6 +27,7 @@ class Main extends Engine
 	{
 #if debug
 		HXP.console.enable();
+		//HXP.console.log({"The game has started!"});
 #end
 		HXP.screen.scale = 1;
 		LoadConfig();

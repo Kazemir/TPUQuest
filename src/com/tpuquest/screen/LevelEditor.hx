@@ -6,8 +6,11 @@ import com.haxepunk.utils.Draw;
 import com.tpuquest.character.Player;
 import com.haxepunk.utils.Input;
 import com.haxepunk.HXP;
+import com.tpuquest.item.Item;
 import com.tpuquest.utils.DrawText;
+import com.tpuquest.utils.PointXY;
 import com.tpuquest.world.Level;
+import com.tpuquest.world.Tile;
 import flash.display.Sprite;
 import flash.geom.Point;
 import com.haxepunk.utils.Key;
@@ -24,14 +27,29 @@ import com.tpuquest.dialog.*;
 
 class LevelEditor extends Screen
 {
+	private var captionText:DrawText;
 	private var coordsText:DrawText;
 	private var elementText:DrawText;
 	private var typeText:DrawText;
 	
-	private var cursorPos:Point;
-	private var currentPos:Point;
+	private var cursorPos:PointXY;
+	private var currentPos:PointXY;
 	private var currentType:Int;
 	private var currentElement:Int;
+	
+	private var cursor:Image;
+	private var settingsFrame:Image;
+	
+	private var isCursorChanged:Bool;
+	
+	private var lvl:Level;
+	
+	public static var itemsList:Array<Dynamic>;
+	public static var charactersList:Array<Dynamic>;
+	public static var tilesList:Array<Dynamic>;
+	
+	private static var elementMax:Int;
+	private static var currentTile:Tile;
 	
 	public function new() 
 	{
@@ -40,137 +58,325 @@ class LevelEditor extends Screen
 	
 	public override function begin()
 	{
-		addGraphic(Image.createRect(330, 85, 0x424242, 1), 0, 18, 22);
+		super.begin();
+
+		LoadElementLists();
 		
-		addGraphic(Image.createRect(9999, 1, 0, 1), 0, 0, 280);
-		addGraphic(Image.createRect(9999, 1, 0, 1), 0, 0, 320);
-		addGraphic(Image.createRect(1, 9999, 0, 1), 0, 400, 0);
-		addGraphic(Image.createRect(1, 9999, 0, 1), 0, 440, 0);
+		lvl = Level.LoadLevel( "levels/new.xml" );
+		//lvl.SaveLevel( "levels/map2.xml" );
+		//lvl = new Level();
+		addList( lvl.getEntities() );
+		//removeList( lvl.getEntities() );
 		
-		addGraphic(DrawText.CreateTextEntity("Level Editor", GameFont.Imperial, 16, 20, 20, 0xFFFFFF, false));
+		var base = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
+        base.color = lvl.bgcolor;
+        base.scrollX = base.scrollY = 0;
+        addGraphic(base).layer = 100; 
+		
+		settingsFrame = Image.createRect(330, 85, 0x424242, 0.5);
+		addGraphic(settingsFrame, 0, 0, 0);
+		settingsFrame.x = 18;
+		settingsFrame.y = 22;
+		settingsFrame.scrollX = settingsFrame.scrollY = 0;
+		
+		cursor = Image.createRect(40, 40, 0xFFFFFF, 0.4);
+		
+		captionText = new DrawText("Level Editor", GameFont.Imperial, 16, 20, 20, 0xFFFFFF, false);
+		addGraphic(captionText.label);
 
 		coordsText = new DrawText("Pos: 0, 0", GameFont.Imperial, 16, 20, 40, 0xFFFFFF, false);
 		addGraphic(coordsText.label);
 		
-		typeText = new DrawText("Type: 0, Ландшафт", GameFont.Imperial, 16, 20, 60, 0xFFFFFF, false);
+		typeText = new DrawText("Type: 0, Landscape", GameFont.Imperial, 16, 20, 60, 0xFFFFFF, false);
 		addGraphic(typeText.label);
 		
-		elementText = new DrawText("Tile: 0, Воздух", GameFont.Imperial, 16, 20, 80, 0xFFFFFF, false);
+		elementText = new DrawText("Tile: 0, Grass", GameFont.Imperial, 16, 20, 80, 0xFFFFFF, false);
 		addGraphic(elementText.label);	
 		
-		currentPos = new Point(0, 0);
+		captionText.label.scrollX = captionText.label.scrollY = 0;
+		coordsText.label.scrollX = captionText.label.scrollY = 0;
+		typeText.label.scrollX = captionText.label.scrollY = 0;
+		elementText.label.scrollX = captionText.label.scrollY = 0;
+		
+		currentPos = new PointXY(0, 0);
+		cursorPos = new PointXY(0, 0);
 		currentElement = 0;
 		currentType = 0;
+		isCursorChanged = false;
 		
 		//20x15 (wxh) - размер поля, 40x40px - tile
 		//10,7 - center
 		
-		var t1:MessageBox = new MessageBox(200, 200, "Caption", "SampleText");
+		/*var t1:MessageBox = new MessageBox(200, 200, "Caption", "SampleText");
 		//add(t1.text.overlay);
-		add(t1);
-		
-		var lvl:Level = Level.LoadLevel( "levels/map1.xml" );
-		lvl.SaveLevel( "levels/map2.xml" );
-		addList( lvl.getEntities() );
-		//removeList( lvl.getEntities() );
-		//addGraphic(DrawText.CreateTextEntity(Std.string(lvl.items[2].itemPoint.x), GameFont.Imperial, 16, 200, 200, 0xFFFFFF, false));
-		
-		
-		super.begin();
+		add(t1);*/
+
+		addGraphic(cursor, 0, 0, 0);
+		cursor.x = 360;
+		cursor.y = 280;
 	}
 	
 	public function updateText()
 	{
 		coordsText.ChangeStr("Pos: " + Std.string(currentPos.x) + ", " + Std.string(currentPos.y), false);
-		//coordsText.ChangeStr("Pos: " + Std.string(HXP.halfHeight) + ", " + Std.string(HXP.halfWidth), false);
 		
-		if (currentType > 4)
+		if (isCursorChanged)
+		{
+			isCursorChanged = false;
+			//x -9..10
+			//y -7..7
+			if (cursorPos.x < -8)
+			{
+				HXP.camera.x -= 40;
+				cursorPos.x = -8;
+			}
+			if (cursorPos.x > 9)
+			{
+				HXP.camera.x += 40;
+				cursorPos.x = 9;
+			}
+			if (cursorPos.y < -6)
+			{
+				HXP.camera.y -= 40;
+				cursorPos.y = -6;
+			}
+			if (cursorPos.y > 6)
+			{
+				HXP.camera.y += 40;
+				cursorPos.y = 6;
+			}
+
+			cursor.x = (cursorPos.x + 9) * 40 + HXP.camera.x;
+			cursor.y = (cursorPos.y + 7) * 40 + HXP.camera.y;
+			currentTile.x = 300 + HXP.camera.x;
+			currentTile.y = 60 + HXP.camera.y;
+		}
+	}
+	
+	private function UpdateTools()
+	{
+		if (currentType > 3)
 			currentType = 0;
 		if (currentType < 0)
-			currentType = 4;
+			currentType = 3;
 		
-		if (currentElement > 4)
+		if (currentElement > elementMax)
 			currentElement = 0;
 		if (currentElement < 0)
-			currentElement = 4;
+			currentElement = elementMax;
 		
-		var temp:String = "";
-		switch(currentElement)
-		{
-			case 0:
-				temp = "Воздух";
-			case 1:
-				temp = "Земля";
-			case 2:
-				temp = "Трава";
-			case 3:
-				temp = "Камень";
-			case 4:
-				temp = "Кирпич";
-		}
-		elementText.ChangeStr("Tile: " + currentElement + ", " + temp, false);
-		
+		var temp1:String = "";
+		var temp2:String = "";
+		currentTile.visible = false;
 		switch(currentType)
 		{
 			case 0:
-				temp = "Ландшафт";
+			{
+				temp1 = "Landscape";
+				elementMax = tilesList.length - 1;
+				currentTile = tilesList[currentElement];
+				temp2 = tilesList[currentElement].tileName;
+
+				currentTile = tilesList[currentElement];
+				currentTile.x = 300 + HXP.camera.x;
+				currentTile.y = 60 + HXP.camera.y;
+				currentTile.visible = true;
+				currentTile.layer = 0;
+				add(currentTile);
+			}
 			case 1:
-				temp = "Предмет";
+			{
+				temp1 = "Item";
+				elementMax = itemsList.length - 1;
+				/*switch(currentElement)
+				{
+					case default:
+						temp2 = "";
+				}*/
+			}
 			case 2:
-				temp = "Торговец";
+			{
+				temp1 = "Character";
+				elementMax = charactersList.length - 1;
+				/*switch(currentElement)
+				{
+					case default:
+						temp2 = "";
+				}*/
+			}
 			case 3:
-				temp = "Говорун";
-			case 4:
-				temp = "Босс";
+			{
+				temp1 = "Service";
+				elementMax = 0;
+				/*switch(currentElement)
+				{
+					case default:
+						temp2 = "";
+				}*/
+			}
 		}
-		typeText.ChangeStr("Type: " + currentType + ", " + temp, false);
+		typeText.ChangeStr("Type: " + currentType + ", " + temp1, false);
+		elementText.ChangeStr("Tile: " + currentElement + ", " + temp2, false);
 	}
 	
 	public override function update()
 	{
 		if (Input.pressed("esc"))
 		{
+			lvl.SaveLevel( "levels/new.xml" );
 			HXP.scene = new MainMenu();
 		}
 		if (Input.pressed("up"))
 		{
+			cursorPos.y--;
 			currentPos.y--;
+			isCursorChanged = true;
 		}
 		if (Input.pressed("down"))
 		{
+			cursorPos.y++;
 			currentPos.y++;
+			isCursorChanged = true;
 		}
 		if (Input.pressed("left"))
 		{
+			cursorPos.x--;
 			currentPos.x--;
+			isCursorChanged = true;
 		}
 		if (Input.pressed("right"))
 		{
+			cursorPos.x++;
 			currentPos.x++;
+			isCursorChanged = true;
 		}
 		if (Input.pressed("action"))
 		{
-			
+			ActionButton();
+		}
+		if (Input.pressed(Key.DELETE))
+		{
+			DeleteButton();
 		}
 		if (Input.pressed(Key.HOME))
 		{
 			currentType++;
+			currentElement = 0;
+			UpdateTools();
 		}
 		if (Input.pressed(Key.END))
 		{
 			currentType--;
+			currentElement = 0;
+			UpdateTools();
 		}
 		if (Input.pressed(Key.PAGE_UP))
 		{
 			currentElement++;
+			UpdateTools();
 		}
 		if (Input.pressed(Key.PAGE_DOWN))
 		{
 			currentElement--;
+			UpdateTools();
 		}
 		
 		updateText();
 		super.update();
 	}
 	
+	private function ActionButton()
+	{
+		switch(currentType)
+		{
+			case 0:
+			{
+				var tX = (currentPos.x + 9) * 40;
+				var tY = (currentPos.y + 7) * 40;
+				for (x in lvl.tiles)
+				{
+					if (x.tilePoint.x == tX && x.tilePoint.y == tY)
+					{
+						lvl.tiles.remove(x);
+						remove(x);
+					}
+				}
+				var temp:Tile = new Tile(new PointXY(tX, tY), tilesList[currentElement].collidability, tilesList[currentElement].imgPath, tilesList[currentElement].tileName);
+				lvl.tiles.push(temp);
+				
+				add(temp);
+			}
+			case 1:
+			{
+
+			}
+			case 2:
+			{
+
+			}
+			case 3:
+			{
+
+			}
+		}
+	}
+	
+	private function DeleteButton()
+	{
+		switch(currentType)
+		{
+			case 0:
+			{
+				var tX = (currentPos.x + 9) * 40;
+				var tY = (currentPos.y + 7) * 40;
+				for (x in lvl.tiles)
+				{
+					if (x.tilePoint.x == tX && x.tilePoint.y == tY)
+					{
+						lvl.tiles.remove(x);
+						remove(x);
+					}
+				}
+			}
+			case 1:
+			{
+
+			}
+			case 2:
+			{
+
+			}
+			case 3:
+			{
+
+			}
+		}
+	}	
+	
+	private static function LoadElementLists()
+	{
+		itemsList = new Array<Dynamic>();
+		charactersList = new Array<Dynamic>();
+		tilesList = new Array<Dynamic>();
+		
+		/*var xmlItems:Xml = Xml.parse(File.getContent("cfg/tiles.xml")).firstElement();
+		for (x in xmlItems.elements())
+		{
+			itemsList.push(new Item(
+		}*/
+		var xmlTiles:Xml = Xml.parse(File.getContent("cfg/tiles.xml")).firstElement();
+		for (x in xmlTiles.elements())
+		{
+			var tC = x.get("collidability");
+			var tCb:Bool = false;
+			if (tC == "1")
+				tCb = true;
+				
+			tilesList.push(new Tile(new PointXY(0, 0), tCb, x.get("path"), x.get("name")));
+		}
+		currentTile = tilesList[0];
+		currentTile.visible = false;
+		currentTile.layer = 0;
+		elementMax = tilesList.length - 1;
+	}
 }

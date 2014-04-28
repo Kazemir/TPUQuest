@@ -1,0 +1,7 @@
+﻿<tiles>
+
+<element id="0" name="Grass" path="tiles/grass.png" collidability="1"/>
+<element id="1" name="GrassGround" path="tiles/grass_ground.png" collidability="1"/>
+<element id="2" name="Ground" path="tiles/ground.png" collidability="1"/>
+
+</tiles>

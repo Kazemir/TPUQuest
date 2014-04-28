@@ -30,7 +30,7 @@ class Screen extends Scene
 		Input.define("esc", [Key.ESCAPE]);
 		Input.define("action", [Key.ENTER, Key.X]);
 		
-		addGraphic(DrawText.CreateTextEntity("TPUQuest. Alpha v0.0.3", GameFont.Molot, 12, 5, 5, 0x0, false));
+		//addGraphic(DrawText.CreateTextEntity("TPUQuest. Alpha v0.0.3", GameFont.Molot, 12, 5, 5, 0x0, false));
 		super.begin();
 	}
 	

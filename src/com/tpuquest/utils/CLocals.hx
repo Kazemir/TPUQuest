@@ -9,7 +9,7 @@ class CLocals {
     public static function set( lang = "ru" ) : Void 
 	{
 		try {
-			var l_xmlString = sys.io.File.getContent( "localisation.xml" );
+			var l_xmlString = sys.io.File.getContent( "cfg/localisation.xml" );
 			var l_xmlFast   = new haxe.xml.Fast( Xml.parse( l_xmlString ).firstElement() );
 			for ( i_node in l_xmlFast.nodes.item ) 
 			{
