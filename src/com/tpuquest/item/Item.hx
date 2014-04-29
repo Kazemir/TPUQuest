@@ -9,7 +9,7 @@ class Item extends Entity
 	
 	public function new(x:Int, y:Int) 
 	{
-		super();
+		super(x, y);
 		itemPoint = new PointXY(x, y);
 	}
 	

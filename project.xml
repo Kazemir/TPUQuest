@@ -21,6 +21,7 @@
 	<assets path="assets/cfg" rename="cfg" include="*.xml" />
 	<assets path="assets/levels" rename="levels" include="*.xml" />
 	<assets path="assets/tiles" rename="tiles" include="*.png|*.jpg" />
+	<assets path="assets/items" rename="items" include="*.png|*.jpg" />
 	
-	<icon path="assets/HaxePunk.svg" />
+	<icon path="assets/icon.svg" />
 </project>

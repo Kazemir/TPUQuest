@@ -1,17 +1,22 @@
 package com.tpuquest.item;
+import com.haxepunk.graphics.Image;
+import com.tpuquest.utils.PointXY;
 
 class Potion extends Item
 {
 	public var potionAmount:Int;
-	public var potionType:Int;
 	
-	public function new(x:Int, y:Int, amount:Int, type:Int = 1) 
+	public function new(point:PointXY, amount:Int) 
 	{
-		super(x, y);
+		super(point.x + 10, point.y + 10);
 		
 		this.potionAmount = amount;
-		this.potionType = type;
-		// 1 - heal
+		
+		type = "potion";
+		
+		var img = new Image("items/potion_red.png");
+		setHitboxTo(img);
+		graphic = img;
 	}
 	
 	public override function update()
