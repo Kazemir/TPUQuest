@@ -19,6 +19,10 @@ class Tile extends Entity
 		this.collidability = collidability;
 		img = new Image(path);
 		setHitbox(40, 40);
+		
+		if (collidability)
+			type = "solid";
+			
 		collidable = true;
 		layer = 10;
 		imgPath = path;

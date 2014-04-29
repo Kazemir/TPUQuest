@@ -39,9 +39,8 @@ class Level
 
 	public static function WorldToScreen(vector:PointXY):PointXY
 	{
-		vector.x = (vector.x + 9) * 40;
-		vector.y = (vector.y + 7) * 40;
-		return vector;
+		var rvec:PointXY = new PointXY((vector.x + 9) * 40, (vector.y + 7) * 40);
+		return rvec;
 	}
 	
 	public function new( name:String = "New Level" ) 
@@ -75,15 +74,15 @@ class Level
 						{
 							case "coin":
 								var tAmount = Std.parseInt(element.get("amount"));
-								temp = new Coin(tX, tY, tAmount);
+								temp = new Coin(new PointXY(tX, tY), tAmount);
 							case "potion":
 								var tAmount = Std.parseInt(element.get("amount"));
 								var tType = Std.parseInt(element.get("p_type"));
-								temp = new Potion(tX, tY, tAmount, tType);
+								temp = new Potion(new PointXY(tX, tY), tAmount);
 							case "weapon":
 								var tDamage = Std.parseInt(element.get("damage"));
 								var tType = Std.parseInt(element.get("w_type"));
-								temp = new Weapon(tX, tY, tDamage, tType);
+								temp = new Weapon(new PointXY(tX, tY), tDamage, tType);
 							default:
 								temp = new Item(tX, tY);
 						}
@@ -98,7 +97,8 @@ class Level
 						switch(element.get("type"))
 						{
 							case "talker":
-								temp = new Talker(tX, tY, 1, "");
+								//temp = new Talker(tX, tY, 1, "");
+								temp = new Character(tX, tY);
 							case "trader":
 								temp = new Trader(tX, tY, 1);
 							case "enemy":

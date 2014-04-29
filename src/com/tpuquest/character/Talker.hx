@@ -6,6 +6,7 @@ import com.tpuquest.utils.DrawText;
 
 class Talker extends Character
 {
+/*
 	private var sprite:Spritemap;
 	private var counter:Float = 0;
 	public var underText:DrawText;
@@ -24,11 +25,12 @@ class Talker extends Character
 		// tell the sprite to play the idle animation
 		sprite.play("idle");
 	 
-		sprite.scale = 8;
-		
+		sprite.scale = 5;
+		sprite.x = -20;
 		// apply the sprite to our graphic object so we can see the player
 		graphic = sprite;
-	 
+		setHitbox(40, 80);
+		type = "talker";
 		velocity = 0;
 		counter = 0;
 		
@@ -83,5 +85,5 @@ class Talker extends Character
 		
 		underText.ChangePoint(x+sprite.width*4, y-10);
 		super.update();
-	}
+	}*/
 }

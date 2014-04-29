@@ -82,21 +82,20 @@ class LevelEditor extends Screen
 		cursor = Image.createRect(40, 40, 0xFFFFFF, 0.4);
 		
 		captionText = new DrawText("Level Editor", GameFont.Imperial, 16, 20, 20, 0xFFFFFF, false);
+		captionText.label.scrollX = captionText.label.scrollY = 0;
 		addGraphic(captionText.label);
 
 		coordsText = new DrawText("Pos: 0, 0", GameFont.Imperial, 16, 20, 40, 0xFFFFFF, false);
+		coordsText.label.scrollX = coordsText.label.scrollY = 0;
 		addGraphic(coordsText.label);
 		
 		typeText = new DrawText("Type: 0, Landscape", GameFont.Imperial, 16, 20, 60, 0xFFFFFF, false);
+		typeText.label.scrollX = typeText.label.scrollY = 0;
 		addGraphic(typeText.label);
 		
 		elementText = new DrawText("Tile: 0, Grass", GameFont.Imperial, 16, 20, 80, 0xFFFFFF, false);
+		elementText.label.scrollX = elementText.label.scrollY = 0;
 		addGraphic(elementText.label);	
-		
-		captionText.label.scrollX = captionText.label.scrollY = 0;
-		coordsText.label.scrollX = captionText.label.scrollY = 0;
-		typeText.label.scrollX = captionText.label.scrollY = 0;
-		elementText.label.scrollX = captionText.label.scrollY = 0;
 		
 		currentPos = new PointXY(0, 0);
 		cursorPos = new PointXY(0, 0);
