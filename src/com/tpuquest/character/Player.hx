@@ -16,22 +16,22 @@ class Player extends Character
 	public var life:Int;
 	
 	private var sprite:Spritemap;
-	private var prevPoint:Point;
 
 	private static inline var kMoveSpeed:Float = 5;
 	private static inline var kJumpForce:Int = 22;
 	public var hasTouchTheGround(default, null) : Bool;
 	public var isDead:Bool;
 	
+	public var behaviorOn:Bool;
 	/*private var soundMoney:Sfx;
 	private var soundPotion:Sfx;
 	private var soundWalk:Sfx;
 	private var soundJumpStart:Sfx;
 	private var soundJumpEnd:Sfx;*/
 	
-	public function new(x:Float, y:Float) 
+	public function new(point:PointXY) 
 	{
-		super(x, y);
+		super(point.x, point.y);
 		
 		hasTouchTheGround = true;
 		
@@ -67,8 +67,10 @@ class Player extends Character
 		money = 0;
 		life = 50;
 		isDead = false;
-		
-		//soundMoney = new Sfx("audio/player_soundMoney.wav");
+		behaviorOn = true;
+
+		//walkSound = new Sfx("audio/grass1.ogg");
+		walkSound = new Sfx("audio/gravel2.ogg");
 	}
 
 	private function setAnimations()
@@ -107,48 +109,57 @@ class Player extends Character
 			}
 		}
 	}
- 
+	
 	public override function update()
 	{
 		acceleration.x = acceleration.y = 0;
- 
+		
+		/*else
+		{
+			walkSound.stop();
+		}*/
+		
 		if (!_onGround)
 			hasTouchTheGround = false;
 		
 		if ( !hasTouchTheGround && _onGround) 
 		{
 			hasTouchTheGround = true;
+			behaviorOn = true;
 			var sound = new Sfx("audio/player_soundJumpStop.wav");
 			sound.play(SettingsMenu.soudVolume / 10);
 		}
 		
-		//if (hasTouchTheGround && Input.check("left"))
-		if (Input.check("left"))
+		if (behaviorOn)
 		{
-			acceleration.x = -kMoveSpeed;
+			if (Input.check("left"))
+			{
+				acceleration.x = -kMoveSpeed;
+				/*if (_onGround)
+				{
+					var 
+					sound.play(SettingsMenu.soudVolume / 10);
+				}*/
+			}
+			if (Input.check("right"))
+			{
+				acceleration.x = kMoveSpeed;
+				/*if (_onGround)
+				{
+					var sound = new Sfx("audio/grass2.ogg");
+					sound.play(SettingsMenu.soudVolume / 10);
+				}*/
+			}
+			if (Input.pressed("jump") && _onGround)
+			{
+				acceleration.y = -HXP.sign(gravity.y) * kJumpForce;
+				
+				var sound = new Sfx("audio/player_soundJumpStart_2.wav");
+				sound.play(SettingsMenu.soudVolume / 10);
+			}
 		}
-		//if (hasTouchTheGround && Input.check("right"))
-		if (Input.check("right"))
-		{
-			acceleration.x = kMoveSpeed;
-		}
-		if (Input.pressed("jump") && _onGround)
-		{
-			acceleration.y = -HXP.sign(gravity.y) * kJumpForce;
-			
-			var sound = new Sfx("audio/player_soundJumpStart.wav");
-			sound.play(SettingsMenu.soudVolume / 10);
-		}
-
-		prevPoint = new Point(x, y);
 		
 		super.update();
-		
-		if(collide("solid", x, y) != null)
-		{
-			x = prevPoint.x;
-			y = prevPoint.y;
-		}
 		
 		var ent:Entity = collide("coin", x, y);
 		if(ent != null)
@@ -170,13 +181,33 @@ class Player extends Character
 			sound.play(SettingsMenu.soudVolume / 10);
 		}
 		
+		ent = collide("enemy", x, y);
+		if(ent != null)
+		{
+			var cn:Enemy = cast(ent, Enemy);
+			behaviorOn = false;
+			var sound = new Sfx("audio/player_soundPain.wav");
+			sound.play(SettingsMenu.soudVolume / 10);
+			life -= 5;
+			if (velocity.x < 0)
+			{
+				velocity.x = kMoveSpeed * 5;
+			}
+			else
+			{
+				velocity.x = -kMoveSpeed * 5;
+			}
+			velocity.y = -HXP.sign(gravity.y) * kJumpForce * 0.5;
+			//super.update();
+			//update();
+		}
+		
 		if(life <= 0)
 			isDead = true;
 		if (life > 100)
 			life = 100;
 		
 		setAnimations();
-		
 		HXP.camera.x = x - 400 + 20;
 		HXP.camera.y = y - 300 + 40;
 	}

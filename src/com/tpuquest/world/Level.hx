@@ -100,9 +100,9 @@ class Level
 								//temp = new Talker(tX, tY, 1, "");
 								temp = new Character(tX, tY);
 							case "trader":
-								temp = new Trader(tX, tY, 1);
+								temp = new Trader(new PointXY(tX, tY));
 							case "enemy":
-								temp = new Enemy(tX, tY, 1);
+								temp = new Enemy(new PointXY(tX, tY));// , 1);
 							default:
 								temp = new Character(tX, tY);
 						}
@@ -119,8 +119,8 @@ class Level
 						if (tC == 1)
 							tCb = true;
 						var tP = element.get("path");
-			
-						var temp:Tile = new Tile(WorldToScreen(new PointXY(tX, tY)), tCb, tP);
+						var tS = element.get("soundPath");
+						var temp:Tile = new Tile(WorldToScreen(new PointXY(tX, tY)), tCb, tP, tS);
 						lvl.tiles.push( temp );
 					}
 			}
@@ -190,6 +190,7 @@ class Level
 			temp.set("x", Std.string(tX));
 			temp.set("y", Std.string(tY));
 			temp.set("path", x.imgPath);
+			temp.set("soundPath", x.soundPath);
 			var t = 0;
 			if (x.collidability == true)
 				t = 1;

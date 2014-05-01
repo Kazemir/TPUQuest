@@ -118,6 +118,7 @@ class SettingsMenu extends Screen
 				else
 					language = "ru";
 		}
+		MainMenu.menuMusic.volume = SettingsMenu.musicVolume / 10;
 		updateMenu();
 	}
 
