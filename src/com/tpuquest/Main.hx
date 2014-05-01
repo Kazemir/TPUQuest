@@ -31,7 +31,7 @@ class Main extends Engine
 #end
 		HXP.screen.scale = 1;
 		LoadConfig();
-		HXP.scene = new MainMenu();
+		HXP.scene = new SplashScreen();
 	}
 
 	public static function main() 

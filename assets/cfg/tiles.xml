@@ -1,7 +1,8 @@
 ﻿<tiles>
 
-<element id="0" name="Grass" path="tiles/grass.png" collidability="1"/>
-<element id="1" name="GrassGround" path="tiles/grass_ground.png" collidability="1"/>
-<element id="2" name="Ground" path="tiles/ground.png" collidability="1"/>
+<element id="0" name="Grass" path="tiles/grass.png" collidability="1" soundPath="audio/grass1.ogg" />
+<element id="1" name="GrassGround" path="tiles/grass_ground.png" collidability="1" soundPath="audio/grass1.ogg" />
+<element id="2" name="Ground" path="tiles/ground.png" collidability="1" soundPath="audio/gravel2.ogg" />
+<element id="3" name="wallGround" path="tiles/wall_ground.png" collidability="0" soundPath="" />
 
 </tiles>

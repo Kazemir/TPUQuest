@@ -1,7 +1,10 @@
 package com.tpuquest.character;
+import com.haxepunk.Sfx;
+import com.tpuquest.world.Tile;
 import flash.geom.Point;
 import com.haxepunk.Entity;
 import com.haxepunk.HXP;
+import com.tpuquest.screen.SettingsMenu;
 
 class Character extends Entity
 {
@@ -59,6 +62,8 @@ class Character extends Entity
 		}
 	}
 
+	private var walkSound:Sfx;
+	
 	public override function moveCollideY(e:Entity):Bool
 	{
 		if (velocity.y * HXP.sign(gravity.y) > 0)
@@ -69,6 +74,16 @@ class Character extends Entity
 
 		velocity.x *= friction.x;
 		if (Math.abs(velocity.x) < 0.5) velocity.x = 0;
+		
+		if (type == "player" && _onGround && velocity.x != 0)
+		{
+			if (!walkSound.playing)
+			{
+				var t:Tile = cast(e, Tile);
+				walkSound = new Sfx(t.soundPath);
+				walkSound.play(SettingsMenu.soudVolume / 10, 1);
+			}
+		}
 		
 		return true;
 	}

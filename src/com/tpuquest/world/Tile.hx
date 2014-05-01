@@ -10,30 +10,29 @@ class Tile extends Entity
 	private var img:Image;
 	public var imgPath:String;
 	public var tileName:String;
+	public var soundPath:String;
 	
-	public function new(point:PointXY, collidability:Bool, path:String, name:String = "") 
+	public function new(point:PointXY, collidability:Bool, path:String, soundPath:String = "", name:String = "") 
 	{
 		super(point.x, point.y);
 		
 		tilePoint = point;
 		this.collidability = collidability;
 		img = new Image(path);
-		setHitbox(40, 40);
 		
 		if (collidability)
+		{
+			setHitboxTo(img);
 			type = "solid";
-			
-		collidable = true;
+			collidable = true;
+		}
+		
 		layer = 10;
 		imgPath = path;
 		tileName = name;
 		graphic = img;
+		this.soundPath = soundPath;
 	}
-	
-	/*public override function moveCollideX(e:Entity)
-    {
-	
-	}*/
 	
 	public override function update()
 	{

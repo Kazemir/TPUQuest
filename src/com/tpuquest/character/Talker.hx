@@ -1,56 +1,77 @@
 package com.tpuquest.character;
-import com.haxepunk.HXP;
+import com.tpuquest.screen.SettingsMenu;
 import com.haxepunk.graphics.Spritemap;
 import com.haxepunk.utils.Input;
-import com.tpuquest.utils.DrawText;
+import com.haxepunk.HXP;
+import com.haxepunk.Sfx;
+import com.tpuquest.utils.PointXY;
+import flash.geom.Point;
 
 class Talker extends Character
 {
-/*
-	private var sprite:Spritemap;
-	private var counter:Float = 0;
-	public var underText:DrawText;
-	private var scale:Float = 1;
+	public var life:Int;
 	
-	public function new(x:Float, y:Float, sc:Float, nm:String) 
+	private var sprite:Spritemap;
+	private var prevPoint:Point;
+	
+	private static inline var kMoveSpeed:Float = 5;
+	private static inline var kJumpForce:Int = 22;
+	public var hasTouchTheGround(default, null) : Bool;
+	public var isDead:Bool;
+	
+	public function new(point:PointXY)//, sc:Float) 
 	{
-		super(x, y);
-		scale = sc;
-		// create a new spritemap (image, frameWidth, frameHeight)
-		sprite = new Spritemap("graphics/player.png", 16, 16);
-		// define animations by passing frames in an array
-		sprite.add("idle", [0]);
-		// we set a speed to the walk animation
-		sprite.add("walk", [1, 2, 3, 2], 12);
-		// tell the sprite to play the idle animation
-		sprite.play("idle");
-	 
-		sprite.scale = 5;
+		super(point.x, point.y);
+		
+		hasTouchTheGround = true;
+		
+		sprite = new Spritemap("graphics/character.png", 32, 32);
+		sprite.add("norm_idle", [8, 8, 8, 9], 3, true);
+		sprite.add("norm_walk", [0, 1, 2, 3, 4, 5, 6, 7], 19, true);
+		sprite.add("norm_jump", [10]);
+		sprite.play("norm_idle");
+		
+		sprite.scale = 2.5;
 		sprite.x = -20;
-		// apply the sprite to our graphic object so we can see the player
-		graphic = sprite;
+		
 		setHitbox(40, 80);
 		type = "talker";
-		velocity = 0;
-		counter = 0;
-		
-		underText = new DrawText(nm, GameFont.Imperial, 18, x+sprite.width*8, y-sprite.height*8-15, 0, true);
-	}
+		graphic = sprite;
 
+		gravity.y = 1.8;
+		maxVelocity.y = kJumpForce;
+		maxVelocity.x = 5;//kMoveSpeed * 4;
+		friction.x = 0.82; // floor friction
+		friction.y = 0.99; // wall friction
+		
+		life = 50;
+		isDead = false;
+	}
+	
 	private function setAnimations()
 	{
-		if (velocity == 0)
+		if (!_onGround)
 		{
-			// we are stopped, set animation to idle
-			sprite.play("idle");
+			sprite.play("norm_jump");
+			
+			if (velocity.x < 0) // left
+			{
+				sprite.flipped = true;
+			}
+			else if(velocity.x > 0) // right
+			{
+				sprite.flipped = false;	
+			}
+		}
+		else if (velocity.x == 0)
+		{
+			sprite.play("norm_idle");
 		}
 		else
 		{
-			// we are moving, set animation to walk
-			sprite.play("walk");
+			sprite.play("norm_walk");
 
-			// this will flip our sprite based on direction
-			if (velocity < 0) // left
+			if (velocity.x < 0) // left
 			{
 				sprite.flipped = true;
 			}
@@ -60,7 +81,43 @@ class Talker extends Character
 			}
 		}
 	}
+	
+	public override function update()
+	{
+		acceleration.x = acceleration.y = 0;
  
+		if (!_onGround)
+			hasTouchTheGround = false;
+		
+		if ( !hasTouchTheGround && _onGround) 
+		{
+			hasTouchTheGround = true;
+			var sound = new Sfx("audio/player_soundJumpStop.wav");
+			sound.play(SettingsMenu.soudVolume / 10);
+		}
+
+		prevPoint = new Point(x, y);
+		
+		super.update();
+		
+		if(collide("solid", x, y) != null)
+		{
+			x = prevPoint.x;
+			y = prevPoint.y;
+		}
+		
+		if(life <= 0)
+			isDead = true;
+		if (life > 100)
+			life = 100;
+		
+		setAnimations();
+	}
+}
+/*
+
+	underText = new DrawText(nm, GameFont.Imperial, 18, x+sprite.width*8, y-sprite.height*8-15, 0, true);
+
 	public override function update()
 	{
 		velocity = 0;
@@ -86,4 +143,3 @@ class Talker extends Character
 		underText.ChangePoint(x+sprite.width*4, y-10);
 		super.update();
 	}*/
-}

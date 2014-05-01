@@ -2,6 +2,7 @@ package com.tpuquest.screen;
 import com.haxepunk.Entity;
 import com.haxepunk.Graphic;
 import com.haxepunk.graphics.Canvas;
+import com.haxepunk.graphics.Tilemap;
 import com.haxepunk.utils.Draw;
 import com.tpuquest.character.Player;
 import com.haxepunk.utils.Input;
@@ -62,7 +63,7 @@ class LevelEditor extends Screen
 
 		LoadElementLists();
 		
-		lvl = Level.LoadLevel( "levels/new.xml" );
+		lvl = Level.LoadLevel( "levels/new_old.xml" );
 		//lvl.SaveLevel( "levels/map2.xml" );
 		//lvl = new Level();
 		addList( lvl.getEntities() );
@@ -205,6 +206,16 @@ class LevelEditor extends Screen
 			}
 			case 3:
 			{
+				temp1 = "Sticker";
+				elementMax = 0;
+				/*switch(currentElement)
+				{
+					case default:
+						temp2 = "";
+				}*/
+			}
+			case 4:
+			{
 				temp1 = "Service";
 				elementMax = 0;
 				/*switch(currentElement)
@@ -222,7 +233,8 @@ class LevelEditor extends Screen
 	{
 		if (Input.pressed("esc"))
 		{
-			lvl.SaveLevel( "levels/new.xml" );
+			lvl.SaveLevel( "levels/new_old.xml" );
+			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
 			HXP.scene = new MainMenu();
 		}
 		if (Input.pressed("up"))
@@ -300,7 +312,7 @@ class LevelEditor extends Screen
 						remove(x);
 					}
 				}
-				var temp:Tile = new Tile(new PointXY(tX, tY), tilesList[currentElement].collidability, tilesList[currentElement].imgPath, tilesList[currentElement].tileName);
+				var temp:Tile = new Tile(new PointXY(tX, tY), tilesList[currentElement].collidability, tilesList[currentElement].imgPath, tilesList[currentElement].soundPath, tilesList[currentElement].tileName);
 				lvl.tiles.push(temp);
 				
 				add(temp);
@@ -370,8 +382,9 @@ class LevelEditor extends Screen
 			var tCb:Bool = false;
 			if (tC == "1")
 				tCb = true;
+			
 				
-			tilesList.push(new Tile(new PointXY(0, 0), tCb, x.get("path"), x.get("name")));
+			tilesList.push(new Tile(new PointXY(0, 0), tCb, x.get("path"), x.get("soundPath"), x.get("name")));
 		}
 		currentTile = tilesList[0];
 		currentTile.visible = false;

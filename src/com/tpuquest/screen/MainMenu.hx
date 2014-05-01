@@ -1,5 +1,6 @@
 package com.tpuquest.screen;
 import com.haxepunk.HXP;
+import com.haxepunk.Sfx;
 import com.haxepunk.utils.Input;
 import com.tpuquest.utils.DrawText;
 import flash.system.System;
@@ -15,6 +16,8 @@ class MainMenu extends Screen
 	
 	private var passiveColor = 0x000000;
 	private var activeColor = 0xFF0000;
+	
+	public static var menuMusic:Sfx;
 	
 	public function new() 
 	{
@@ -64,9 +67,11 @@ class MainMenu extends Screen
 		switch(currentMenuElement)
 		{
 			case 0:
+				menuMusic.stop();
 				HXP.scene = new GameScreen();
 			case 1:
-				HXP.scene = new MainScene();
+				menuMusic.stop();
+				//HXP.scene = new MainScene();
 			case 2:
 				HXP.scene = new SettingsMenu();
 			case 3:
@@ -74,6 +79,7 @@ class MainMenu extends Screen
 			case 4:
 				HXP.scene = new AuthorsMenu();
 			case 5:
+				menuMusic.stop();
 				ExitGame();
 		}
 	}
@@ -82,6 +88,7 @@ class MainMenu extends Screen
 	{
 		if (Input.pressed("esc"))
 		{
+			menuMusic.stop();
 			ExitGame();
 		}
 		if (Input.pressed("up"))
@@ -100,7 +107,8 @@ class MainMenu extends Screen
 		}
 		if (Input.pressed(Key.L))
 		{
-			HXP.world = new LevelEditor();
+			menuMusic.stop();
+			HXP.scene = new LevelEditor();
 		}
 		
 		super.update();
