@@ -19,9 +19,9 @@ class Enemy extends Character
 	public var hasTouchTheGround(default, null) : Bool;
 	public var isDead:Bool;
 	
-	public function new(point:PointXY)//, sc:Float) 
+	public function new(point:PointXY)
 	{
-		super(point.x, point.y);
+		super(point);
 		
 		hasTouchTheGround = true;
 		

@@ -7,10 +7,10 @@ class Item extends Entity
 {
 	public var itemPoint:PointXY;
 	
-	public function new(x:Int, y:Int) 
+	public function new(point:PointXY) 
 	{
-		super(x, y);
-		itemPoint = new PointXY(x, y);
+		super(point.x, point.y);
+		itemPoint = point;
 	}
 	
 	public override function update()

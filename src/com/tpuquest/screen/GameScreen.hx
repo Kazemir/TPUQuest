@@ -54,22 +54,6 @@ class GameScreen extends Screen
 		addGraphic(coinImg, -5, 670, 53);
 		addGraphic(heartImg, -5, 670, 23);
 		
-		/*var test:Talker = new Talker(20, 50, 1, "Vince");
-		add(test);
-		addGraphic(test.underText.label);
-	
-		test = new Talker(20, 100, 1.1, "Howard");
-		add(test);
-		addGraphic(test.underText.label);
-		
-		test = new Talker(20, 150, 0.75, "Naboo");
-		add(test);
-		addGraphic(test.underText.label);
-		
-		test = new Talker(20, 200, 1.25, "Bollo");
-		add(test);
-		addGraphic(test.underText.label);*/
-		
 		player = new Player(Level.WorldToScreen(new PointXY(0, -3)));
 		add(player);
 		

@@ -103,14 +103,9 @@ class LevelEditor extends Screen
 		currentElement = 0;
 		currentType = 0;
 		isCursorChanged = false;
-		
-		//20x15 (wxh) - размер поля, 40x40px - tile
-		//10,7 - center
-		
-		/*var t1:MessageBox = new MessageBox(200, 200, "Caption", "SampleText");
-		//add(t1.text.overlay);
-		add(t1);*/
 
+		add(new Dialog(200, 200));
+		
 		addGraphic(cursor, 0, 0, 0);
 		cursor.x = 360;
 		cursor.y = 280;
@@ -216,7 +211,7 @@ class LevelEditor extends Screen
 			}
 			case 4:
 			{
-				temp1 = "Service";
+				temp1 = "Helper";
 				elementMax = 0;
 				/*switch(currentElement)
 				{

@@ -9,7 +9,7 @@ class Weapon extends Item
 	
 	public function new(point:PointXY, damage:Int, type:Int) 
 	{
-		super(point.x + 10, point.y + 10);
+		super(new PointXY(point.x + 10, point.y + 10));
 		
 		this.weaponDamage = damage;
 		this.weaponType = type;
