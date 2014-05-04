@@ -8,15 +8,15 @@ class Potion extends Item
 	
 	public function new(point:PointXY, amount:Int) 
 	{
-		super(point.x + 10, point.y + 10);
+		super(new PointXY(point.x + 10, point.y + 10));
 		
 		this.potionAmount = amount;
 		
-		type = "potion";
-		
 		var img = new Image("items/potion_red.png");
-		setHitboxTo(img);
 		graphic = img;
+		
+		type = "potion";
+		setHitboxTo(img);
 	}
 	
 	public override function update()

@@ -8,15 +8,15 @@ class Coin extends Item
 	
 	public function new(point:PointXY, amount:Int) 
 	{
-		super(point.x + 10, point.y + 10);
+		super(new PointXY(point.x + 10, point.y + 10));
 		
 		this.coinAmount = amount;
-		
-		type = "coin";
-		
+
 		var img = new Image("items/coin.png");
-		setHitboxTo(img);
 		graphic = img;
+		
+		setHitboxTo(img);
+		type = "coin";
 	}
 	
 	public override function update()

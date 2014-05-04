@@ -39,10 +39,7 @@ class DrawText
 			label = new Text(str, x, y);
 		else
 		{
-			label = new Text(str, x, y, width, height);
-			label.wordWrap = true;
-			label.resizable = false;
-			label.align = flash.text.TextFormatAlign.CENTER;
+			label = new Text(str, x, y, width, height, { wordWrap:true, align:"center", size:size, font:fnt, resizable:false });
 		}
 
 		label.color = color;

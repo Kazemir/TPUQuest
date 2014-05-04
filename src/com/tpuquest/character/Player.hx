@@ -23,21 +23,14 @@ class Player extends Character
 	public var isDead:Bool;
 	
 	public var behaviorOn:Bool;
-	/*private var soundMoney:Sfx;
-	private var soundPotion:Sfx;
-	private var soundWalk:Sfx;
-	private var soundJumpStart:Sfx;
-	private var soundJumpEnd:Sfx;*/
 	
 	public function new(point:PointXY) 
 	{
-		super(point.x, point.y);
+		super(point);
 		
 		hasTouchTheGround = true;
 		
-		// create a new spritemap (image, frameWidth, frameHeight)
 		sprite = new Spritemap("graphics/character.png", 32, 32);
-		// define animations by passing frames in an array
 		sprite.add("norm_idle", [8, 8, 8, 9], 3, true);
 		sprite.add("norm_walk", [0, 1, 2, 3, 4, 5, 6, 7], 19, true);
 		sprite.add("norm_jump", [10]);
@@ -46,7 +39,6 @@ class Player extends Character
 		sprite.add("grav_walk", [11, 12, 13, 14, 15, 16, 17, 18], 19, true);
 		sprite.add("grav_jump", [21]);
 
-		// tell the sprite to play the idle animation
 		sprite.play("norm_idle");
 	 
 		sprite.scale = 2.5;
@@ -55,7 +47,6 @@ class Player extends Character
 		setHitbox(40, 80);
 		//setHitboxTo(sprite);
 		type = "player";
-		// apply the sprite to our graphic object so we can see the player
 		graphic = sprite;
 
 		gravity.y = 1.8;
@@ -68,9 +59,6 @@ class Player extends Character
 		life = 50;
 		isDead = false;
 		behaviorOn = true;
-
-		//walkSound = new Sfx("audio/grass1.ogg");
-		walkSound = new Sfx("audio/gravel2.ogg");
 	}
 
 	private function setAnimations()
@@ -90,15 +78,12 @@ class Player extends Character
 		}
 		else if (velocity.x == 0)
 		{
-			// we are stopped, set animation to idle
 			sprite.play("norm_idle");
 		}
 		else
 		{
-			// we are moving, set animation to walk
 			sprite.play("norm_walk");
 
-			// this will flip our sprite based on direction
 			if (velocity.x < 0) // left
 			{
 				sprite.flipped = true;
@@ -113,12 +98,7 @@ class Player extends Character
 	public override function update()
 	{
 		acceleration.x = acceleration.y = 0;
-		
-		/*else
-		{
-			walkSound.stop();
-		}*/
-		
+
 		if (!_onGround)
 			hasTouchTheGround = false;
 		
@@ -135,26 +115,16 @@ class Player extends Character
 			if (Input.check("left"))
 			{
 				acceleration.x = -kMoveSpeed;
-				/*if (_onGround)
-				{
-					var 
-					sound.play(SettingsMenu.soudVolume / 10);
-				}*/
 			}
 			if (Input.check("right"))
 			{
 				acceleration.x = kMoveSpeed;
-				/*if (_onGround)
-				{
-					var sound = new Sfx("audio/grass2.ogg");
-					sound.play(SettingsMenu.soudVolume / 10);
-				}*/
 			}
 			if (Input.pressed("jump") && _onGround)
 			{
 				acceleration.y = -HXP.sign(gravity.y) * kJumpForce;
 				
-				var sound = new Sfx("audio/player_soundJumpStart_2.wav");
+				var sound = new Sfx("audio/player_soundJumpStart.wav");
 				sound.play(SettingsMenu.soudVolume / 10);
 			}
 		}
@@ -182,6 +152,8 @@ class Player extends Character
 		}
 		
 		ent = collide("enemy", x, y);
+		if (ent == null)
+			ent = collide("boss", x, y);
 		if(ent != null)
 		{
 			var cn:Enemy = cast(ent, Enemy);
@@ -198,12 +170,19 @@ class Player extends Character
 				velocity.x = -kMoveSpeed * 5;
 			}
 			velocity.y = -HXP.sign(gravity.y) * kJumpForce * 0.5;
-			//super.update();
-			//update();
 		}
 		
-		if(life <= 0)
+		ent = collide("helper", x, y);
+		if(ent != null)
+		{
+			
+		}
+		
+		if (life <= 0)
+		{
 			isDead = true;
+			behaviorOn = false;
+		}
 		if (life > 100)
 			life = 100;
 		

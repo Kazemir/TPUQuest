@@ -1,5 +1,6 @@
 package com.tpuquest.character;
 import com.haxepunk.Sfx;
+import com.tpuquest.utils.PointXY;
 import com.tpuquest.world.Tile;
 import flash.geom.Point;
 import com.haxepunk.Entity;
@@ -16,9 +17,9 @@ class Character extends Entity
 	
 	public static var solid:String = "solid";
 
-	public function new(x:Float, y:Float)
+	public function new(point:PointXY)
 	{
-		super(x, y);
+		super(point.x, point.y);
 		_onGround = false;
 
 		velocity     = new Point();
@@ -77,6 +78,12 @@ class Character extends Entity
 		
 		if (type == "player" && _onGround && velocity.x != 0)
 		{
+			if (walkSound == null)
+			{
+				var t:Tile = cast(e, Tile);
+				walkSound = new Sfx(t.soundPath);
+				walkSound.play(SettingsMenu.soudVolume / 10, 1);
+			}
 			if (!walkSound.playing)
 			{
 				var t:Tile = cast(e, Tile);

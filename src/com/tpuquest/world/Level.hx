@@ -84,7 +84,7 @@ class Level
 								var tType = Std.parseInt(element.get("w_type"));
 								temp = new Weapon(new PointXY(tX, tY), tDamage, tType);
 							default:
-								temp = new Item(tX, tY);
+								temp = new Item(new PointXY(tX, tY));
 						}
 						lvl.items.push( temp );
 					}
@@ -97,14 +97,13 @@ class Level
 						switch(element.get("type"))
 						{
 							case "talker":
-								//temp = new Talker(tX, tY, 1, "");
-								temp = new Character(tX, tY);
+								temp = new Talker(new PointXY(tX, tY));
 							case "trader":
 								temp = new Trader(new PointXY(tX, tY));
 							case "enemy":
 								temp = new Enemy(new PointXY(tX, tY));// , 1);
 							default:
-								temp = new Character(tX, tY);
+								temp = new Character(new PointXY(tX, tY));
 						}
 						
 						lvl.characters.push( temp );
