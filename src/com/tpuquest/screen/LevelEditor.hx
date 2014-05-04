@@ -104,7 +104,8 @@ class LevelEditor extends Screen
 		currentType = 0;
 		isCursorChanged = false;
 
-		add(new Dialog(200, 200));
+		//add(new MessageBox(HXP.halfWidth, HXP.halfHeight, "ЗаголовокЗаголовокЗаголовокЗаголовок", "Я помню как\n она стала моей. В теплый летний и без того радостный день, на голову свалилось еще большее счастье."));
+		add(new InputBox(HXP.halfWidth, HXP.halfHeight, "InputBox", "Введите назвиние карты для загрузки:"));
 		
 		addGraphic(cursor, 0, 0, 0);
 		cursor.x = 360;
