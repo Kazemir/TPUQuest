@@ -79,7 +79,7 @@ class MessageBox extends Dialog
 	{
 		super.update();
 		
-		if (Input.pressed("action") || Input.pressed("esc"))
+		if (Input.pressed("action") || Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("A") || Screen.joyPressed("B"))
 		{
 			Screen.overrideControlByBox = false;
 			this.scene.remove(this);

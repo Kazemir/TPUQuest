@@ -29,7 +29,7 @@ class GameScreen extends Screen
 	
 	public override function begin()
 	{
-		lvl = Level.LoadLevel( "levels/new_old.xml" );
+		lvl = Level.LoadLevel( "levels/fungus.xml" );
 		addList( lvl.getEntities() );
 		
 		var base = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
@@ -83,7 +83,7 @@ class GameScreen extends Screen
 	
 	public override function update()
 	{
-		if (Input.pressed("esc") && !Screen.overrideControlByBox)
+		if ((Input.pressed("esc") || Screen.joyPressed("BACK")) && !Screen.overrideControlByBox)
 		{
 			music.stop();
 			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);

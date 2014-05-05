@@ -3,6 +3,7 @@ import com.haxepunk.HXP;
 import com.haxepunk.Sfx;
 import com.haxepunk.utils.Input;
 import com.tpuquest.utils.DrawText;
+import flash.geom.Point;
 import flash.system.System;
 import com.haxepunk.graphics.Image;
 import com.haxepunk.Entity;
@@ -86,26 +87,27 @@ class MainMenu extends Screen
 	
 	public override function update()
 	{
-		if (Input.pressed("esc"))
+		if (Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B"))
 		{
 			menuMusic.stop();
 			ExitGame();
 		}
-		if (Input.pressed("up"))
+		if (Input.pressed("up") || Screen.joyPressed("DPAD_UP"))
 		{
 			currentMenuElement--;
 			changeMenu();
 		}
-		if (Input.pressed("down"))
+		if (Input.pressed("down") || Screen.joyPressed("DPAD_DOWN"))
 		{
+			
 			currentMenuElement++;
 			changeMenu();
 		}
-		if (Input.pressed("action"))
+		if (Input.pressed("action") || Screen.joyPressed("START") || Screen.joyPressed("A"))
 		{
 			actionMenu();
 		}
-		if (Input.pressed(Key.L))
+		if (Input.pressed(Key.L) || Screen.joyPressed("LS_BUTTON"))
 		{
 			menuMusic.stop();
 			HXP.scene = new LevelEditor();
