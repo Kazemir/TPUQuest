@@ -5,6 +5,7 @@ import com.haxepunk.utils.Input;
 import com.haxepunk.HXP;
 import com.tpuquest.item.Coin;
 import com.tpuquest.item.Potion;
+import com.tpuquest.screen.Screen;
 import com.tpuquest.screen.SettingsMenu;
 import com.tpuquest.utils.PointXY;
 import flash.geom.Point;
@@ -110,7 +111,7 @@ class Player extends Character
 			sound.play(SettingsMenu.soudVolume / 10);
 		}
 		
-		if (behaviorOn)
+		if (behaviorOn && !Screen.overrideControlByBox)
 		{
 			if (Input.check("left"))
 			{

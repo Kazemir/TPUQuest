@@ -24,7 +24,8 @@ import sys.io.File;
 import sys.io.FileInput;
 import sys.io.FileOutput;
 
-import com.tpuquest.dialog.*;
+import com.tpuquest.dialog.InputBox;
+import com.tpuquest.dialog.MessageBox;
 
 class LevelEditor extends Screen
 {
@@ -52,6 +53,9 @@ class LevelEditor extends Screen
 	private static var elementMax:Int;
 	private static var currentTile:Tile;
 	
+	private var waitingForAnswer:Bool;
+	private var typeOfAnswer:Int;
+
 	public function new() 
 	{
 		super();
@@ -110,6 +114,9 @@ class LevelEditor extends Screen
 		addGraphic(cursor, 0, 0, 0);
 		cursor.x = 360;
 		cursor.y = 280;
+		
+		waitingForAnswer = false;
+		typeOfAnswer = -1;
 	}
 	
 	public function updateText()
@@ -225,64 +232,83 @@ class LevelEditor extends Screen
 		elementText.ChangeStr("Tile: " + currentElement + ", " + temp2, false);
 	}
 	
+	private var iB:InputBox;
+	
 	public override function update()
 	{
-		if (Input.pressed("esc"))
+		if (!Screen.overrideControlByBox && waitingForAnswer)
+		{
+			switch(typeOfAnswer)
+			{
+				case 0:	//SaveLevel
+					if(iB.getInput() != "")
+						lvl.SaveLevel( "levels/" + iB.getInput() + ".xml" );
+			}
+		}
+		
+		if (Input.pressed("esc") && !Screen.overrideControlByBox)
 		{
 			lvl.SaveLevel( "levels/new_old.xml" );
 			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
 			HXP.scene = new MainMenu();
 		}
-		if (Input.pressed("up"))
+		if (Input.pressed(Key.F2) && !Screen.overrideControlByBox)
+		{
+			iB = new InputBox(HXP.halfWidth, HXP.halfHeight, "Сохранение карты", "Введите назвиние вашей карты для сохранения:");
+			add(iB);
+			waitingForAnswer = true;
+			typeOfAnswer = 0;
+		}
+		if (Input.pressed("up") && !Screen.overrideControlByBox)
 		{
 			cursorPos.y--;
 			currentPos.y--;
 			isCursorChanged = true;
 		}
-		if (Input.pressed("down"))
+		if (Input.pressed("down") && !Screen.overrideControlByBox)
 		{
 			cursorPos.y++;
 			currentPos.y++;
 			isCursorChanged = true;
 		}
-		if (Input.pressed("left"))
+		if (Input.pressed("left") && !Screen.overrideControlByBox)
 		{
 			cursorPos.x--;
 			currentPos.x--;
 			isCursorChanged = true;
 		}
-		if (Input.pressed("right"))
+		if (Input.pressed("right") && !Screen.overrideControlByBox)
 		{
 			cursorPos.x++;
 			currentPos.x++;
 			isCursorChanged = true;
 		}
-		if (Input.pressed("action"))
+		if (Input.pressed("action") && !Screen.overrideControlByBox)
 		{
 			ActionButton();
 		}
-		if (Input.pressed(Key.DELETE))
+		if (Input.pressed(Key.DELETE) && !Screen.overrideControlByBox)
 		{
 			DeleteButton();
 		}
-		if (Input.pressed(Key.HOME))
+		if (Input.pressed(Key.HOME) && !Screen.overrideControlByBox)
 		{
 			currentType++;
 			currentElement = 0;
 			UpdateTools();
 		}
-		if (Input.pressed(Key.END))
+		if (Input.pressed(Key.END) && !Screen.overrideControlByBox)
 		{
 			currentType--;
 			currentElement = 0;
 			UpdateTools();
 		}
-		if (Input.pressed(Key.PAGE_UP))
+		if (Input.pressed(Key.PAGE_UP) && !Screen.overrideControlByBox)
 		{
 			currentElement++;
 			UpdateTools();
 		}
-		if (Input.pressed(Key.PAGE_DOWN))
+		if (Input.pressed(Key.PAGE_DOWN) && !Screen.overrideControlByBox)
 		{
 			currentElement--;
 			UpdateTools();
