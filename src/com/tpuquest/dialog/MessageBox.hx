@@ -1,6 +1,7 @@
 package com.tpuquest.dialog;
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Stamp;
+import com.tpuquest.screen.Screen;
 import com.tpuquest.utils.DrawText;
 import flash.display.BitmapData;
 import flash.display.Graphics;
@@ -70,6 +71,8 @@ class MessageBox extends Dialog
 		graphic.y -= 16 + msgFrameH / 2;
 		
 		layer = -50;
+		
+		Screen.overrideControlByBox = true;
 	}
 	
 	public override function update()
@@ -78,6 +81,7 @@ class MessageBox extends Dialog
 		
 		if (Input.pressed("action") || Input.pressed("esc"))
 		{
+			Screen.overrideControlByBox = false;
 			this.scene.remove(this);
 		}
 	}

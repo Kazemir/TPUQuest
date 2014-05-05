@@ -83,7 +83,7 @@ class GameScreen extends Screen
 	
 	public override function update()
 	{
-		if (Input.pressed("esc"))
+		if (Input.pressed("esc") && !Screen.overrideControlByBox)
 		{
 			music.stop();
 			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);

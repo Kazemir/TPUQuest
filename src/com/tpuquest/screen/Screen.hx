@@ -15,9 +15,13 @@ import sys.FileSystem;
 
 class Screen extends Scene
 {
+	public static var overrideControlByBox:Bool;
+	
 	public function new() 
 	{
 		super();
+		
+		overrideControlByBox = false;
 	}
 	
 	public override function begin()
