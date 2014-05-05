@@ -9,11 +9,11 @@ class Test
 		var r = new haxe.unit.TestRunner();
         r.add(new TestPointXY());
 		r.add(new TestDrawText());
-		r.add(new TestTalker());
+		/*r.add(new TestTalker());
 		r.add(new TestPlayer());
 		r.add(new TestBoss());
 		r.add(new TestTrader());
-		r.add(new TestEnemy());
+		r.add(new TestEnemy());*/
         r.run();
 		
 		System.exit(0);
