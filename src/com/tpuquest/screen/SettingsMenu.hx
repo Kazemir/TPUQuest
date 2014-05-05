@@ -22,8 +22,6 @@ class SettingsMenu extends Screen
 	public function new() 
 	{
 		super();
-		
-		prevHatY = 0;
 	}
 	
 	public override function begin()
@@ -124,9 +122,6 @@ class SettingsMenu extends Screen
 		updateMenu();
 	}
 	
-	private var prevHatY:Float;
-	private var prevHatX:Float;
-	
 	public override function update()
 	{
 		if (Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B"))
@@ -150,9 +145,6 @@ class SettingsMenu extends Screen
 			actionMenu(true);
 		}
 		changeMenu();
-		
-		prevHatY = Input.joystick(0).hat.y;
-		prevHatX = Input.joystick(0).hat.x;
 		
 		super.update();
 	}
