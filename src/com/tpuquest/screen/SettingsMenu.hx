@@ -22,6 +22,8 @@ class SettingsMenu extends Screen
 	public function new() 
 	{
 		super();
+		
+		prevHatY = 0;
 	}
 	
 	public override function begin()
@@ -121,30 +123,36 @@ class SettingsMenu extends Screen
 		MainMenu.menuMusic.volume = SettingsMenu.musicVolume / 10;
 		updateMenu();
 	}
-
+	
+	private var prevHatY:Float;
+	private var prevHatX:Float;
+	
 	public override function update()
 	{
-		if (Input.pressed("esc"))
+		if (Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B"))
 		{
 			HXP.scene = new MainMenu();
 		}
-		if (Input.pressed("up"))
+		if (Input.pressed("up") || Screen.joyPressed("DPAD_UP"))
 		{
 			currentMenuElement--;
 		}
-		if (Input.pressed("down"))
+		if (Input.pressed("down") || Screen.joyPressed("DPAD_DOWN"))
 		{
 			currentMenuElement++;
 		}
-		if (Input.pressed("left"))
+		if (Input.pressed("left") || Screen.joyPressed("DPAD_LEFT"))
 		{
 			actionMenu(false);
 		}
-		if (Input.pressed("right"))
+		if (Input.pressed("right") || Screen.joyPressed("DPAD_RIGHT"))
 		{
 			actionMenu(true);
 		}
 		changeMenu();
+		
+		prevHatY = Input.joystick(0).hat.y;
+		prevHatX = Input.joystick(0).hat.x;
 		
 		super.update();
 	}

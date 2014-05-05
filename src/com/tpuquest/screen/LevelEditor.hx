@@ -6,6 +6,7 @@ import com.haxepunk.graphics.Tilemap;
 import com.haxepunk.utils.Draw;
 import com.tpuquest.character.Player;
 import com.haxepunk.utils.Input;
+import com.haxepunk.utils.*;
 import com.haxepunk.HXP;
 import com.tpuquest.item.Item;
 import com.tpuquest.utils.DrawText;
@@ -20,6 +21,7 @@ import com.haxepunk.graphics.Image;
 import com.haxepunk.Entity;
 
 import haxe.io.Eof;
+import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileInput;
 import sys.io.FileOutput;
@@ -45,6 +47,7 @@ class LevelEditor extends Screen
 	private var isCursorChanged:Bool;
 	
 	private var lvl:Level;
+	private var background:Image;
 	
 	public static var itemsList:Array<Dynamic>;
 	public static var charactersList:Array<Dynamic>;
@@ -67,16 +70,16 @@ class LevelEditor extends Screen
 
 		LoadElementLists();
 		
-		lvl = Level.LoadLevel( "levels/new_old.xml" );
+		//lvl = Level.LoadLevel( "levels/new_old.xml" );
 		//lvl.SaveLevel( "levels/map2.xml" );
-		//lvl = new Level();
+		lvl = new Level();
 		addList( lvl.getEntities() );
 		//removeList( lvl.getEntities() );
 		
-		var base = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
-        base.color = lvl.bgcolor;
-        base.scrollX = base.scrollY = 0;
-        addGraphic(base).layer = 100; 
+		background = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
+        background.color = lvl.bgcolor;
+        background.scrollX = background.scrollY = 0;
+        addGraphic(background).layer = 100; 
 		
 		settingsFrame = Image.createRect(330, 85, 0x424242, 0.5);
 		addGraphic(settingsFrame, 0, 0, 0);
@@ -108,12 +111,17 @@ class LevelEditor extends Screen
 		currentType = 0;
 		isCursorChanged = false;
 
-		//add(new MessageBox(HXP.halfWidth, HXP.halfHeight, "ЗаголовокЗаголовокЗаголовокЗаголовок", "Я помню как\n она стала моей. В теплый летний и без того радостный день, на голову свалилось еще большее счастье."));
-		add(new InputBox(HXP.halfWidth, HXP.halfHeight, "InputBox", "Введите назвиние карты для загрузки:"));
-		
 		addGraphic(cursor, 0, 0, 0);
 		cursor.x = 360;
 		cursor.y = 280;
+		
+		var helpFrame:Image = Image.createRect(HXP.width - 50, 25, 0x424242, 0.5);
+		helpFrame.scrollX = helpFrame.scrollY = 0;
+		addGraphic(helpFrame, -9, 25, HXP.height - 25);
+		
+		var helpText:DrawText = new DrawText("F1 - New, F2 - Load, F3 - Save, F4 - Change bg color", GameFont.Imperial, 16, HXP.halfWidth, HXP.height - 13, 0xFFFFFF, true);
+		helpText.label.scrollX = helpText.label.scrollY = 0;
+		addGraphic(helpText.label, -10);
 		
 		waitingForAnswer = false;
 		typeOfAnswer = -1;
@@ -241,74 +249,118 @@ class LevelEditor extends Screen
 			switch(typeOfAnswer)
 			{
 				case 0:	//SaveLevel
-					if(iB.getInput() != "")
+					if (iB.getInput() != "")
+					{
+						lvl.levelName = iB.getInput();
 						lvl.SaveLevel( "levels/" + iB.getInput() + ".xml" );
+					}
+				case 1:	//LoadLevel
+					if (iB.getInput() != "")
+					{
+						removeList( lvl.getEntities() );
+						lvl = Level.LoadLevel( "levels/" + iB.getInput() + ".xml" );
+						addList( lvl.getEntities() );
+						background.color = lvl.bgcolor;
+					}
+				case 2: //Color
+					if (iB.getInput() != "")
+					{
+						lvl.bgcolor = Std.parseInt(iB.getInput());
+						background.color = lvl.bgcolor;
+					}
 			}
+			waitingForAnswer = false;
+			typeOfAnswer = -1;
 		}
 		
-		if (Input.pressed("esc") && !Screen.overrideControlByBox)
+		if ((Input.pressed("esc") || Screen.joyPressed("BACK")) && !Screen.overrideControlByBox)
 		{
-			lvl.SaveLevel( "levels/new_old.xml" );
 			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
 			HXP.scene = new MainMenu();
 		}
+		if (Input.pressed(Key.F1) && !Screen.overrideControlByBox)
+		{
+			iB = new InputBox(HXP.halfWidth, HXP.halfHeight, "Загрузка карты", "Список карт:\n------------\n");
+			add(iB);
+			waitingForAnswer = true;
+			typeOfAnswer = 1;
+		}
 		if (Input.pressed(Key.F2) && !Screen.overrideControlByBox)
+		{
+			var t:String = "";
+			for (x in FileSystem.readDirectory("levels/"))
+			{
+				t += x.split(".")[0] + "\n";
+			}
+			iB = new InputBox(HXP.halfWidth, HXP.halfHeight, "Загрузка карты", "Список карт:\n------------\n" + t);
+			add(iB);
+			waitingForAnswer = true;
+			typeOfAnswer = 1;
+		}
+		if (Input.pressed(Key.F3) && !Screen.overrideControlByBox)
 		{
 			iB = new InputBox(HXP.halfWidth, HXP.halfHeight, "Сохранение карты", "Введите назвиние вашей карты для сохранения:");
 			add(iB);
 			waitingForAnswer = true;
 			typeOfAnswer = 0;
 		}
-		if (Input.pressed("up") && !Screen.overrideControlByBox)
+		if (Input.pressed(Key.F4) && !Screen.overrideControlByBox)
+		{
+			iB = new InputBox(HXP.halfWidth, HXP.halfHeight, "Фоновый цвет", "Введите цвет фоновой заливки карты (DEC or HEX):");
+			add(iB);
+			waitingForAnswer = true;
+			typeOfAnswer = 2;
+		}
+		if ((Input.pressed("up") || Screen.joyCheck("DPAD_UP")) && !Screen.overrideControlByBox)
 		{
 			cursorPos.y--;
 			currentPos.y--;
 			isCursorChanged = true;
 		}
-		if (Input.pressed("down") && !Screen.overrideControlByBox)
+		if ((Input.pressed("down") || Screen.joyCheck("DPAD_DOWN")) && !Screen.overrideControlByBox)
 		{
 			cursorPos.y++;
 			currentPos.y++;
 			isCursorChanged = true;
 		}
-		if (Input.pressed("left") && !Screen.overrideControlByBox)
+		if ((Input.pressed("left") || Screen.joyCheck("DPAD_LEFT")) && !Screen.overrideControlByBox)
 		{
 			cursorPos.x--;
 			currentPos.x--;
 			isCursorChanged = true;
 		}
-		if (Input.pressed("right") && !Screen.overrideControlByBox)
+		if ((Input.pressed("right") || Screen.joyCheck("DPAD_RIGHT")) && !Screen.overrideControlByBox)
 		{
 			cursorPos.x++;
 			currentPos.x++;
 			isCursorChanged = true;
 		}
-		if (Input.pressed("action") && !Screen.overrideControlByBox)
+		if ((Input.pressed("action") || Screen.joyPressed("A")) && !Screen.overrideControlByBox)
 		{
 			ActionButton();
 		}
-		if (Input.pressed(Key.DELETE) && !Screen.overrideControlByBox)
+		if ((Input.pressed(Key.DELETE) || Screen.joyPressed("B")) && !Screen.overrideControlByBox)
 		{
 			DeleteButton();
 		}
-		if (Input.pressed(Key.HOME) && !Screen.overrideControlByBox)
+		if ((Input.pressed(Key.HOME) || Screen.joyPressed("X")) && !Screen.overrideControlByBox)
 		{
 			currentType++;
 			currentElement = 0;
 			UpdateTools();
 		}
-		if (Input.pressed(Key.END) && !Screen.overrideControlByBox)
+		if ((Input.pressed(Key.END) || Screen.joyPressed("Y")) && !Screen.overrideControlByBox)
 		{
 			currentType--;
 			currentElement = 0;
 			UpdateTools();
 		}
-		if (Input.pressed(Key.PAGE_UP) && !Screen.overrideControlByBox)
+		if ((Input.pressed(Key.PAGE_UP) || Screen.joyPressed("RB")) && !Screen.overrideControlByBox)
 		{
 			currentElement++;
 			UpdateTools();
 		}
-		if (Input.pressed(Key.PAGE_DOWN) && !Screen.overrideControlByBox)
+		if ((Input.pressed(Key.PAGE_DOWN) || Screen.joyPressed("LB")) && !Screen.overrideControlByBox)
 		{
 			currentElement--;
 			UpdateTools();

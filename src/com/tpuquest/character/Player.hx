@@ -113,15 +113,15 @@ class Player extends Character
 		
 		if (behaviorOn && !Screen.overrideControlByBox)
 		{
-			if (Input.check("left"))
+			if (Input.check("left") || Screen.joyCheck("DPAD_LEFT"))
 			{
 				acceleration.x = -kMoveSpeed;
 			}
-			if (Input.check("right"))
+			if (Input.check("right") || Screen.joyCheck("DPAD_RIGHT"))
 			{
 				acceleration.x = kMoveSpeed;
 			}
-			if (Input.pressed("jump") && _onGround)
+			if ((Input.pressed("jump") || Screen.joyCheck("X")) && _onGround)
 			{
 				acceleration.y = -HXP.sign(gravity.y) * kJumpForce;
 				
