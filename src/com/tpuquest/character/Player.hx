@@ -23,7 +23,7 @@ class Player extends Character
 	public var hasTouchTheGround(default, null) : Bool;
 	public var isDead:Bool;
 	
-	public var behaviorOn:Bool;
+	public var controlOn:Bool;
 	
 	public function new(point:PointXY) 
 	{
@@ -59,7 +59,7 @@ class Player extends Character
 		money = 0;
 		life = 50;
 		isDead = false;
-		behaviorOn = true;
+		controlOn = true;
 	}
 
 	private function setAnimations()
@@ -106,12 +106,12 @@ class Player extends Character
 		if ( !hasTouchTheGround && _onGround) 
 		{
 			hasTouchTheGround = true;
-			behaviorOn = true;
+			controlOn = true;
 			var sound = new Sfx("audio/player_soundJumpStop.wav");
 			sound.play(SettingsMenu.soudVolume / 10);
 		}
 		
-		if (behaviorOn && !Screen.overrideControlByBox)
+		if (controlOn && !Screen.overrideControlByBox)
 		{
 			if (Input.check("left") || Screen.joyCheck("DPAD_LEFT"))
 			{
@@ -158,7 +158,7 @@ class Player extends Character
 		if(ent != null)
 		{
 			var cn:Enemy = cast(ent, Enemy);
-			behaviorOn = false;
+			controlOn = false;
 			var sound = new Sfx("audio/player_soundPain.wav");
 			sound.play(SettingsMenu.soudVolume / 10);
 			life -= 5;
@@ -182,7 +182,7 @@ class Player extends Character
 		if (life <= 0)
 		{
 			isDead = true;
-			behaviorOn = false;
+			controlOn = false;
 		}
 		if (life > 100)
 			life = 100;

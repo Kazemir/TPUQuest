@@ -99,7 +99,6 @@ class MainMenu extends Screen
 		}
 		if (Input.pressed("down") || Screen.joyPressed("DPAD_DOWN"))
 		{
-			
 			currentMenuElement++;
 			changeMenu();
 		}

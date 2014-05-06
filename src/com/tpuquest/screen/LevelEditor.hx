@@ -4,6 +4,7 @@ import com.haxepunk.Graphic;
 import com.haxepunk.graphics.Canvas;
 import com.haxepunk.graphics.Tilemap;
 import com.haxepunk.utils.Draw;
+import com.tpuquest.character.Character;
 import com.tpuquest.character.Player;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.*;
@@ -12,6 +13,7 @@ import com.tpuquest.item.Item;
 import com.tpuquest.utils.DrawText;
 import com.tpuquest.utils.PointXY;
 import com.tpuquest.world.Level;
+import com.tpuquest.world.Sticker;
 import com.tpuquest.world.Tile;
 import flash.display.Sprite;
 import flash.geom.Point;
@@ -52,13 +54,18 @@ class LevelEditor extends Screen
 	public static var itemsList:Array<Dynamic>;
 	public static var charactersList:Array<Dynamic>;
 	public static var tilesList:Array<Dynamic>;
+	public static var stickersList:Array<Dynamic>;
 	
 	private static var elementMax:Int;
 	private static var currentTile:Tile;
+	private static var currentItem:Item;
+	private static var currentCharacter:Character;
+	private static var currentSticker:Sticker;
 	
+	private var iB:InputBox;
 	private var waitingForAnswer:Bool;
 	private var typeOfAnswer:Int;
-
+	
 	public function new() 
 	{
 		super();
@@ -70,11 +77,8 @@ class LevelEditor extends Screen
 
 		LoadElementLists();
 		
-		//lvl = Level.LoadLevel( "levels/new_old.xml" );
-		//lvl.SaveLevel( "levels/map2.xml" );
 		lvl = new Level();
 		addList( lvl.getEntities() );
-		//removeList( lvl.getEntities() );
 		
 		background = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
         background.color = lvl.bgcolor;
@@ -134,8 +138,6 @@ class LevelEditor extends Screen
 		if (isCursorChanged)
 		{
 			isCursorChanged = false;
-			//x -9..10
-			//y -7..7
 			if (cursorPos.x < -8)
 			{
 				HXP.camera.x -= 40;
@@ -161,6 +163,12 @@ class LevelEditor extends Screen
 			cursor.y = (cursorPos.y + 7) * 40 + HXP.camera.y;
 			currentTile.x = 300 + HXP.camera.x;
 			currentTile.y = 60 + HXP.camera.y;
+			currentItem.x = 300 + HXP.camera.x;
+			currentItem.y = 60 + HXP.camera.y;
+			currentCharacter.x = 300 + HXP.camera.x;
+			currentCharacter.y = 60 + HXP.camera.y;
+			currentSticker.x = 300 + HXP.camera.x;
+			currentSticker.y = 60 + HXP.camera.y;
 		}
 	}
 	
@@ -179,51 +187,79 @@ class LevelEditor extends Screen
 		var temp1:String = "";
 		var temp2:String = "";
 		currentTile.visible = false;
+		currentItem.visible = false;
+		currentCharacter.visible = false;
+		currentSticker.visible = false;
 		switch(currentType)
 		{
 			case 0:
 			{
 				temp1 = "Landscape";
-				elementMax = tilesList.length - 1;
-				currentTile = tilesList[currentElement];
-				temp2 = tilesList[currentElement].tileName;
+				elementMax = 0;
+				if (tilesList.length != 0)
+				{
+					elementMax = tilesList.length - 1;
+					currentTile = tilesList[currentElement];
+					temp2 = tilesList[currentElement].tileName;
 
-				currentTile = tilesList[currentElement];
-				currentTile.x = 300 + HXP.camera.x;
-				currentTile.y = 60 + HXP.camera.y;
-				currentTile.visible = true;
-				currentTile.layer = 0;
-				add(currentTile);
+					currentTile.x = 300 + HXP.camera.x;
+					currentTile.y = 60 + HXP.camera.y;
+					currentTile.visible = true;
+					currentTile.layer = 0;
+					add(currentTile);
+				}
 			}
 			case 1:
 			{
 				temp1 = "Item";
-				elementMax = itemsList.length - 1;
-				/*switch(currentElement)
+				elementMax = 0;
+				if (itemsList.length != 0)
 				{
-					case default:
-						temp2 = "";
-				}*/
+					elementMax = itemsList.length - 1;
+					currentItem = itemsList[currentElement];
+					temp2 = itemsList[currentElement].itemName;
+					
+					currentItem.x = 300 + HXP.camera.x;
+					currentItem.y = 60 + HXP.camera.y;
+					currentItem.visible = true;
+					currentItem.layer = 0;
+					add(currentItem);
+				}
 			}
 			case 2:
 			{
 				temp1 = "Character";
-				elementMax = charactersList.length - 1;
-				/*switch(currentElement)
+				elementMax = 0;
+				if (charactersList.length != 0)
 				{
-					case default:
-						temp2 = "";
-				}*/
+					elementMax = charactersList.length - 1;
+					currentCharacter = charactersList[currentElement];
+					temp2 = charactersList[currentElement].characterName;
+					
+					currentCharacter.x = 300 + HXP.camera.x;
+					currentCharacter.y = 60 + HXP.camera.y;
+					currentCharacter.visible = true;
+					currentCharacter.layer = 0;
+					currentCharacter.behaviorOn = false;
+					add(currentCharacter);
+				}
 			}
 			case 3:
 			{
 				temp1 = "Sticker";
 				elementMax = 0;
-				/*switch(currentElement)
+				if (stickersList.length != 0)
 				{
-					case default:
-						temp2 = "";
-				}*/
+					elementMax = stickersList.length - 1;
+					currentSticker = stickersList[currentElement];
+					temp2 = stickersList[currentElement].tileName;
+
+					currentSticker.x = 300 + HXP.camera.x;
+					currentSticker.y = 60 + HXP.camera.y;
+					currentSticker.visible = true;
+					currentSticker.layer = -1;
+					add(currentSticker);
+				}
 			}
 			case 4:
 			{
@@ -239,8 +275,6 @@ class LevelEditor extends Screen
 		typeText.ChangeStr("Type: " + currentType + ", " + temp1, false);
 		elementText.ChangeStr("Tile: " + currentElement + ", " + temp2, false);
 	}
-	
-	private var iB:InputBox;
 	
 	public override function update()
 	{
@@ -401,7 +435,20 @@ class LevelEditor extends Screen
 			}
 			case 3:
 			{
-
+				var tX = (currentPos.x + 9) * 40;
+				var tY = (currentPos.y + 7) * 40;
+				for (x in lvl.stickers)
+				{
+					if (x.tilePoint.x == tX && x.tilePoint.y == tY)
+					{
+						lvl.stickers.remove(x);
+						remove(x);
+					}
+				}
+				var temp:Sticker = new Sticker(new PointXY(tX, tY), stickersList[currentElement].behindCreatures, stickersList[currentElement].imgPath, stickersList[currentElement].tileName);
+				lvl.stickers.push(temp);
+				
+				add(temp);
 			}
 		}
 	}
@@ -433,7 +480,16 @@ class LevelEditor extends Screen
 			}
 			case 3:
 			{
-
+				var tX = (currentPos.x + 9) * 40;
+				var tY = (currentPos.y + 7) * 40;
+				for (x in lvl.stickers)
+				{
+					if (x.tilePoint.x == tX && x.tilePoint.y == tY)
+					{
+						lvl.stickers.remove(x);
+						remove(x);
+					}
+				}
 			}
 		}
 	}	
@@ -443,6 +499,7 @@ class LevelEditor extends Screen
 		itemsList = new Array<Dynamic>();
 		charactersList = new Array<Dynamic>();
 		tilesList = new Array<Dynamic>();
+		stickersList = new Array<Dynamic>();
 		
 		/*var xmlItems:Xml = Xml.parse(File.getContent("cfg/tiles.xml")).firstElement();
 		for (x in xmlItems.elements())
@@ -463,6 +520,23 @@ class LevelEditor extends Screen
 		currentTile = tilesList[0];
 		currentTile.visible = false;
 		currentTile.layer = 0;
+		
+		var xmlStickers:Xml = Xml.parse(File.getContent("cfg/stickers.xml")).firstElement();
+		for (x in xmlStickers.elements())
+		{
+			var tC = x.get("behindCreatures");
+			var tCb:Bool = false;
+			if (tC == "1")
+				tCb = true;
+				
+			stickersList.push(new Sticker(new PointXY(0, 0), tCb, x.get("path"), x.get("name")));
+		}
+		currentSticker = stickersList[0];
+		currentSticker.visible = false;
+		//currentSticker.layer = 0;
+		
 		elementMax = tilesList.length - 1;
+		currentItem = new Item(new PointXY(0, 0));
+		currentCharacter = new Character(new PointXY(0, 0));
 	}
 }

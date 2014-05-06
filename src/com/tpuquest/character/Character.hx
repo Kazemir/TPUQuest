@@ -16,6 +16,9 @@ class Character extends Entity
 	public var gravity:Point;
 	
 	public static var solid:String = "solid";
+	
+	public var characterName:String;
+	public var behaviorOn:Bool;
 
 	public function new(point:PointXY)
 	{
@@ -27,6 +30,9 @@ class Character extends Entity
 		friction     = new Point();
 		maxVelocity  = new Point();
 		gravity      = new Point();
+		
+		characterName = "";
+		behaviorOn = true;
 	}
 
 	public var onGround(get_onGround, null): Bool;
@@ -34,12 +40,15 @@ class Character extends Entity
 
 	override public function update()
 	{
-		// Apply acceleration and velocity
-		velocity.x += acceleration.x;
-		velocity.y += acceleration.y;
-		applyVelocity();
-		applyGravity();
-		checkMaxVelocity();
+		if (behaviorOn)
+		{
+			// Apply acceleration and velocity
+			velocity.x += acceleration.x;
+			velocity.y += acceleration.y;
+			applyVelocity();
+			applyGravity();
+			checkMaxVelocity();
+		}
 		super.update();
 	}
 
