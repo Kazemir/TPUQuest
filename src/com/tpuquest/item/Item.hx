@@ -8,11 +8,11 @@ class Item extends Entity
 	public var itemPoint:PointXY;
 	public var itemName:String;
 	
-	public function new(point:PointXY) 
+	public function new(point:PointXY, itemName:String = "") 
 	{
 		super(point.x, point.y);
 		itemPoint = point;
-		itemName = "";
+		this.itemName = itemName;
 	}
 	
 	public override function update()

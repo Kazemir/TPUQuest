@@ -179,6 +179,12 @@ class Player extends Character
 			
 		}
 		
+		ent = collide("weapon", x, y);
+		if(ent != null)
+		{
+			
+		}
+		
 		if (life <= 0)
 		{
 			isDead = true;

@@ -9,7 +9,10 @@ import com.tpuquest.character.Player;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.*;
 import com.haxepunk.HXP;
+import com.tpuquest.item.Coin;
 import com.tpuquest.item.Item;
+import com.tpuquest.item.Potion;
+import com.tpuquest.item.Weapon;
 import com.tpuquest.utils.DrawText;
 import com.tpuquest.utils.PointXY;
 import com.tpuquest.world.Level;
@@ -427,7 +430,34 @@ class LevelEditor extends Screen
 			}
 			case 1:
 			{
-
+				var tX = (currentPos.x + 9) * 40 + 10;
+				var tY = (currentPos.y + 7) * 40 + 10;
+				for (x in lvl.items)
+				{
+					if (x.x == tX && x.y == tY)
+					{
+						lvl.items.remove(x);
+						remove(x);
+					}
+				}
+				var temp:Item = new Item(new PointXY(0, 0));// = Reflect.copy(currentItem);
+				switch(Type.getClassName(Type.getClass(currentItem)))
+				{
+					case "com.tpuquest.item.Coin":
+						temp = new Coin(new PointXY(tX -10, tY - 10), cast(currentItem, Coin).coinAmount, cast(currentItem, Coin).imgPath);
+					case "com.tpuquest.item.Potion":
+						temp = new Potion(new PointXY(tX -10, tY - 10), cast(currentItem, Potion).potionAmount, cast(currentItem, Potion).imgPath);
+					case "com.tpuquest.item.Weapon":
+						temp = new Weapon(new PointXY(tX -10, tY - 10), cast(currentItem, Weapon).weaponDamage, cast(currentItem, Weapon).imgPath);
+				}
+			
+				/*temp.x = tX;
+				temp.y = tY;
+				temp.itemPoint.x = tX;
+				temp.itemPoint.y = tY;*/
+				lvl.items.push(temp);
+				
+				add(temp);
 			}
 			case 2:
 			{
@@ -472,7 +502,16 @@ class LevelEditor extends Screen
 			}
 			case 1:
 			{
-
+				var tX = (currentPos.x + 9) * 40 + 10;
+				var tY = (currentPos.y + 7) * 40 + 10;
+				for (x in lvl.items)
+				{
+					if (x.x == tX && x.y == tY)
+					{
+						lvl.items.remove(x);
+						remove(x);
+					}
+				}
 			}
 			case 2:
 			{
@@ -501,11 +540,23 @@ class LevelEditor extends Screen
 		tilesList = new Array<Dynamic>();
 		stickersList = new Array<Dynamic>();
 		
-		/*var xmlItems:Xml = Xml.parse(File.getContent("cfg/tiles.xml")).firstElement();
+		var xmlItems:Xml = Xml.parse(File.getContent("cfg/items.xml")).firstElement();
 		for (x in xmlItems.elements())
 		{
-			itemsList.push(new Item(
-		}*/
+			switch(x.get("type"))
+			{
+				case "coin":
+					itemsList.push(new Coin(new PointXY(0, 0), Std.parseInt(x.get("coinAmount")), x.get("path"), x.get("name")));
+				case "potion":
+					itemsList.push(new Potion(new PointXY(0, 0), Std.parseInt(x.get("potionAmount")), x.get("path"), x.get("name")));
+				case "weapon":
+					itemsList.push(new Weapon(new PointXY(0, 0), Std.parseInt(x.get("weaponDamage")), x.get("path"), x.get("name")));
+			}
+		}
+		currentItem = itemsList[0];
+		currentItem.visible = false;
+		currentItem.layer = 0;
+		
 		var xmlTiles:Xml = Xml.parse(File.getContent("cfg/tiles.xml")).firstElement();
 		for (x in xmlTiles.elements())
 		{
@@ -513,12 +564,11 @@ class LevelEditor extends Screen
 			var tCb:Bool = false;
 			if (tC == "1")
 				tCb = true;
-			
-				
+
 			tilesList.push(new Tile(new PointXY(0, 0), tCb, x.get("path"), x.get("soundPath"), x.get("name")));
 		}
 		currentTile = tilesList[0];
-		currentTile.visible = false;
+		currentTile.visible = true;
 		currentTile.layer = 0;
 		
 		var xmlStickers:Xml = Xml.parse(File.getContent("cfg/stickers.xml")).firstElement();
@@ -536,7 +586,6 @@ class LevelEditor extends Screen
 		//currentSticker.layer = 0;
 		
 		elementMax = tilesList.length - 1;
-		currentItem = new Item(new PointXY(0, 0));
 		currentCharacter = new Character(new PointXY(0, 0));
 	}
 }

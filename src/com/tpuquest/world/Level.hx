@@ -33,9 +33,8 @@ class Level
 	
 	public static function ScreenToWorld(vector:PointXY):PointXY
 	{
-		vector.x = Std.int(vector.x / 40) - 9;
-		vector.y = Std.int(vector.y / 40) - 9;
-		return vector;
+		var rvec:PointXY = new PointXY(Std.int(vector.x / 40) - 9, Std.int(vector.y / 40) - 9 );
+		return rvec;
 	}
 
 	public static function WorldToScreen(vector:PointXY):PointXY
@@ -76,17 +75,16 @@ class Level
 						switch(element.get("type"))
 						{
 							case "coin":
-								var tAmount = Std.parseInt(element.get("amount"));
-								temp = new Coin(new PointXY(tX, tY), tAmount);
+								var tAmount = Std.parseInt(element.get("coinAmount"));
+								temp = new Coin(WorldToScreen(new PointXY(tX, tY)), tAmount, element.get("path"));
 							case "potion":
-								var tAmount = Std.parseInt(element.get("amount"));
-								temp = new Potion(new PointXY(tX, tY), tAmount);
+								var tAmount = Std.parseInt(element.get("potionAmount"));
+								temp = new Potion(WorldToScreen(new PointXY(tX, tY)), tAmount, element.get("path"));
 							case "weapon":
-								var tDamage = Std.parseInt(element.get("damage"));
-								var tType = Std.parseInt(element.get("w_type"));
-								temp = new Weapon(new PointXY(tX, tY), tDamage, tType);
+								var tDamage = Std.parseInt(element.get("weaponDamage"));
+								temp = new Weapon(WorldToScreen(new PointXY(tX, tY)), tDamage, element.get("path"));
 							default:
-								temp = new Item(new PointXY(tX, tY));
+								temp = new Item(WorldToScreen(new PointXY(tX, tY)));
 						}
 						lvl.items.push( temp );
 					}
@@ -99,13 +97,13 @@ class Level
 						switch(element.get("type"))
 						{
 							case "talker":
-								temp = new Talker(new PointXY(tX, tY));
+								temp = new Talker(WorldToScreen(new PointXY(tX, tY)));
 							case "trader":
-								temp = new Trader(new PointXY(tX, tY));
+								temp = new Trader(WorldToScreen(new PointXY(tX, tY)));
 							case "enemy":
-								temp = new Enemy(new PointXY(tX, tY));
+								temp = new Enemy(WorldToScreen(new PointXY(tX, tY)));
 							default:
-								temp = new Character(new PointXY(tX, tY));
+								temp = new Character(WorldToScreen(new PointXY(tX, tY)));
 						}
 						
 						lvl.characters.push( temp );
@@ -153,21 +151,27 @@ class Level
 		for (x in items)
 		{
 			var temp:Xml = Xml.createElement( "element" );
-			temp.set("x", Std.string(x.itemPoint.x));
-			temp.set("y", Std.string(x.itemPoint.y));
+			var tX = x.itemPoint.x;
+			var tY = x.itemPoint.y;
+			
+			tX = Std.int((tX / 40) - 9);
+			tY = Std.int((tY / 40) - 7);
+			temp.set("x", Std.string(tX));
+			temp.set("y", Std.string(tY));
 			switch(Type.getClassName(Type.getClass(x)))
 			{
 				case "com.tpuquest.item.Coin":
 					temp.set("type", "coin");
-					temp.set("amount", Std.string(x.coinAmount));
+					temp.set("coinAmount", Std.string(x.coinAmount));
+					temp.set("path", x.imgPath);
 				case "com.tpuquest.item.Potion":
 					temp.set("type", "potion");
-					temp.set("amount", Std.string(x.potionAmount));
-					temp.set("p_type", Std.string(x.potionType));
+					temp.set("potionAmount", Std.string(x.potionAmount));
+					temp.set("path", x.imgPath);
 				case "com.tpuquest.item.Weapon":
 					temp.set("type", "weapon");
-					temp.set("damage", Std.string(x.weaponDamage));
-					temp.set("w_type", Std.string(x.weaponType));
+					temp.set("weaponDamage", Std.string(x.weaponDamage));
+					temp.set("path", x.imgPath);
 			}
 			itemsXML.addChild(temp);
 		}
@@ -176,8 +180,13 @@ class Level
 		for (x in characters)
 		{
 			var temp:Xml = Xml.createElement( "element" );
-			temp.set("x", Std.string(x.characterPoint.x));
-			temp.set("y", Std.string(x.characterPoint.y));
+			var tX = x.characterPoint.x;
+			var tY = x.characterPoint.y;
+			
+			tX = Std.int((tX / 40) - 9);
+			tY = Std.int((tY / 40) - 7);
+			temp.set("x", Std.string(tX));
+			temp.set("y", Std.string(tY));
 			
 			switch(Type.getClassName(Type.getClass(x)))
 			{
