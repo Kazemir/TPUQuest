@@ -24,6 +24,7 @@ class Level
 	public var items:Array<Dynamic>;
 	public var characters:Array<Dynamic>;
 	public var tiles:Array<Dynamic>;
+	public var stickers:Array<Dynamic>;
 	
 	public var cameraPos:PointXY;
 	
@@ -48,6 +49,8 @@ class Level
 		items = new Array<Dynamic>();
 		characters = new Array<Dynamic>();
 		tiles = new Array<Dynamic>();
+		stickers = new Array<Dynamic>();
+		
 		cameraPos = new PointXY(0, 0);
 		bgcolor = 0x61c3ff;
 		levelName = name;
@@ -77,7 +80,6 @@ class Level
 								temp = new Coin(new PointXY(tX, tY), tAmount);
 							case "potion":
 								var tAmount = Std.parseInt(element.get("amount"));
-								var tType = Std.parseInt(element.get("p_type"));
 								temp = new Potion(new PointXY(tX, tY), tAmount);
 							case "weapon":
 								var tDamage = Std.parseInt(element.get("damage"));
@@ -101,7 +103,7 @@ class Level
 							case "trader":
 								temp = new Trader(new PointXY(tX, tY));
 							case "enemy":
-								temp = new Enemy(new PointXY(tX, tY));// , 1);
+								temp = new Enemy(new PointXY(tX, tY));
 							default:
 								temp = new Character(new PointXY(tX, tY));
 						}
@@ -121,6 +123,19 @@ class Level
 						var tS = element.get("soundPath");
 						var temp:Tile = new Tile(WorldToScreen(new PointXY(tX, tY)), tCb, tP, tS);
 						lvl.tiles.push( temp );
+					}
+				case "stickers":
+					for (element in section.elements())
+					{
+						var tX = Std.parseInt(element.get("x"));
+						var tY = Std.parseInt(element.get("y"));
+						var tB = Std.parseInt(element.get("behindCreatures"));
+						var tBb:Bool = false;
+						if (tB == 1)
+							tBb = true;
+						var tP = element.get("path");
+						var temp:Sticker = new Sticker(WorldToScreen(new PointXY(tX, tY)), tBb, tP);
+						lvl.stickers.push( temp );
 					}
 			}
 		}
@@ -197,9 +212,29 @@ class Level
 			tilesXML.addChild(temp);
 		}
 		
+		var stickersXML:Xml = Xml.createElement( "stickers" );
+		for (x in stickers)
+		{
+			var temp:Xml = Xml.createElement( "element" );
+			var tX = x.tilePoint.x;
+			var tY = x.tilePoint.y;
+			
+			tX = Std.int((tX / 40) - 9);
+			tY = Std.int((tY / 40) - 7);
+			temp.set("x", Std.string(tX));
+			temp.set("y", Std.string(tY));
+			temp.set("path", x.imgPath);
+			var t = 0;
+			if (x.behindCreatures == true)
+				t = 1;
+			temp.set("behindCreatures", Std.string(t));
+			stickersXML.addChild(temp);
+		}
+		
 		lvlXML.addChild(itemsXML);
 		lvlXML.addChild(charactersXML);
 		lvlXML.addChild(tilesXML);
+		lvlXML.addChild(stickersXML);
 		
 		var fout:FileOutput = File.write( path, false );
 		fout.writeString( lvlXML.toString() );
@@ -211,20 +246,17 @@ class Level
 		var entList:Array<Entity> = new Array<Entity>();
 		
 		for (x in items)
-		{
 			entList.push(x);
-		}
 		
 		for (x in characters)
-		{
 			entList.push(x);
-		}
-		
+			
 		for (x in tiles)
-		{
 			entList.push(x);
-		}
-
+			
+		for (x in stickers)
+			entList.push(x);
+		
 		try
 		{
 			return entList;
