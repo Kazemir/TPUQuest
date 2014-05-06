@@ -1,0 +1,11 @@
+﻿<tiles>
+
+<element id="0" name="Coin" path="items/coin.png" type="coin" coinAmount="1" />
+<element id="1" name="Gold" path="items/gold.png" type="coin" coinAmount="5" />
+<element id="2" name="GoldenBar" path="items/gold_bar.png" type="coin" coinAmount="25" />
+<element id="3" name="Potion" path="items/potion_red.png" type="potion" potionAmount="50" />
+<element id="4" name="PotionSmall" path="items/potion_red_small.png" type="potion" potionAmount="25" />
+<element id="5" name="Heart" path="items/heart.png" type="potion" potionAmount="100" />
+<element id="6" name="Sword" path="items/sword.png" type="weapon" weaponDamage="10" />
+
+</tiles>

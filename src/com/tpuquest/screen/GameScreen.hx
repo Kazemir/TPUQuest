@@ -57,13 +57,6 @@ class GameScreen extends Screen
 		player = new Player(Level.WorldToScreen(new PointXY(0, -3)));
 		add(player);
 		
-		add(new Coin(Level.WorldToScreen(new PointXY(8, -2)), 10));
-		add(new Coin(Level.WorldToScreen(new PointXY(10, -2)), 5));
-		add(new Coin(Level.WorldToScreen(new PointXY(12, -2)), 1));
-		add(new Coin(Level.WorldToScreen(new PointXY(14, -2)), 3));
-		
-		add(new Potion(Level.WorldToScreen(new PointXY(6, 3)), 25));
-		
 		add(new Enemy(Level.WorldToScreen(new PointXY( -6, 4))));
 		add(new Enemy(Level.WorldToScreen(new PointXY(11, -2))));
 		
