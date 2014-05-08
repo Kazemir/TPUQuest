@@ -14,8 +14,6 @@ import sys.io.FileOutput;
 import sys.FileSystem;
 
 import com.haxepunk.utils.Joystick;
-//import com.haxepunk.utils.XBOX_GAMEPAD;
-//import com.haxepunk.utils.JoyButtonState;
 
 class Screen extends Scene
 {
@@ -35,7 +33,7 @@ class Screen extends Scene
 		Input.define("up", [Key.UP, Key.W]);
 		Input.define("down", [Key.DOWN, Key.S]);
 		Input.define("jump", [Key.SPACE]);
-		Input.define("esc", [Key.ESCAPE]);
+		Input.define("esc", [Key.ESCAPE, Key.BACKSPACE]);
 		Input.define("action", [Key.ENTER, Key.X]);
 		
 		super.begin();

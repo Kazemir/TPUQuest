@@ -29,7 +29,7 @@ class GameScreen extends Screen
 	
 	public override function begin()
 	{
-		lvl = Level.LoadLevel( "levels/fungus.xml" );
+		lvl = Level.LoadLevel( "levels/fungus2.xml" );
 		addList( lvl.getEntities() );
 		
 		var base = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
@@ -54,11 +54,17 @@ class GameScreen extends Screen
 		addGraphic(coinImg, -5, 670, 53);
 		addGraphic(heartImg, -5, 670, 23);
 		
-		player = new Player(Level.WorldToScreen(new PointXY(0, -3)));
+		/*player = new Player(Level.WorldToScreen(new PointXY(0, -3)));
 		add(player);
 		
 		add(new Enemy(Level.WorldToScreen(new PointXY( -6, 4))));
-		add(new Enemy(Level.WorldToScreen(new PointXY(11, -2))));
+		add(new Enemy(Level.WorldToScreen(new PointXY(11, -2))));*/
+		
+		for (x in lvl.characters)
+		{
+			if (Type.getClassName(Type.getClass(x)) == "com.tpuquest.character.Player")
+				player = x;
+		}
 		
 		var bg:Image = new Image("graphics/clouds2.png");
 		bg.scrollX = bg.scrollY = 0.05;

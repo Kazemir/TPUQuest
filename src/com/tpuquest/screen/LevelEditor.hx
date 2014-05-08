@@ -4,11 +4,15 @@ import com.haxepunk.Graphic;
 import com.haxepunk.graphics.Canvas;
 import com.haxepunk.graphics.Tilemap;
 import com.haxepunk.utils.Draw;
+import com.tpuquest.character.Boss;
 import com.tpuquest.character.Character;
+import com.tpuquest.character.Enemy;
 import com.tpuquest.character.Player;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.*;
 import com.haxepunk.HXP;
+import com.tpuquest.character.Talker;
+import com.tpuquest.character.Trader;
 import com.tpuquest.item.Coin;
 import com.tpuquest.item.Item;
 import com.tpuquest.item.Potion;
@@ -69,6 +73,13 @@ class LevelEditor extends Screen
 	private var waitingForAnswer:Bool;
 	private var typeOfAnswer:Int;
 	
+	private var itsTestDude:Bool;
+	private var coinsText:DrawText;
+	private var hpText:DrawText;
+	private var player:Player;
+	private var coinImg:Image;
+	private var heartImg:Image;
+	
 	public function new() 
 	{
 		super();
@@ -126,12 +137,35 @@ class LevelEditor extends Screen
 		helpFrame.scrollX = helpFrame.scrollY = 0;
 		addGraphic(helpFrame, -9, 25, HXP.height - 25);
 		
-		var helpText:DrawText = new DrawText("F1 - New, F2 - Load, F3 - Save, F4 - Change bg color", GameFont.Imperial, 16, HXP.halfWidth, HXP.height - 13, 0xFFFFFF, true);
+		var helpText:DrawText = new DrawText("F1 - New, F2 - Load, F3 - Save, F4 - Change bg color, F5 - Test", GameFont.Imperial, 16, HXP.halfWidth, HXP.height - 13, 0xFFFFFF, true);
 		helpText.label.scrollX = helpText.label.scrollY = 0;
 		addGraphic(helpText.label, -10);
 		
 		waitingForAnswer = false;
 		typeOfAnswer = -1;
+		itsTestDude = false;
+		
+		coinsText = new DrawText("000", GameFont.PixelCyr, 20, 700, 50, 0xFFFFFF, false);
+		coinsText.label.scrollX = coinsText.label.scrollY = 0;
+		addGraphic(coinsText.label, -5);
+		coinsText.label.visible = false;
+		
+		hpText = new DrawText("100", GameFont.PixelCyr, 20, 700, 20, 0xFFFFFF, false);
+		hpText.label.scrollX = hpText.label.scrollY = 0;
+		addGraphic(hpText.label, -5);
+		hpText.label.visible = false;
+		
+		coinImg = new Image("items/coin.png");
+		coinImg.scrollX = coinImg.scrollY = 0;
+		
+		heartImg = new Image("items/heart.png");
+		heartImg.scrollX = heartImg.scrollY = 0;
+		
+		addGraphic(coinImg, -5, 670, 53);
+		addGraphic(heartImg, -5, 670, 23);
+		
+		coinImg.visible = false;
+		heartImg.visible = false;
 	}
 	
 	public function updateText()
@@ -161,26 +195,15 @@ class LevelEditor extends Screen
 				HXP.camera.y += 40;
 				cursorPos.y = 6;
 			}
-
-			cursor.x = (cursorPos.x + 9) * 40 + HXP.camera.x;
-			cursor.y = (cursorPos.y + 7) * 40 + HXP.camera.y;
-			currentTile.x = 300 + HXP.camera.x;
-			currentTile.y = 60 + HXP.camera.y;
-			currentItem.x = 300 + HXP.camera.x;
-			currentItem.y = 60 + HXP.camera.y;
-			currentCharacter.x = 300 + HXP.camera.x;
-			currentCharacter.y = 60 + HXP.camera.y;
-			currentSticker.x = 300 + HXP.camera.x;
-			currentSticker.y = 60 + HXP.camera.y;
 		}
 	}
 	
 	private function UpdateTools()
 	{
-		if (currentType > 3)
+		if (currentType > 4)
 			currentType = 0;
 		if (currentType < 0)
-			currentType = 3;
+			currentType = 4;
 		
 		if (currentElement > elementMax)
 			currentElement = 0;
@@ -281,129 +304,200 @@ class LevelEditor extends Screen
 	
 	public override function update()
 	{
-		if (!Screen.overrideControlByBox && waitingForAnswer)
+		if (itsTestDude)
 		{
-			switch(typeOfAnswer)
+			if ((Input.pressed("esc") || Screen.joyPressed("BACK")) && !Screen.overrideControlByBox)
 			{
-				case 0:	//SaveLevel
-					if (iB.getInput() != "")
-					{
-						lvl.levelName = iB.getInput();
-						lvl.SaveLevel( "levels/" + iB.getInput() + ".xml" );
-					}
-				case 1:	//LoadLevel
-					if (iB.getInput() != "")
-					{
-						removeList( lvl.getEntities() );
-						lvl = Level.LoadLevel( "levels/" + iB.getInput() + ".xml" );
-						addList( lvl.getEntities() );
-						background.color = lvl.bgcolor;
-					}
-				case 2: //Color
-					if (iB.getInput() != "")
-					{
-						lvl.bgcolor = Std.parseInt(iB.getInput());
-						background.color = lvl.bgcolor;
-					}
+				itsTestDude = false;
+				
+				removeList( lvl.getEntities() );
+				HXP.camera.x = 0;
+				HXP.camera.y = 0;
+				isCursorChanged = true;
+				cursorPos = new PointXY(0, 0);
+				currentPos = new PointXY(0, 0);
+				lvl = Level.LoadLevel("levels/testLevel.xml", false);
+				addList( lvl.getEntities() );
+				
+				coinImg.visible = false;
+				heartImg.visible = false;
+				coinsText.label.visible = false;
+				hpText.label.visible = false;
+				cursor.visible = true;
 			}
-			waitingForAnswer = false;
-			typeOfAnswer = -1;
-		}
-		
-		if ((Input.pressed("esc") || Screen.joyPressed("BACK")) && !Screen.overrideControlByBox)
-		{
-			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
-			HXP.scene = new MainMenu();
-		}
-		if (Input.pressed(Key.F1) && !Screen.overrideControlByBox)
-		{
-			iB = new InputBox(HXP.halfWidth, HXP.halfHeight, "Загрузка карты", "Список карт:\n------------\n");
-			add(iB);
-			waitingForAnswer = true;
-			typeOfAnswer = 1;
-		}
-		if (Input.pressed(Key.F2) && !Screen.overrideControlByBox)
-		{
-			var t:String = "";
-			for (x in FileSystem.readDirectory("levels/"))
+			
+			var t:String = Std.string(player.money);
+			for ( j  in 0...-t.length + 3)
 			{
-				t += x.split(".")[0] + "\n";
+				t = "0" + t;
 			}
-			iB = new InputBox(HXP.halfWidth, HXP.halfHeight, "Загрузка карты", "Список карт:\n------------\n" + t);
-			add(iB);
-			waitingForAnswer = true;
-			typeOfAnswer = 1;
+			coinsText.ChangeStr(t, false);
+			
+			t = Std.string(player.life);
+			for ( j  in 0...-t.length + 3)
+			{
+				t = "0" + t;
+			}
+			hpText.ChangeStr(t, false);
 		}
-		if (Input.pressed(Key.F3) && !Screen.overrideControlByBox)
+		else
 		{
-			iB = new InputBox(HXP.halfWidth, HXP.halfHeight, "Сохранение карты", "Введите назвиние вашей карты для сохранения:");
-			add(iB);
-			waitingForAnswer = true;
-			typeOfAnswer = 0;
+			if (!Screen.overrideControlByBox && waitingForAnswer)
+			{
+				switch(typeOfAnswer)
+				{
+					case 0:	//SaveLevel
+						if (iB.getInput() != "")
+						{
+							lvl.levelName = iB.getInput();
+							lvl.SaveLevel( "levels/" + iB.getInput() + ".xml" );
+						}
+					case 1:	//LoadLevel
+						if (iB.getInput() != "")
+						{
+							removeList( lvl.getEntities() );
+							lvl = Level.LoadLevel( "levels/" + iB.getInput() + ".xml", false );
+							addList( lvl.getEntities() );
+							background.color = lvl.bgcolor;
+						}
+					case 2: //Color
+						if (iB.getInput() != "")
+						{
+							lvl.bgcolor = Std.parseInt(iB.getInput());
+							background.color = lvl.bgcolor;
+						}
+				}
+				waitingForAnswer = false;
+				typeOfAnswer = -1;
+			}
+			
+			if ((Input.pressed("esc") || Screen.joyPressed("BACK")) && !Screen.overrideControlByBox)
+			{
+				MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
+				HXP.scene = new MainMenu();
+			}
+			if (Input.pressed(Key.F1) && !Screen.overrideControlByBox)
+			{
+				iB = new InputBox(HXP.halfWidth, HXP.halfHeight, "Загрузка карты", "Список карт:\n------------\n");
+				add(iB);
+				waitingForAnswer = true;
+				typeOfAnswer = 1;
+			}
+			if (Input.pressed(Key.F2) && !Screen.overrideControlByBox)
+			{
+				var t:String = "";
+				for (x in FileSystem.readDirectory("levels/"))
+				{
+					t += x.split(".")[0] + "\n";
+				}
+				iB = new InputBox(HXP.halfWidth, HXP.halfHeight, "Загрузка карты", "Список карт:\n------------\n" + t);
+				add(iB);
+				waitingForAnswer = true;
+				typeOfAnswer = 1;
+			}
+			if (Input.pressed(Key.F3) && !Screen.overrideControlByBox)
+			{
+				iB = new InputBox(HXP.halfWidth, HXP.halfHeight, "Сохранение карты", "Введите назвиние вашей карты для сохранения:");
+				add(iB);
+				waitingForAnswer = true;
+				typeOfAnswer = 0;
+			}
+			if (Input.pressed(Key.F4) && !Screen.overrideControlByBox)
+			{
+				iB = new InputBox(HXP.halfWidth, HXP.halfHeight, "Фоновый цвет", "Введите цвет фоновой заливки карты (DEC or HEX):");
+				add(iB);
+				waitingForAnswer = true;
+				typeOfAnswer = 2;
+			}
+			if (Input.pressed(Key.F5) && !Screen.overrideControlByBox)
+			{
+				lvl.SaveLevel( "levels/testLevel.xml" );
+				removeList( lvl.getEntities() );
+				lvl = Level.LoadLevel("levels/testLevel.xml", true);
+				addList( lvl.getEntities() );
+				itsTestDude = true;
+				
+				for (x in lvl.characters)
+				{
+					if (Type.getClassName(Type.getClass(x)) == "com.tpuquest.character.Player")
+						player = x;
+				}
+				
+				coinImg.visible = true;
+				heartImg.visible = true;
+				coinsText.label.visible = true;
+				hpText.label.visible = true;
+				cursor.visible = false;
+			}
+			if ((Input.pressed("up") || Screen.joyCheck("DPAD_UP")) && !Screen.overrideControlByBox)
+			{
+				cursorPos.y--;
+				currentPos.y--;
+				isCursorChanged = true;
+			}
+			if ((Input.pressed("down") || Screen.joyCheck("DPAD_DOWN")) && !Screen.overrideControlByBox)
+			{
+				cursorPos.y++;
+				currentPos.y++;
+				isCursorChanged = true;
+			}
+			if ((Input.pressed("left") || Screen.joyCheck("DPAD_LEFT")) && !Screen.overrideControlByBox)
+			{
+				cursorPos.x--;
+				currentPos.x--;
+				isCursorChanged = true;
+			}
+			if ((Input.pressed("right") || Screen.joyCheck("DPAD_RIGHT")) && !Screen.overrideControlByBox)
+			{
+				cursorPos.x++;
+				currentPos.x++;
+				isCursorChanged = true;
+			}
+			if ((Input.pressed("action") || Screen.joyPressed("A")) && !Screen.overrideControlByBox)
+			{
+				ActionButton();
+			}
+			if ((Input.pressed(Key.DELETE) || Screen.joyPressed("B")) && !Screen.overrideControlByBox)
+			{
+				DeleteButton();
+			}
+			if ((Input.pressed(Key.HOME) || Screen.joyPressed("X")) && !Screen.overrideControlByBox)
+			{
+				currentType++;
+				currentElement = 0;
+				UpdateTools();
+			}
+			if ((Input.pressed(Key.END) || Screen.joyPressed("Y")) && !Screen.overrideControlByBox)
+			{
+				currentType--;
+				currentElement = 0;
+				UpdateTools();
+			}
+			if ((Input.pressed(Key.PAGE_UP) || Screen.joyPressed("RB")) && !Screen.overrideControlByBox)
+			{
+				currentElement++;
+				UpdateTools();
+			}
+			if ((Input.pressed(Key.PAGE_DOWN) || Screen.joyPressed("LB")) && !Screen.overrideControlByBox)
+			{
+				currentElement--;
+				UpdateTools();
+			}
+			
+			updateText();
 		}
-		if (Input.pressed(Key.F4) && !Screen.overrideControlByBox)
-		{
-			iB = new InputBox(HXP.halfWidth, HXP.halfHeight, "Фоновый цвет", "Введите цвет фоновой заливки карты (DEC or HEX):");
-			add(iB);
-			waitingForAnswer = true;
-			typeOfAnswer = 2;
-		}
-		if ((Input.pressed("up") || Screen.joyCheck("DPAD_UP")) && !Screen.overrideControlByBox)
-		{
-			cursorPos.y--;
-			currentPos.y--;
-			isCursorChanged = true;
-		}
-		if ((Input.pressed("down") || Screen.joyCheck("DPAD_DOWN")) && !Screen.overrideControlByBox)
-		{
-			cursorPos.y++;
-			currentPos.y++;
-			isCursorChanged = true;
-		}
-		if ((Input.pressed("left") || Screen.joyCheck("DPAD_LEFT")) && !Screen.overrideControlByBox)
-		{
-			cursorPos.x--;
-			currentPos.x--;
-			isCursorChanged = true;
-		}
-		if ((Input.pressed("right") || Screen.joyCheck("DPAD_RIGHT")) && !Screen.overrideControlByBox)
-		{
-			cursorPos.x++;
-			currentPos.x++;
-			isCursorChanged = true;
-		}
-		if ((Input.pressed("action") || Screen.joyPressed("A")) && !Screen.overrideControlByBox)
-		{
-			ActionButton();
-		}
-		if ((Input.pressed(Key.DELETE) || Screen.joyPressed("B")) && !Screen.overrideControlByBox)
-		{
-			DeleteButton();
-		}
-		if ((Input.pressed(Key.HOME) || Screen.joyPressed("X")) && !Screen.overrideControlByBox)
-		{
-			currentType++;
-			currentElement = 0;
-			UpdateTools();
-		}
-		if ((Input.pressed(Key.END) || Screen.joyPressed("Y")) && !Screen.overrideControlByBox)
-		{
-			currentType--;
-			currentElement = 0;
-			UpdateTools();
-		}
-		if ((Input.pressed(Key.PAGE_UP) || Screen.joyPressed("RB")) && !Screen.overrideControlByBox)
-		{
-			currentElement++;
-			UpdateTools();
-		}
-		if ((Input.pressed(Key.PAGE_DOWN) || Screen.joyPressed("LB")) && !Screen.overrideControlByBox)
-		{
-			currentElement--;
-			UpdateTools();
-		}
+
+		cursor.x = (cursorPos.x + 9) * 40 + HXP.camera.x;
+		cursor.y = (cursorPos.y + 7) * 40 + HXP.camera.y;
+		currentTile.x = 300 + HXP.camera.x;
+		currentTile.y = 60 + HXP.camera.y;
+		currentItem.x = 300 + HXP.camera.x;
+		currentItem.y = 60 + HXP.camera.y;
+		currentCharacter.x = 300 + HXP.camera.x;
+		currentCharacter.y = 60 + HXP.camera.y;
+		currentSticker.x = 300 + HXP.camera.x;
+		currentSticker.y = 60 + HXP.camera.y;
 		
-		updateText();
 		super.update();
 	}
 	
@@ -425,7 +519,6 @@ class LevelEditor extends Screen
 				}
 				var temp:Tile = new Tile(new PointXY(tX, tY), tilesList[currentElement].collidability, tilesList[currentElement].imgPath, tilesList[currentElement].soundPath, tilesList[currentElement].tileName);
 				lvl.tiles.push(temp);
-				
 				add(temp);
 			}
 			case 1:
@@ -440,28 +533,48 @@ class LevelEditor extends Screen
 						remove(x);
 					}
 				}
-				var temp:Item = new Item(new PointXY(0, 0));// = Reflect.copy(currentItem);
+				var temp:Item = new Item(new PointXY(0, 0));
 				switch(Type.getClassName(Type.getClass(currentItem)))
 				{
 					case "com.tpuquest.item.Coin":
-						temp = new Coin(new PointXY(tX -10, tY - 10), cast(currentItem, Coin).coinAmount, cast(currentItem, Coin).imgPath);
+						temp = new Coin(new PointXY(tX -10, tY - 10), cast(currentItem, Coin).coinAmount, cast(currentItem, Coin).imgPath, cast(currentItem, Coin).name);
 					case "com.tpuquest.item.Potion":
-						temp = new Potion(new PointXY(tX -10, tY - 10), cast(currentItem, Potion).potionAmount, cast(currentItem, Potion).imgPath);
+						temp = new Potion(new PointXY(tX -10, tY - 10), cast(currentItem, Potion).potionAmount, cast(currentItem, Potion).imgPath, cast(currentItem, Potion).name);
 					case "com.tpuquest.item.Weapon":
-						temp = new Weapon(new PointXY(tX -10, tY - 10), cast(currentItem, Weapon).weaponDamage, cast(currentItem, Weapon).imgPath);
+						temp = new Weapon(new PointXY(tX -10, tY - 10), cast(currentItem, Weapon).weaponDamage, cast(currentItem, Weapon).imgPath, cast(currentItem, Weapon).name);
 				}
-			
-				/*temp.x = tX;
-				temp.y = tY;
-				temp.itemPoint.x = tX;
-				temp.itemPoint.y = tY;*/
 				lvl.items.push(temp);
-				
 				add(temp);
 			}
 			case 2:
 			{
-
+				var tX = (currentPos.x + 9) * 40;
+				var tY = (currentPos.y + 7) * 40;
+				for (x in lvl.characters)
+				{
+					if (x.x == tX && x.y == tY)
+					{
+						lvl.characters.remove(x);
+						remove(x);
+					}
+				}
+				var temp:Character = new Character(new Point(0, 0), "");
+				switch(Type.getClassName(Type.getClass(currentCharacter)))
+				{
+					case "com.tpuquest.character.Talker":
+						temp = new Talker(new Point(tX, tY), currentCharacter.spritePath, currentCharacter.characterName);
+					case "com.tpuquest.character.Trader":
+						temp = new Trader(new Point(tX, tY), currentCharacter.spritePath, currentCharacter.characterName);
+					case "com.tpuquest.character.Enemy":
+						temp = new Enemy(new Point(tX, tY), currentCharacter.spritePath, cast(currentCharacter, Enemy).life, currentCharacter.characterName);
+					case "com.tpuquest.character.Player":
+						temp = new Player(new Point(tX, tY), currentCharacter.spritePath, cast(currentCharacter, Player).life, cast(currentCharacter, Player).money, currentCharacter.characterName);
+					case "com.tpuquest.character.Boss":
+						temp = new Boss(new Point(tX, tY), currentCharacter.spritePath, cast(currentCharacter, Boss).life, currentCharacter.characterName);
+				}
+				temp.behaviorOn = false;
+				lvl.characters.push(temp);
+				add(temp);
 			}
 			case 3:
 			{
@@ -515,7 +628,16 @@ class LevelEditor extends Screen
 			}
 			case 2:
 			{
-
+				var tX = (currentPos.x + 9) * 40;
+				var tY = (currentPos.y + 7) * 40;
+				for (x in lvl.characters)
+				{
+					if (x.x == tX && x.y == tY)
+					{
+						lvl.characters.remove(x);
+						remove(x);
+					}
+				}
 			}
 			case 3:
 			{
@@ -556,7 +678,29 @@ class LevelEditor extends Screen
 		currentItem = itemsList[0];
 		currentItem.visible = false;
 		currentItem.layer = 0;
-		
+
+		var xmlCharacters:Xml = Xml.parse(File.getContent("cfg/characters.xml")).firstElement();
+		for (x in xmlCharacters.elements())
+		{
+			switch(x.get("type"))
+			{
+				case "talker":
+					charactersList.push(new Talker(new Point(0, 0), x.get("spritePath"), x.get("name"), false));
+				case "trader":
+					charactersList.push(new Trader(new Point(0, 0), x.get("spritePath"), x.get("name"), false));
+				case "enemy":
+					charactersList.push(new Enemy(new Point(0, 0), x.get("spritePath"), Std.parseInt(x.get("hp")), x.get("name"), false));
+				case "player":
+					charactersList.push(new Player(new Point(0, 0), x.get("spritePath"), Std.parseInt(x.get("hp")), Std.parseInt(x.get("money")), x.get("name"), false));
+				case "boss":
+					charactersList.push(new Boss(new Point(0, 0), x.get("spritePath"), Std.parseInt(x.get("hp")), x.get("name"), false));
+			}
+		}
+		currentCharacter = charactersList[0];
+		currentCharacter.visible = false;
+		currentCharacter.layer = 0;
+		currentCharacter.behaviorOn = false;
+
 		var xmlTiles:Xml = Xml.parse(File.getContent("cfg/tiles.xml")).firstElement();
 		for (x in xmlTiles.elements())
 		{
@@ -586,6 +730,5 @@ class LevelEditor extends Screen
 		//currentSticker.layer = 0;
 		
 		elementMax = tilesList.length - 1;
-		currentCharacter = new Character(new PointXY(0, 0));
 	}
 }

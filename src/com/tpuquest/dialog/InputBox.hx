@@ -102,7 +102,7 @@ class InputBox extends Dialog
 	{
 		super.update();
 		
-		if (Input.pressed(Key.ENTER) || Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("A") || Screen.joyPressed("B"))
+		if (Input.pressed(Key.ENTER) || Input.pressed(Key.ESCAPE) || Screen.joyPressed("BACK") || Screen.joyPressed("A") || Screen.joyPressed("B"))
 		{
 			Screen.overrideControlByBox = false;
 			inputStr = inputText.label.richText;

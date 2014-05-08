@@ -7,8 +7,20 @@ import flash.geom.Point;
 
 class Boss extends Character
 {
-	public function new(point:PointXY) 
+	public var life:Int;
+		
+	public function new(point:Point, spritePath:String, hp:Int = 100, name:String = "", behavior:Bool = true) 
 	{
-		super(point);
+		super(point, spritePath, name, behavior);
+		
+		this.life = hp;
+	}
+	
+	public override function update()
+	{
+		if (behaviorOn)
+		{
+			super.update();
+		}
 	}
 }
