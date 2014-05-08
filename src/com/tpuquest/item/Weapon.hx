@@ -17,10 +17,14 @@ class Weapon extends Item
 		type = "weapon";
 		
 		var img = new Image(imgPath);
+		img.x = -8;
+		img.y = -8;
 		setHitboxTo(img);
 		graphic = img;
 		this.imgPath = imgPath;
 		itemPoint = point;
+		
+		
 	}
 	
 	public override function update()

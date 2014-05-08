@@ -19,8 +19,9 @@ class Character extends Entity
 	
 	public var characterName:String;
 	public var behaviorOn:Bool;
+	public var spritePath:String;
 
-	public function new(point:PointXY)
+	public function new(point:Point, spritePath:String, name:String = "", behavior:Bool = true)
 	{
 		super(point.x, point.y);
 		_onGround = false;
@@ -31,8 +32,9 @@ class Character extends Entity
 		maxVelocity  = new Point();
 		gravity      = new Point();
 		
-		characterName = "";
-		behaviorOn = true;
+		characterName = name;
+		behaviorOn = behavior;
+		this.spritePath = spritePath;
 	}
 
 	public var onGround(get_onGround, null): Bool;

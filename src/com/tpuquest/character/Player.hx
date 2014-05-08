@@ -19,19 +19,19 @@ class Player extends Character
 	private var sprite:Spritemap;
 
 	private static inline var kMoveSpeed:Float = 5;
-	private static inline var kJumpForce:Int = 22;
+	private static inline var kJumpForce:Int = 23;
 	public var hasTouchTheGround(default, null) : Bool;
 	public var isDead:Bool;
 	
 	public var controlOn:Bool;
 	
-	public function new(point:PointXY) 
+	public function new(point:Point, spritePath:String, hp:Int = 100, money:Int = 0, name:String = "", behavior:Bool = true) 
 	{
-		super(point);
+		super(point, spritePath, name, behavior);
 		
 		hasTouchTheGround = true;
 		
-		sprite = new Spritemap("graphics/character.png", 32, 32);
+		sprite = new Spritemap(spritePath, 32, 32);
 		sprite.add("norm_idle", [8, 8, 8, 9], 3, true);
 		sprite.add("norm_walk", [0, 1, 2, 3, 4, 5, 6, 7], 19, true);
 		sprite.add("norm_jump", [10]);
@@ -56,10 +56,10 @@ class Player extends Character
 		friction.x = 0.82; // floor friction
 		friction.y = 0.99; // wall friction
 		
-		money = 0;
-		life = 50;
-		isDead = false;
-		controlOn = true;
+		this.money = money;
+		this.life = hp;
+		this.isDead = false;
+		this.controlOn = true;
 	}
 
 	private function setAnimations()
@@ -98,104 +98,113 @@ class Player extends Character
 	
 	public override function update()
 	{
-		acceleration.x = acceleration.y = 0;
+		if (behaviorOn)
+		{
+			acceleration.x = acceleration.y = 0;
 
-		if (!_onGround)
-			hasTouchTheGround = false;
-		
-		if ( !hasTouchTheGround && _onGround) 
-		{
-			hasTouchTheGround = true;
-			controlOn = true;
-			var sound = new Sfx("audio/player_soundJumpStop.wav");
-			sound.play(SettingsMenu.soudVolume / 10);
-		}
-		
-		if (controlOn && !Screen.overrideControlByBox)
-		{
-			if (Input.check("left") || Screen.joyCheck("DPAD_LEFT"))
+			if (!_onGround)
+				hasTouchTheGround = false;
+			
+			if ( !hasTouchTheGround && _onGround) 
 			{
-				acceleration.x = -kMoveSpeed;
-			}
-			if (Input.check("right") || Screen.joyCheck("DPAD_RIGHT"))
-			{
-				acceleration.x = kMoveSpeed;
-			}
-			if ((Input.pressed("jump") || Screen.joyCheck("X")) && _onGround)
-			{
-				acceleration.y = -HXP.sign(gravity.y) * kJumpForce;
-				
-				var sound = new Sfx("audio/player_soundJumpStart.wav");
+				hasTouchTheGround = true;
+				controlOn = true;
+				var sound = new Sfx("audio/player_soundJumpStop.wav");
 				sound.play(SettingsMenu.soudVolume / 10);
 			}
-		}
-		
-		super.update();
-		
-		var ent:Entity = collide("coin", x, y);
-		if(ent != null)
-		{
-			var cn:Coin = cast(ent, Coin);
-			money += cn.coinAmount;
-			scene.remove(cn);
-			var sound = new Sfx("audio/player_soundMoney.wav");
-			sound.play(SettingsMenu.soudVolume / 10);
-		}
-		
-		ent = collide("potion", x, y);
-		if(ent != null && life < 100)
-		{
-			var cn:Potion = cast(ent, Potion);
-			life += cn.potionAmount;
-			scene.remove(cn);
-			var sound = new Sfx("audio/player_soundPotion.wav");
-			sound.play(SettingsMenu.soudVolume / 10);
-		}
-		
-		ent = collide("enemy", x, y);
-		if (ent == null)
-			ent = collide("boss", x, y);
-		if(ent != null)
-		{
-			var cn:Enemy = cast(ent, Enemy);
-			controlOn = false;
-			var sound = new Sfx("audio/player_soundPain.wav");
-			sound.play(SettingsMenu.soudVolume / 10);
-			life -= 5;
-			if (velocity.x < 0)
-			{
-				velocity.x = kMoveSpeed * 5;
-			}
-			else
-			{
-				velocity.x = -kMoveSpeed * 5;
-			}
-			velocity.y = -HXP.sign(gravity.y) * kJumpForce * 0.5;
-		}
-		
-		ent = collide("helper", x, y);
-		if(ent != null)
-		{
 			
-		}
-		
-		ent = collide("weapon", x, y);
-		if(ent != null)
-		{
+			if (controlOn && !Screen.overrideControlByBox)
+			{
+				if (Input.check("left") || Screen.joyCheck("DPAD_LEFT"))
+				{
+					acceleration.x = -kMoveSpeed;
+				}
+				if (Input.check("right") || Screen.joyCheck("DPAD_RIGHT"))
+				{
+					acceleration.x = kMoveSpeed;
+				}
+				if ((Input.pressed("jump") || Screen.joyCheck("X")) && _onGround)
+				{
+					acceleration.y = -HXP.sign(gravity.y) * kJumpForce;
+					
+					var sound = new Sfx("audio/player_soundJumpStart.wav");
+					sound.play(SettingsMenu.soudVolume / 10);
+				}
+			}
 			
+			super.update();
+			
+			var ent:Entity = collide("coin", x, y);
+			if(ent != null)
+			{
+				var cn:Coin = cast(ent, Coin);
+				money += cn.coinAmount;
+				scene.remove(cn);
+				var sound = new Sfx("audio/player_soundMoney.wav");
+				sound.play(SettingsMenu.soudVolume / 10);
+			}
+			
+			ent = collide("potion", x, y);
+			if(ent != null && life < 100)
+			{
+				var cn:Potion = cast(ent, Potion);
+				life += cn.potionAmount;
+				scene.remove(cn);
+				var sound = new Sfx("audio/player_soundPotion.wav");
+				sound.play(SettingsMenu.soudVolume / 10);
+			}
+			
+			ent = collide("enemy", x, y);
+			if (ent == null)
+				ent = collide("boss", x, y);
+			if(ent != null)
+			{
+				var cn:Enemy = cast(ent, Enemy);
+				controlOn = false;
+				var sound = new Sfx("audio/player_soundPain.wav");
+				sound.play(SettingsMenu.soudVolume / 10);
+				life -= 5;
+				if (velocity.x < 0)
+				{
+					velocity.x = kMoveSpeed * 5;
+				}
+				else
+				{
+					velocity.x = -kMoveSpeed * 5;
+				}
+				velocity.y = -HXP.sign(gravity.y) * kJumpForce * 0.5;
+			}
+			
+			ent = collide("helper", x, y);
+			if(ent != null)
+			{
+				
+			}
+			
+			ent = collide("weapon", x, y);
+			if(ent != null)
+			{
+				
+			}
+			
+			if (life <= 0)
+			{
+				isDead = true;
+				controlOn = false;
+				behaviorOn = false;
+			}
+			if (life > 100)
+				life = 100;
+			
+			setAnimations();
+			HXP.camera.x = x - 400 + 20;
+			HXP.camera.y = y - 300 + 40;
 		}
-		
-		if (life <= 0)
+		else
 		{
-			isDead = true;
-			controlOn = false;
+			super.update();
+			setAnimations();
 		}
-		if (life > 100)
-			life = 100;
-		
-		setAnimations();
-		HXP.camera.x = x - 400 + 20;
-		HXP.camera.y = y - 300 + 40;
 	}
 	
 }

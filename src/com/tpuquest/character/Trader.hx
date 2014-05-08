@@ -19,13 +19,13 @@ class Trader extends Character
 	public var hasTouchTheGround(default, null) : Bool;
 	public var isDead:Bool;
 	
-	public function new(point:PointXY) 
+	public function new(point:Point, spritePath:String, name:String = "", behavior:Bool = true) 
 	{
-		super(point);
+		super(point, spritePath, name, behavior);
 		
 		hasTouchTheGround = true;
 		
-		sprite = new Spritemap("graphics/character.png", 32, 32);
+		sprite = new Spritemap(spritePath, 32, 32);
 		sprite.add("norm_idle", [8, 8, 8, 9], 3, true);
 		sprite.add("norm_walk", [0, 1, 2, 3, 4, 5, 6, 7], 19, true);
 		sprite.add("norm_jump", [10]);
@@ -84,33 +84,36 @@ class Trader extends Character
 	
 	public override function update()
 	{
-		acceleration.x = acceleration.y = 0;
- 
-		if (!_onGround)
-			hasTouchTheGround = false;
-		
-		if ( !hasTouchTheGround && _onGround) 
+		if (behaviorOn)
 		{
-			hasTouchTheGround = true;
-			var sound = new Sfx("audio/player_soundJumpStop.wav");
-			sound.play(SettingsMenu.soudVolume / 10);
-		}
+			acceleration.x = acceleration.y = 0;
+	 
+			if (!_onGround)
+				hasTouchTheGround = false;
+			
+			if ( !hasTouchTheGround && _onGround) 
+			{
+				hasTouchTheGround = true;
+				var sound = new Sfx("audio/player_soundJumpStop.wav");
+				sound.play(SettingsMenu.soudVolume / 10);
+			}
 
-		prevPoint = new Point(x, y);
-		
-		super.update();
-		
-		if(collide("solid", x, y) != null)
-		{
-			x = prevPoint.x;
-			y = prevPoint.y;
+			prevPoint = new Point(x, y);
+			
+			super.update();
+			
+			if(collide("solid", x, y) != null)
+			{
+				x = prevPoint.x;
+				y = prevPoint.y;
+			}
+			
+			if(life <= 0)
+				isDead = true;
+			if (life > 100)
+				life = 100;
+			
+			setAnimations();
 		}
-		
-		if(life <= 0)
-			isDead = true;
-		if (life > 100)
-			life = 100;
-		
-		setAnimations();
 	}
 }

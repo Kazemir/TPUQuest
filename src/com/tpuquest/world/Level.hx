@@ -1,7 +1,9 @@
 package com.tpuquest.world;
 import com.haxepunk.Graphic;
 import com.haxepunk.graphics.Graphiclist;
+import com.tpuquest.character.Boss;
 import com.tpuquest.character.Enemy;
+import com.tpuquest.character.Player;
 import com.tpuquest.character.Talker;
 import com.tpuquest.character.Trader;
 import com.tpuquest.item.Coin;
@@ -13,6 +15,7 @@ import com.tpuquest.utils.PointXY;
 import com.tpuquest.world.Tile;
 import com.haxepunk.Entity;
 import com.haxepunk.HXP;
+import flash.geom.Point;
 
 import haxe.xml.*;
 import sys.FileSystem;
@@ -36,10 +39,20 @@ class Level
 		var rvec:PointXY = new PointXY(Std.int(vector.x / 40) - 9, Std.int(vector.y / 40) - 9 );
 		return rvec;
 	}
-
 	public static function WorldToScreen(vector:PointXY):PointXY
 	{
 		var rvec:PointXY = new PointXY((vector.x + 9) * 40, (vector.y + 7) * 40);
+		return rvec;
+	}
+	
+	public static function ScreenToWorldFloat(vector:Point):Point
+	{
+		var rvec:Point = new Point(vector.x / 40 - 9, vector.y / 40 - 9 );
+		return rvec;
+	}
+	public static function WorldToScreenFloat(vector:Point):Point
+	{
+		var rvec:Point = new Point((vector.x + 9) * 40, (vector.y + 7) * 40);
 		return rvec;
 	}
 	
@@ -55,7 +68,7 @@ class Level
 		levelName = name;
 	}
 	
-	public static function LoadLevel( path:String ):Level
+	public static function LoadLevel( path:String, behavior:Bool = true ):Level
 	{
 		var lvl:Level = new Level();
 		
@@ -92,18 +105,28 @@ class Level
 					for (element in section.elements())
 					{
 						var temp:Character;
-						var tX = Std.parseInt(element.get("x"));
-						var tY = Std.parseInt(element.get("y"));
+						var tX = Std.parseFloat(element.get("x"));
+						var tY = Std.parseFloat(element.get("y"));
+						var tS = element.get("spritePath");
+						var tN = element.get("name");
 						switch(element.get("type"))
 						{
 							case "talker":
-								temp = new Talker(WorldToScreen(new PointXY(tX, tY)));
+								temp = new Talker(WorldToScreenFloat(new Point(tX, tY)), tS, tN, behavior);
 							case "trader":
-								temp = new Trader(WorldToScreen(new PointXY(tX, tY)));
+								temp = new Trader(WorldToScreenFloat(new Point(tX, tY)), tS, tN, behavior);
 							case "enemy":
-								temp = new Enemy(WorldToScreen(new PointXY(tX, tY)));
+								var tHP = Std.parseInt(element.get("hp"));
+								temp = new Enemy(WorldToScreenFloat(new Point(tX, tY)), tS, tHP, tN, behavior);
+							case "player":
+								var tHP = Std.parseInt(element.get("hp"));
+								var tM = Std.parseInt(element.get("money"));
+								temp = new Player(WorldToScreenFloat(new Point(tX, tY)), tS, tHP, tM, tN, behavior);
+							case "boss":
+								var tHP = Std.parseInt(element.get("hp"));
+								temp = new Boss(WorldToScreenFloat(new Point(tX, tY)), tS, tHP, tN, behavior);
 							default:
-								temp = new Character(WorldToScreen(new PointXY(tX, tY)));
+								temp = new Character(WorldToScreenFloat(new Point(tX, tY)), tS, tN, behavior);
 						}
 						
 						lvl.characters.push( temp );
@@ -180,13 +203,15 @@ class Level
 		for (x in characters)
 		{
 			var temp:Xml = Xml.createElement( "element" );
-			var tX = x.characterPoint.x;
-			var tY = x.characterPoint.y;
+			var tX:Float = x.x;
+			var tY:Float = x.y;
 			
-			tX = Std.int((tX / 40) - 9);
-			tY = Std.int((tY / 40) - 7);
+			tX = (tX / 40) - 9;
+			tY = (tY / 40) - 7;
 			temp.set("x", Std.string(tX));
 			temp.set("y", Std.string(tY));
+			temp.set("name", x.characterName);
+			temp.set("spritePath", x.spritePath);
 			
 			switch(Type.getClassName(Type.getClass(x)))
 			{
@@ -195,9 +220,16 @@ class Level
 				case "com.tpuquest.character.Trader":
 					temp.set("type", "trader");
 				case "com.tpuquest.character.Enemy":
-					temp.set("type", "enemy");
+					temp.set("type", "enemy");		
+					temp.set("hp", x.life);
+				case "com.tpuquest.character.Boss":
+					temp.set("type", "boss");	
+					temp.set("hp", x.life);
+				case "com.tpuquest.character.Player":
+					temp.set("type", "player");
+					temp.set("hp", x.life);
+					temp.set("money", x.money);
 			}
-			
 			charactersXML.addChild(temp);
 		}
 		
