@@ -5,6 +5,7 @@ import com.tpuquest.character.Player;
 import com.tpuquest.character.Talker;
 import com.haxepunk.utils.Input;
 import com.haxepunk.HXP;
+import com.tpuquest.helper.Helper;
 import com.tpuquest.item.Coin;
 import com.tpuquest.item.Potion;
 import com.tpuquest.utils.DrawText;
@@ -54,11 +55,7 @@ class GameScreen extends Screen
 		addGraphic(coinImg, -5, 670, 53);
 		addGraphic(heartImg, -5, 670, 23);
 		
-		/*player = new Player(Level.WorldToScreen(new PointXY(0, -3)));
-		add(player);
-		
-		add(new Enemy(Level.WorldToScreen(new PointXY( -6, 4))));
-		add(new Enemy(Level.WorldToScreen(new PointXY(11, -2))));*/
+		add(new Helper(Level.WorldToScreen(new PointXY( -6, -3)), "ChangeMap", true));
 		
 		for (x in lvl.characters)
 		{
@@ -69,10 +66,6 @@ class GameScreen extends Screen
 		var bg:Image = new Image("graphics/clouds2.png");
 		bg.scrollX = bg.scrollY = 0.05;
 		addGraphic(bg, 100, -100);
-		
-		/*var base2 = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
-        base2.color = lvl.bgcolor;
-        addGraphic(base2, 101);*/
 		
 		music = new Sfx("music/MightandMagic_Book1__ShopTheme.ogg");
 		music.play(SettingsMenu.musicVolume / 10, 0, true);

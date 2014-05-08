@@ -13,6 +13,10 @@ import com.haxepunk.utils.*;
 import com.haxepunk.HXP;
 import com.tpuquest.character.Talker;
 import com.tpuquest.character.Trader;
+import com.tpuquest.helper.ChangeMap;
+import com.tpuquest.helper.Helper;
+import com.tpuquest.helper.ShowMessage;
+import com.tpuquest.helper.Spawn;
 import com.tpuquest.item.Coin;
 import com.tpuquest.item.Item;
 import com.tpuquest.item.Potion;
@@ -62,12 +66,14 @@ class LevelEditor extends Screen
 	public static var charactersList:Array<Dynamic>;
 	public static var tilesList:Array<Dynamic>;
 	public static var stickersList:Array<Dynamic>;
+	public static var helpersList:Array<Dynamic>;
 	
 	private static var elementMax:Int;
 	private static var currentTile:Tile;
 	private static var currentItem:Item;
 	private static var currentCharacter:Character;
 	private static var currentSticker:Sticker;
+	private static var currentHelper:Helper;
 	
 	private var iB:InputBox;
 	private var waitingForAnswer:Bool;
@@ -216,6 +222,7 @@ class LevelEditor extends Screen
 		currentItem.visible = false;
 		currentCharacter.visible = false;
 		currentSticker.visible = false;
+		currentHelper.visible = false;
 		switch(currentType)
 		{
 			case 0:
@@ -291,11 +298,18 @@ class LevelEditor extends Screen
 			{
 				temp1 = "Helper";
 				elementMax = 0;
-				/*switch(currentElement)
+				if (helpersList.length != 0)
 				{
-					case default:
-						temp2 = "";
-				}*/
+					elementMax = helpersList.length - 1;
+					currentHelper = helpersList[currentElement];
+					temp2 = helpersList[currentElement].helperName;
+					
+					currentHelper.x = 300 + HXP.camera.x;
+					currentHelper.y = 60 + HXP.camera.y;
+					currentHelper.visible = true;
+					currentHelper.layer = -2;
+					add(currentHelper);
+				}
 			}
 		}
 		typeText.ChangeStr("Type: " + currentType + ", " + temp1, false);
@@ -497,6 +511,8 @@ class LevelEditor extends Screen
 		currentCharacter.y = 60 + HXP.camera.y;
 		currentSticker.x = 300 + HXP.camera.x;
 		currentSticker.y = 60 + HXP.camera.y;
+		currentHelper.x = 300 + HXP.camera.x;
+		currentHelper.y = 60 + HXP.camera.y;
 		
 		super.update();
 	}
@@ -593,6 +609,34 @@ class LevelEditor extends Screen
 				
 				add(temp);
 			}
+			case 4:
+			{
+				var tX = (currentPos.x + 9) * 40;
+				var tY = (currentPos.y + 7) * 40;
+				for (x in lvl.helpers)
+				{
+					if (x.helperPoint.x == tX && x.helperPoint.y == tY)
+					{
+						lvl.helpers.remove(x);
+						remove(x);
+					}
+				}
+				var temp:Helper = new Helper(new PointXY(0, 0), "", false);
+				
+				switch(Type.getClassName(Type.getClass(currentHelper)))
+				{
+					case "com.tpuquest.helper.ChangeMap":
+						temp = new ChangeMap(new PointXY(tX, tY), currentHelper.helperName, true);
+					case "com.tpuquest.helper.ShowMessage":
+						temp = new ShowMessage(new PointXY(tX, tY), currentHelper.helperName, true);
+					case "com.tpuquest.helper.Spawn":
+						temp = new Spawn(new PointXY(tX, tY), currentHelper.helperName, true);
+				}
+				
+				lvl.helpers.push(temp);
+				
+				add(temp);
+			}
 		}
 	}
 	
@@ -652,6 +696,19 @@ class LevelEditor extends Screen
 					}
 				}
 			}
+			case 4:
+			{
+				var tX = (currentPos.x + 9) * 40;
+				var tY = (currentPos.y + 7) * 40;
+				for (x in lvl.helpers)
+				{
+					if (x.helperPoint.x == tX && x.helperPoint.y == tY)
+					{
+						lvl.helpers.remove(x);
+						remove(x);
+					}
+				}
+			}
 		}
 	}	
 	
@@ -661,6 +718,7 @@ class LevelEditor extends Screen
 		charactersList = new Array<Dynamic>();
 		tilesList = new Array<Dynamic>();
 		stickersList = new Array<Dynamic>();
+		helpersList = new Array<Dynamic>();
 		
 		var xmlItems:Xml = Xml.parse(File.getContent("cfg/items.xml")).firstElement();
 		for (x in xmlItems.elements())
@@ -728,6 +786,23 @@ class LevelEditor extends Screen
 		currentSticker = stickersList[0];
 		currentSticker.visible = false;
 		//currentSticker.layer = 0;
+		
+		var xmlHelpers:Xml = Xml.parse(File.getContent("cfg/helpers.xml")).firstElement();
+		for (x in xmlHelpers.elements())
+		{
+			switch(x.get("type"))
+			{
+				case "message":
+					helpersList.push(new ShowMessage(new PointXY(0, 0), x.get("name"), true));
+				case "nextlevel":
+					helpersList.push(new ChangeMap(new PointXY(0, 0), x.get("name"), true));
+				case "spawn":
+					helpersList.push(new Spawn(new PointXY(0, 0), x.get("name"), true));
+			}
+		}
+		currentHelper = helpersList[0];
+		currentHelper.visible = false;
+		currentHelper.layer = 0;
 		
 		elementMax = tilesList.length - 1;
 	}
