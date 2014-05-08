@@ -1,0 +1,7 @@
+﻿<tiles>
+
+<element id="0" name="Msg" type="message"  />
+<element id="1" name="NL" type="nextlevel" />
+<element id="2" name="Spawn" type="spawn" />
+
+</tiles>

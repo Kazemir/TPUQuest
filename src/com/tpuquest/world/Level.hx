@@ -6,6 +6,10 @@ import com.tpuquest.character.Enemy;
 import com.tpuquest.character.Player;
 import com.tpuquest.character.Talker;
 import com.tpuquest.character.Trader;
+import com.tpuquest.helper.ChangeMap;
+import com.tpuquest.helper.Helper;
+import com.tpuquest.helper.ShowMessage;
+import com.tpuquest.helper.Spawn;
 import com.tpuquest.item.Coin;
 import com.tpuquest.item.Item;
 import com.tpuquest.character.Character;
@@ -28,6 +32,7 @@ class Level
 	public var characters:Array<Dynamic>;
 	public var tiles:Array<Dynamic>;
 	public var stickers:Array<Dynamic>;
+	public var helpers:Array<Dynamic>;
 	
 	public var cameraPos:PointXY;
 	
@@ -62,6 +67,7 @@ class Level
 		characters = new Array<Dynamic>();
 		tiles = new Array<Dynamic>();
 		stickers = new Array<Dynamic>();
+		helpers = new Array<Dynamic>();
 		
 		cameraPos = new PointXY(0, 0);
 		bgcolor = 0x61c3ff;
@@ -157,6 +163,25 @@ class Level
 						var tP = element.get("path");
 						var temp:Sticker = new Sticker(WorldToScreen(new PointXY(tX, tY)), tBb, tP);
 						lvl.stickers.push( temp );
+					}
+				case "helpers":
+					for (element in section.elements())
+					{
+						var tX = Std.parseInt(element.get("x"));
+						var tY = Std.parseInt(element.get("y"));
+						var tN = element.get("name");
+						var temp:Helper = new Helper(WorldToScreen(new PointXY(tX, tY)), tN);
+						switch(element.get("type"))
+						{
+							case "message":
+								temp = new ShowMessage(WorldToScreen(new PointXY(tX, tY)), tN);
+							case "nextlevel":
+								temp = new ChangeMap(WorldToScreen(new PointXY(tX, tY)), tN);
+							case "spawn":
+								temp = new Spawn(WorldToScreen(new PointXY(tX, tY)), tN);
+						}
+						
+						lvl.helpers.push( temp );
 					}
 			}
 		}
@@ -272,10 +297,36 @@ class Level
 			stickersXML.addChild(temp);
 		}
 		
+		var helpersXML:Xml = Xml.createElement( "helpers" );
+		for (x in helpers)
+		{
+			var temp:Xml = Xml.createElement( "element" );
+			var tX = x.helperPoint.x;
+			var tY = x.helperPoint.y;
+			
+			tX = Std.int((tX / 40) - 9);
+			tY = Std.int((tY / 40) - 7);
+			temp.set("x", Std.string(tX));
+			temp.set("y", Std.string(tY));
+			temp.set("name", x.helperName);
+			
+			switch(Type.getClassName(Type.getClass(x)))
+			{
+				case "com.tpuquest.helper.ChangeMap":
+					temp.set("type", "message");
+				case "com.tpuquest.helper.ShowMessage":
+					temp.set("type", "nextlevel");
+				case "com.tpuquest.helper.Spawn":
+					temp.set("type", "spawn");		
+			}
+			helpersXML.addChild(temp);
+		}
+		
 		lvlXML.addChild(itemsXML);
 		lvlXML.addChild(charactersXML);
 		lvlXML.addChild(tilesXML);
 		lvlXML.addChild(stickersXML);
+		lvlXML.addChild(helpersXML);
 		
 		var fout:FileOutput = File.write( path, false );
 		fout.writeString( lvlXML.toString() );
@@ -297,7 +348,10 @@ class Level
 			
 		for (x in stickers)
 			entList.push(x);
-		
+			
+		for (x in helpers)
+			entList.push(x);
+			
 		try
 		{
 			return entList;
