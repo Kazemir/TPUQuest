@@ -1,7 +1,5 @@
 ﻿<tiles>
 
-<element id="0" name="Msg" type="message"  />
-<element id="1" name="NL" type="nextlevel" />
-<element id="2" name="Spawn" type="spawn" />
+<element id="1" name="toTEST" type="nextlevel" mapPath="levels/TEST.xml" keepPlayer="1" instantly="0" />
 
 </tiles>

@@ -1,14 +1,14 @@
-package com.tpuquest.character;
+package com.tpuquest.entity.character;
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Spritemap;
 import com.haxepunk.Scene;
 import com.haxepunk.utils.Input;
 import com.haxepunk.HXP;
-import com.tpuquest.helper.ChangeMap;
-import com.tpuquest.helper.ShowMessage;
-import com.tpuquest.helper.Spawn;
-import com.tpuquest.item.Coin;
-import com.tpuquest.item.Potion;
+import com.tpuquest.entity.helper.ChangeMap;
+import com.tpuquest.entity.helper.ShowMessage;
+import com.tpuquest.entity.helper.Spawn;
+import com.tpuquest.entity.item.Coin;
+import com.tpuquest.entity.item.Potion;
 import com.tpuquest.screen.GameScreen;
 import com.tpuquest.screen.LevelEditor;
 import com.tpuquest.screen.Screen;
@@ -68,14 +68,14 @@ class Player extends Character
 		this.life = hp;
 		this.isDead = false;
 		this.controlOn = true;
-		
+	}
+	
+	public override function added()
+	{
 		if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
 			currentScene = cast(scene, GameScreen);
-		//else
-		//	currentScene = cast(scene, LevelEditor);
-		//	currentScene = cast(scene, LevelEditor);
 	}
-
+	
 	private function setAnimations()
 	{
 		//setHitbox(Std.int(sprite.scaledWidth), Std.int(sprite.scaledHeight));

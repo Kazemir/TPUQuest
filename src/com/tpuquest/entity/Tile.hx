@@ -1,4 +1,4 @@
-package com.tpuquest.world;
+package com.tpuquest.entity;
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Image;
 import com.tpuquest.utils.PointXY;

@@ -1,17 +1,19 @@
 package com.tpuquest.screen;
 import com.haxepunk.Sfx;
-import com.tpuquest.character.Enemy;
-import com.tpuquest.character.Player;
-import com.tpuquest.character.Talker;
+import com.tpuquest.entity.character.Enemy;
+import com.tpuquest.entity.character.Player;
+import com.tpuquest.entity.character.Talker;
 import com.haxepunk.utils.Input;
 import com.haxepunk.HXP;
-import com.tpuquest.helper.Helper;
-import com.tpuquest.item.Coin;
-import com.tpuquest.item.Potion;
+import com.tpuquest.entity.helper.ChangeMap;
+import com.tpuquest.entity.helper.Helper;
+import com.tpuquest.entity.item.Coin;
+import com.tpuquest.entity.item.Potion;
 import com.tpuquest.utils.DrawText;
 import com.tpuquest.utils.PointXY;
-import com.tpuquest.world.Level;
+import com.tpuquest.utils.Level;
 import com.haxepunk.graphics.Image;
+import flash.geom.Point;
 import sys.io.File;
 
 class GameScreen extends Screen
@@ -29,6 +31,13 @@ class GameScreen extends Screen
 	private var cfgStartHP:Int;
 	private var cfgStartMoney:Int;
 	
+	private var background:Image = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
+	private var notInstantlyMapLoadingEngage:Bool = false;
+	private var notInstantlyMapLoadingBackground:Image = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
+	private var mapPathFromHelper:String = "";
+	private var newPlayerFromHelper:Bool = false;
+	private var notInstantlyMapLoadingUp:Bool = true;
+	
 	public function new() 
 	{
 		super();
@@ -39,10 +48,13 @@ class GameScreen extends Screen
 		LoadCFG();
 		LoadMap(cfgStartMap, true);
 		
-		var base = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
-        base.color = lvl.bgcolor;
-        base.scrollX = base.scrollY = 0;
-        addGraphic(base).layer = 101; 
+		background.scrollX = background.scrollY = 0;
+        addGraphic(background).layer = 101;
+		
+		notInstantlyMapLoadingBackground.scrollX = notInstantlyMapLoadingBackground.scrollY = 0;
+        notInstantlyMapLoadingBackground.color = 0;
+		notInstantlyMapLoadingBackground.alpha = 0;
+		addGraphic(notInstantlyMapLoadingBackground).layer = -101; 
 		
 		coinsText = new DrawText("000", GameFont.PixelCyr, 20, 700, 50, 0xFFFFFF, false);
 		coinsText.label.scrollX = coinsText.label.scrollY = 0;
@@ -61,9 +73,7 @@ class GameScreen extends Screen
 		addGraphic(coinImg, -5, 670, 53);
 		addGraphic(heartImg, -5, 670, 23);
 		
-		//add(new Helper(Level.WorldToScreen(new PointXY( -6, -3)), "ChangeMap", true));
-		
-
+		add(new ChangeMap(Level.WorldToScreen(new PointXY( -6, -3)), "levels/TEST.xml", true, false, "ChangeMap", true));
 		
 		var bg:Image = new Image("graphics/clouds2.png");
 		bg.scrollX = bg.scrollY = 0.05;
@@ -77,7 +87,7 @@ class GameScreen extends Screen
 	
 	public override function update()
 	{
-		if ((Input.pressed("esc") || Screen.joyPressed("BACK")) && !Screen.overrideControlByBox)
+		if ((Input.pressed("esc") || Screen.joyPressed("BACK")) && !Screen.overrideControlByBox && !notInstantlyMapLoadingEngage)
 		{
 			music.stop();
 			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
@@ -98,7 +108,28 @@ class GameScreen extends Screen
 		}
 		hpText.ChangeStr(t, false);
 		
-		super.update();
+		if (notInstantlyMapLoadingEngage)
+		{
+			if (notInstantlyMapLoadingUp)
+			{
+				notInstantlyMapLoadingBackground.alpha += 0.05;
+				if (notInstantlyMapLoadingBackground.alpha == 1)
+				{
+					player = null;
+					removeList( lvl.getEntities() );
+					LoadMap(mapPathFromHelper, !newPlayerFromHelper);
+					notInstantlyMapLoadingUp = false;
+				}
+			}
+			else
+			{
+				notInstantlyMapLoadingBackground.alpha -= 0.05;
+				if (notInstantlyMapLoadingBackground.alpha == 0)
+					notInstantlyMapLoadingEngage = false;
+			}
+		}
+		else
+			super.update();
 	}
 	
 	private function LoadCFG()
@@ -123,24 +154,49 @@ class GameScreen extends Screen
 	public function LoadMap( mapPath:String, newPlayer:Bool = false )
 	{
 		lvl = Level.LoadLevel( mapPath );
-		addList( lvl.getEntities() );
 		
+		var isExsist = false;
 		for (x in lvl.characters)
 		{
 			if (Type.getClassName(Type.getClass(x)) == "com.tpuquest.character.Player")
+			{
 				player = x;
+				isExsist = true;
+			}
 		}
+		if (!isExsist)
+			player = new Player(new Point(0, 0), "graphics/character.png", 100, 0, "Me", true);
 		
 		if (newPlayer)
 		{
 			player.life = cfgStartHP;
 			player.money = cfgStartMoney;
 		}
-	}
-	
-	public function NextMap( mapPath:String , newPlayer:Bool = false, instantly:Bool )
-	{
 		
+		HXP.camera.x = player.x - 400 + 20;
+		HXP.camera.y = player.y - 300 + 40;
+				
+		addList( lvl.getEntities() );
+		
+		background = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
+        background.color = lvl.bgcolor;
+		background.scrollX = background.scrollY = 0;
+        addGraphic(background).layer = 101;
 	}
 	
+	public function NextMap( mapPath:String , currentPlayer:Bool = true, instantly:Bool )
+	{
+		if (instantly)
+		{
+			removeList( lvl.getEntities() );
+			LoadMap(mapPath, !currentPlayer);
+		}
+		else
+		{
+			notInstantlyMapLoadingEngage = true;
+			mapPathFromHelper = mapPath;
+			newPlayerFromHelper = currentPlayer;
+			notInstantlyMapLoadingUp = true;
+		}
+	}
 }

@@ -4,28 +4,28 @@ import com.haxepunk.Graphic;
 import com.haxepunk.graphics.Canvas;
 import com.haxepunk.graphics.Tilemap;
 import com.haxepunk.utils.Draw;
-import com.tpuquest.character.Boss;
-import com.tpuquest.character.Character;
-import com.tpuquest.character.Enemy;
-import com.tpuquest.character.Player;
+import com.tpuquest.entity.character.Boss;
+import com.tpuquest.entity.character.Character;
+import com.tpuquest.entity.character.Enemy;
+import com.tpuquest.entity.character.Player;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.*;
 import com.haxepunk.HXP;
-import com.tpuquest.character.Talker;
-import com.tpuquest.character.Trader;
-import com.tpuquest.helper.ChangeMap;
-import com.tpuquest.helper.Helper;
-import com.tpuquest.helper.ShowMessage;
-import com.tpuquest.helper.Spawn;
-import com.tpuquest.item.Coin;
-import com.tpuquest.item.Item;
-import com.tpuquest.item.Potion;
-import com.tpuquest.item.Weapon;
+import com.tpuquest.entity.character.Talker;
+import com.tpuquest.entity.character.Trader;
+import com.tpuquest.entity.helper.ChangeMap;
+import com.tpuquest.entity.helper.Helper;
+import com.tpuquest.entity.helper.ShowMessage;
+import com.tpuquest.entity.helper.Spawn;
+import com.tpuquest.entity.item.Coin;
+import com.tpuquest.entity.item.Item;
+import com.tpuquest.entity.item.Potion;
+import com.tpuquest.entity.item.Weapon;
 import com.tpuquest.utils.DrawText;
 import com.tpuquest.utils.PointXY;
-import com.tpuquest.world.Level;
-import com.tpuquest.world.Sticker;
-import com.tpuquest.world.Tile;
+import com.tpuquest.utils.Level;
+import com.tpuquest.entity.Sticker;
+import com.tpuquest.entity.Tile;
 import flash.display.Sprite;
 import flash.geom.Point;
 import com.haxepunk.utils.Key;
@@ -626,7 +626,7 @@ class LevelEditor extends Screen
 				switch(Type.getClassName(Type.getClass(currentHelper)))
 				{
 					case "com.tpuquest.helper.ChangeMap":
-						temp = new ChangeMap(new PointXY(tX, tY), currentHelper.helperName, true);
+						temp = new ChangeMap(new PointXY(tX, tY), cast(currentHelper, ChangeMap).nextMapPath, cast(currentHelper, ChangeMap).keepPlayer, cast(currentHelper, ChangeMap).instantly, currentHelper.helperName, true);
 					case "com.tpuquest.helper.ShowMessage":
 						temp = new ShowMessage(new PointXY(tX, tY), currentHelper.helperName, true);
 					case "com.tpuquest.helper.Spawn":
@@ -795,7 +795,15 @@ class LevelEditor extends Screen
 				case "message":
 					helpersList.push(new ShowMessage(new PointXY(0, 0), x.get("name"), true));
 				case "nextlevel":
-					helpersList.push(new ChangeMap(new PointXY(0, 0), x.get("name"), true));
+					var tCP = Std.parseInt(x.get("currentPlayer"));
+					var tCP_b = false;
+					if (tCP == 1)
+						tCP_b = true;
+					var tI = Std.parseInt(x.get("instantly"));
+					var tI_b = false;
+					if (tI == 1)
+						tI_b = true;
+					helpersList.push(new ChangeMap(new PointXY(0, 0), x.get("mapPath"), tCP_b, tI_b, x.get("name"), true));
 				case "spawn":
 					helpersList.push(new Spawn(new PointXY(0, 0), x.get("name"), true));
 			}

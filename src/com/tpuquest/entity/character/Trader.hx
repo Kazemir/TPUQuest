@@ -1,4 +1,4 @@
-package com.tpuquest.character;
+package com.tpuquest.entity.character;
 import com.tpuquest.screen.SettingsMenu;
 import com.haxepunk.graphics.Spritemap;
 import com.haxepunk.utils.Input;
@@ -7,7 +7,7 @@ import com.haxepunk.Sfx;
 import com.tpuquest.utils.PointXY;
 import flash.geom.Point;
 
-class Enemy extends Character
+class Trader extends Character
 {
 	public var life:Int;
 	
@@ -19,7 +19,7 @@ class Enemy extends Character
 	public var hasTouchTheGround(default, null) : Bool;
 	public var isDead:Bool;
 	
-	public function new(point:Point, spritePath:String, hp:Int = 50, name:String = "", behavior:Bool = true)
+	public function new(point:Point, spritePath:String, name:String = "", behavior:Bool = true) 
 	{
 		super(point, spritePath, name, behavior);
 		
@@ -35,7 +35,7 @@ class Enemy extends Character
 		sprite.x = -20;
 		
 		setHitbox(40, 80);
-		type = "enemy";
+		type = "trader";
 		graphic = sprite;
 
 		gravity.y = 1.8;
@@ -44,7 +44,7 @@ class Enemy extends Character
 		friction.x = 0.82; // floor friction
 		friction.y = 0.99; // wall friction
 		
-		life = hp;
+		life = 50;
 		isDead = false;
 	}
 	
@@ -87,7 +87,7 @@ class Enemy extends Character
 		if (behaviorOn)
 		{
 			acceleration.x = acceleration.y = 0;
- 
+	 
 			if (!_onGround)
 				hasTouchTheGround = false;
 			

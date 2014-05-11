@@ -1,4 +1,4 @@
-package com.tpuquest.helper;
+package com.tpuquest.entity.helper;
 
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Image;
