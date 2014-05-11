@@ -1,8 +1,8 @@
-package com.tpuquest.helper;
+package com.tpuquest.entity.helper;
 
 import com.tpuquest.utils.PointXY;
 
-class Spawn extends Helper
+class ShowMessage extends Helper
 {
 
 	public function new(point:PointXY, name:String="", show:Bool = false) 
@@ -11,4 +11,8 @@ class Spawn extends Helper
 		
 	}
 	
+	public override function update()
+	{
+		super.update();
+	}
 }

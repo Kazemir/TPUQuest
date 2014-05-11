@@ -1,22 +1,23 @@
-package com.tpuquest.world;
+package com.tpuquest.utils;
 import com.haxepunk.Graphic;
 import com.haxepunk.graphics.Graphiclist;
-import com.tpuquest.character.Boss;
-import com.tpuquest.character.Enemy;
-import com.tpuquest.character.Player;
-import com.tpuquest.character.Talker;
-import com.tpuquest.character.Trader;
-import com.tpuquest.helper.ChangeMap;
-import com.tpuquest.helper.Helper;
-import com.tpuquest.helper.ShowMessage;
-import com.tpuquest.helper.Spawn;
-import com.tpuquest.item.Coin;
-import com.tpuquest.item.Item;
-import com.tpuquest.character.Character;
-import com.tpuquest.item.Potion;
-import com.tpuquest.item.Weapon;
+import com.tpuquest.entity.character.Boss;
+import com.tpuquest.entity.character.Enemy;
+import com.tpuquest.entity.character.Player;
+import com.tpuquest.entity.character.Talker;
+import com.tpuquest.entity.character.Trader;
+import com.tpuquest.entity.helper.ChangeMap;
+import com.tpuquest.entity.helper.Helper;
+import com.tpuquest.entity.helper.ShowMessage;
+import com.tpuquest.entity.helper.Spawn;
+import com.tpuquest.entity.item.Coin;
+import com.tpuquest.entity.item.Item;
+import com.tpuquest.entity.character.Character;
+import com.tpuquest.entity.item.Potion;
+import com.tpuquest.entity.item.Weapon;
 import com.tpuquest.utils.PointXY;
-import com.tpuquest.world.Tile;
+import com.tpuquest.entity.Tile;
+import com.tpuquest.entity.Sticker;
 import com.haxepunk.Entity;
 import com.haxepunk.HXP;
 import flash.geom.Point;
@@ -176,7 +177,16 @@ class Level
 							case "message":
 								temp = new ShowMessage(WorldToScreen(new PointXY(tX, tY)), tN);
 							case "nextlevel":
-								temp = new ChangeMap(WorldToScreen(new PointXY(tX, tY)), tN);
+								var tMP = element.get("mapPath");
+								var tCP = Std.parseInt(element.get("currentPlayer"));
+								var tCP_b = false;
+								if (tCP == 1)
+									tCP_b = true;
+								var tI = Std.parseInt(element.get("instantly"));
+								var tI_b = false;
+								if (tI == 1)
+									tI_b = true;
+								temp = new ChangeMap(WorldToScreen(new PointXY(tX, tY)), tMP, tCP_b, tI_b, tN);
 							case "spawn":
 								temp = new Spawn(WorldToScreen(new PointXY(tX, tY)), tN);
 						}
@@ -316,6 +326,15 @@ class Level
 					temp.set("type", "message");
 				case "com.tpuquest.helper.ShowMessage":
 					temp.set("type", "nextlevel");
+					temp.set("mapPath", x.nextMapPath);
+					var tKP:Int = 0;
+					if (x.keepPlayer)
+						tKP = 1;
+					temp.set("currentPlayer", Std.string(tKP));
+					var tI:Int = 0;
+					if (x.instantly)
+						tI = 1;
+					temp.set("instantly", Std.string(tI));
 				case "com.tpuquest.helper.Spawn":
 					temp.set("type", "spawn");		
 			}

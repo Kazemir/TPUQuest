@@ -1,7 +1,7 @@
 ﻿<tiles>
 
-<element id="0" name="Flower" path="stickers/flower.png" behindCreatures="1" />
-<element id="1" name="Grave" path="stickers/grave.png" behindCreatures="0" />
-<element id="2" name="Grave2" path="stickers/grave2.png" behindCreatures="0" />
+<element id="0" name="Flower" path="graphics/stickers/flower.png" behindCreatures="1" />
+<element id="1" name="Grave" path="graphics/stickers/grave.png" behindCreatures="0" />
+<element id="2" name="Grave2" path="graphics/stickers/grave2.png" behindCreatures="0" />
 
 </tiles>

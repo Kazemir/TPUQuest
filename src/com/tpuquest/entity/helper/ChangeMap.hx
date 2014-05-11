@@ -1,4 +1,4 @@
-package com.tpuquest.helper;
+package com.tpuquest.entity.helper;
 
 import com.tpuquest.utils.PointXY;
 
@@ -11,8 +11,8 @@ class ChangeMap extends Helper
 	public function new(point:PointXY, mapPath:String, currentPlayer:Bool, instantly:Bool, name:String="", show:Bool = false) 
 	{
 		super(point, name, show);
-		nextMapPath = mapPath;
-		keepPlayer = currentPlayer;
+		this.nextMapPath = mapPath;
+		this.keepPlayer = currentPlayer;
 		this.instantly = instantly;
 	}
 	

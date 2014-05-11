@@ -1,7 +1,7 @@
-package com.tpuquest.character;
+package com.tpuquest.entity.character;
 import com.haxepunk.Sfx;
 import com.tpuquest.utils.PointXY;
-import com.tpuquest.world.Tile;
+import com.tpuquest.entity.Tile;
 import flash.geom.Point;
 import com.haxepunk.Entity;
 import com.haxepunk.HXP;

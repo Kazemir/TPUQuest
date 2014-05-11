@@ -1,4 +1,4 @@
-package com.tpuquest.character;
+package com.tpuquest.entity.character;
 import com.haxepunk.graphics.Spritemap;
 import com.haxepunk.utils.Input;
 import com.haxepunk.HXP;
