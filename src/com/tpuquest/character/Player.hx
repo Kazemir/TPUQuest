@@ -1,10 +1,16 @@
 package com.tpuquest.character;
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Spritemap;
+import com.haxepunk.Scene;
 import com.haxepunk.utils.Input;
 import com.haxepunk.HXP;
+import com.tpuquest.helper.ChangeMap;
+import com.tpuquest.helper.ShowMessage;
+import com.tpuquest.helper.Spawn;
 import com.tpuquest.item.Coin;
 import com.tpuquest.item.Potion;
+import com.tpuquest.screen.GameScreen;
+import com.tpuquest.screen.LevelEditor;
 import com.tpuquest.screen.Screen;
 import com.tpuquest.screen.SettingsMenu;
 import com.tpuquest.utils.PointXY;
@@ -24,6 +30,8 @@ class Player extends Character
 	public var isDead:Bool;
 	
 	public var controlOn:Bool;
+	
+	private var currentScene:GameScreen;
 	
 	public function new(point:Point, spritePath:String, hp:Int = 100, money:Int = 0, name:String = "", behavior:Bool = true) 
 	{
@@ -60,10 +68,17 @@ class Player extends Character
 		this.life = hp;
 		this.isDead = false;
 		this.controlOn = true;
+		
+		if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
+			currentScene = cast(scene, GameScreen);
+		//else
+		//	currentScene = cast(scene, LevelEditor);
+		//	currentScene = cast(scene, LevelEditor);
 	}
 
 	private function setAnimations()
 	{
+		//setHitbox(Std.int(sprite.scaledWidth), Std.int(sprite.scaledHeight));
 		if (!_onGround)
 		{
 			sprite.play("norm_jump");
@@ -178,7 +193,16 @@ class Player extends Character
 			ent = collide("helper", x, y);
 			if(ent != null)
 			{
-				
+				switch(Type.getClassName(Type.getClass(ent)))
+				{
+					case "com.tpuquest.helper.ChangeMap":
+						var cm:ChangeMap = cast(ent, ChangeMap);
+						currentScene.NextMap(cm.nextMapPath, cm.keepPlayer, cm.instantly);
+					case "com.tpuquest.helper.ShowMessage":
+						var sm:ShowMessage = cast(ent, ShowMessage);
+					case "com.tpuquest.helper.Spawn":
+						var sp:Spawn = cast(ent, Spawn);
+				}
 			}
 			
 			ent = collide("weapon", x, y);

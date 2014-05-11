@@ -12,6 +12,7 @@ import com.tpuquest.utils.DrawText;
 import com.tpuquest.utils.PointXY;
 import com.tpuquest.world.Level;
 import com.haxepunk.graphics.Image;
+import sys.io.File;
 
 class GameScreen extends Screen
 {
@@ -23,6 +24,11 @@ class GameScreen extends Screen
 
 	private var music:Sfx;
 	
+	private var cfgStartMap:String;
+	private var cfgContinueMap:String;
+	private var cfgStartHP:Int;
+	private var cfgStartMoney:Int;
+	
 	public function new() 
 	{
 		super();
@@ -30,8 +36,8 @@ class GameScreen extends Screen
 	
 	public override function begin()
 	{
-		lvl = Level.LoadLevel( "levels/fungus2.xml" );
-		addList( lvl.getEntities() );
+		LoadCFG();
+		LoadMap(cfgStartMap, true);
 		
 		var base = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
         base.color = lvl.bgcolor;
@@ -55,13 +61,9 @@ class GameScreen extends Screen
 		addGraphic(coinImg, -5, 670, 53);
 		addGraphic(heartImg, -5, 670, 23);
 		
-		add(new Helper(Level.WorldToScreen(new PointXY( -6, -3)), "ChangeMap", true));
+		//add(new Helper(Level.WorldToScreen(new PointXY( -6, -3)), "ChangeMap", true));
 		
-		for (x in lvl.characters)
-		{
-			if (Type.getClassName(Type.getClass(x)) == "com.tpuquest.character.Player")
-				player = x;
-		}
+
 		
 		var bg:Image = new Image("graphics/clouds2.png");
 		bg.scrollX = bg.scrollY = 0.05;
@@ -97,6 +99,48 @@ class GameScreen extends Screen
 		hpText.ChangeStr(t, false);
 		
 		super.update();
+	}
+	
+	private function LoadCFG()
+	{
+		var config:Xml = Xml.parse(File.getContent( "cfg/mainCFG.xml" )).firstElement();
+		
+		for (x in config.elements())
+		{
+			if (x.nodeName == "newgame")
+			{
+				cfgStartMap = x.get("mapPath");
+				cfgStartHP = Std.parseInt(x.get("startHP"));
+				cfgStartMoney = Std.parseInt(x.get("startMoney"));
+			}
+			if (x.nodeName == "continue")
+			{
+				cfgContinueMap = x.get("mapPath");
+			}
+		}
+	}
+	
+	public function LoadMap( mapPath:String, newPlayer:Bool = false )
+	{
+		lvl = Level.LoadLevel( mapPath );
+		addList( lvl.getEntities() );
+		
+		for (x in lvl.characters)
+		{
+			if (Type.getClassName(Type.getClass(x)) == "com.tpuquest.character.Player")
+				player = x;
+		}
+		
+		if (newPlayer)
+		{
+			player.life = cfgStartHP;
+			player.money = cfgStartMoney;
+		}
+	}
+	
+	public function NextMap( mapPath:String , newPlayer:Bool = false, instantly:Bool )
+	{
+		
 	}
 	
 }
