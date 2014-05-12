@@ -1,4 +1,4 @@
 TPUQuest
 ========
 
-Project of "Software Engineering"
+Team project in the discipline "Software Engineering"
