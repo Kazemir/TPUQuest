@@ -64,16 +64,14 @@ class GameScreen extends Screen
 		hpText.label.scrollX = hpText.label.scrollY = 0;
 		addGraphic(hpText.label, -5);
 		
-		var coinImg:Image = new Image("items/coin.png");
+		var coinImg:Image = new Image("graphics/items/coin.png");
 		coinImg.scrollX = coinImg.scrollY = 0;
 		
-		var heartImg:Image = new Image("items/heart.png");
+		var heartImg:Image = new Image("graphics/items/heart.png");
 		heartImg.scrollX = heartImg.scrollY = 0;
 		
 		addGraphic(coinImg, -5, 670, 53);
 		addGraphic(heartImg, -5, 670, 23);
-		
-		add(new ChangeMap(Level.WorldToScreen(new PointXY( -6, -3)), "levels/TEST.xml", true, false, "ChangeMap", true));
 		
 		var bg:Image = new Image("graphics/clouds2.png");
 		bg.scrollX = bg.scrollY = 0.05;
@@ -165,7 +163,7 @@ class GameScreen extends Screen
 			}
 		}
 		if (!isExsist)
-			player = new Player(new Point(0, 0), "graphics/character.png", 100, 0, "Me", true);
+			player = new Player(new Point(0, 0), "graphics/characters/character.png", 100, 0, "Me", true);
 		
 		if (newPlayer)
 		{

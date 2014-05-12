@@ -161,10 +161,10 @@ class LevelEditor extends Screen
 		addGraphic(hpText.label, -5);
 		hpText.label.visible = false;
 		
-		coinImg = new Image("items/coin.png");
+		coinImg = new Image("graphics/items/coin.png");
 		coinImg.scrollX = coinImg.scrollY = 0;
 		
-		heartImg = new Image("items/heart.png");
+		heartImg = new Image("graphics/items/heart.png");
 		heartImg.scrollX = heartImg.scrollY = 0;
 		
 		addGraphic(coinImg, -5, 670, 53);
