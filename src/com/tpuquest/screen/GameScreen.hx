@@ -156,7 +156,7 @@ class GameScreen extends Screen
 		var isExsist = false;
 		for (x in lvl.characters)
 		{
-			if (Type.getClassName(Type.getClass(x)) == "com.tpuquest.character.Player")
+			if (Type.getClassName(Type.getClass(x)) == "com.tpuquest.entity.character.Player")
 			{
 				player = x;
 				isExsist = true;

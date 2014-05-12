@@ -218,15 +218,15 @@ class Level
 			temp.set("y", Std.string(tY));
 			switch(Type.getClassName(Type.getClass(x)))
 			{
-				case "com.tpuquest.item.Coin":
+				case "com.tpuquest.entity.item.Coin":
 					temp.set("type", "coin");
 					temp.set("coinAmount", Std.string(x.coinAmount));
 					temp.set("path", x.imgPath);
-				case "com.tpuquest.item.Potion":
+				case "com.tpuquest.entity.item.Potion":
 					temp.set("type", "potion");
 					temp.set("potionAmount", Std.string(x.potionAmount));
 					temp.set("path", x.imgPath);
-				case "com.tpuquest.item.Weapon":
+				case "com.tpuquest.entity.item.Weapon":
 					temp.set("type", "weapon");
 					temp.set("weaponDamage", Std.string(x.weaponDamage));
 					temp.set("path", x.imgPath);
@@ -250,17 +250,17 @@ class Level
 			
 			switch(Type.getClassName(Type.getClass(x)))
 			{
-				case "com.tpuquest.character.Talker":
+				case "com.tpuquest.entity.character.Talker":
 					temp.set("type", "talker");
-				case "com.tpuquest.character.Trader":
+				case "com.tpuquest.entity.character.Trader":
 					temp.set("type", "trader");
-				case "com.tpuquest.character.Enemy":
+				case "com.tpuquest.entity.character.Enemy":
 					temp.set("type", "enemy");		
 					temp.set("hp", x.life);
-				case "com.tpuquest.character.Boss":
+				case "com.tpuquest.entity.character.Boss":
 					temp.set("type", "boss");	
 					temp.set("hp", x.life);
-				case "com.tpuquest.character.Player":
+				case "com.tpuquest.entity.character.Player":
 					temp.set("type", "player");
 					temp.set("hp", x.life);
 					temp.set("money", x.money);
@@ -322,9 +322,9 @@ class Level
 			
 			switch(Type.getClassName(Type.getClass(x)))
 			{
-				case "com.tpuquest.helper.ChangeMap":
+				case "com.tpuquest.entity.helper.ChangeMap":
 					temp.set("type", "message");
-				case "com.tpuquest.helper.ShowMessage":
+				case "com.tpuquest.entity.helper.ShowMessage":
 					temp.set("type", "nextlevel");
 					temp.set("mapPath", x.nextMapPath);
 					var tKP:Int = 0;
@@ -335,7 +335,7 @@ class Level
 					if (x.instantly)
 						tI = 1;
 					temp.set("instantly", Std.string(tI));
-				case "com.tpuquest.helper.Spawn":
+				case "com.tpuquest.entity.helper.Spawn":
 					temp.set("type", "spawn");		
 			}
 			helpersXML.addChild(temp);

@@ -1,7 +1,45 @@
 ﻿<tiles>
 
-<element id="0" name="Flower" path="graphics/stickers/flower.png" behindCreatures="1" />
-<element id="1" name="Grave" path="graphics/stickers/grave.png" behindCreatures="0" />
-<element id="2" name="Grave2" path="graphics/stickers/grave2.png" behindCreatures="0" />
+<element name="Flower" path="graphics/stickers/flower.png" behindCreatures="1" />
+<element name="Grave" path="graphics/stickers/grave.png" behindCreatures="0" />
+<element name="Grave2" path="graphics/stickers/grave2.png" behindCreatures="0" />
+<element name="Banner" path="graphics/stickers/banner.png" behindCreatures="1" />
+<element name="Banner2" path="graphics/stickers/banner2.png" behindCreatures="1" />
+<element name="bones" path="graphics/stickers/bones.png" behindCreatures="0" />
+<element name="crystal" path="graphics/stickers/crystal.png" behindCreatures="1" />
+<element name="fenceLeft" path="graphics/stickers/fenceLeft.png" behindCreatures="0" />
+<element name="fenceMiddle" path="graphics/stickers/fenceMiddle.png" behindCreatures="0" />
+<element name="fenceRight" path="graphics/stickers/fenceRight.png" behindCreatures="0" />
+<element name="fish" path="graphics/stickers/fish.png" behindCreatures="1" />
+<element name="fish2" path="graphics/stickers/fish2.png" behindCreatures="1" />
+<element name="flower" path="graphics/stickers/flower.png" behindCreatures="1" />
+<element name="flower2" path="graphics/stickers/flower2.png" behindCreatures="1" />
+<element name="flower3" path="graphics/stickers/flower3.png" behindCreatures="1" />
+<element name="flower4" path="graphics/stickers/flower4.png" behindCreatures="1" />
+<element name="flower5" path="graphics/stickers/flower5.png" behindCreatures="1" />
+<element name="grass" path="graphics/stickers/grass.png" behindCreatures="0" />
+<element name="grass2" path="graphics/stickers/grass2.png" behindCreatures="0" />
+<element name="grass3" path="graphics/stickers/grass3.png" behindCreatures="0" />
+<element name="grass4" path="graphics/stickers/grass4.png" behindCreatures="0" />
+<element name="grass5" path="graphics/stickers/grass5.png" behindCreatures="0" />
+<element name="grass6" path="graphics/stickers/grass6.png" behindCreatures="1" />
+<element name="grassyRock" path="graphics/stickers/grassyRock.png" behindCreatures="0" />
+<element name="grassyRock2" path="graphics/stickers/grassyRock2.png" behindCreatures="0" />
+<element name="light" path="graphics/stickers/light.png" behindCreatures="1" />
+<element name="mushrooms" path="graphics/stickers/mushrooms.png" behindCreatures="1" />
+<element name="mushrooms2" path="graphics/stickers/mushrooms2.png" behindCreatures="1" />
+<element name="onion" path="graphics/stickers/onion.png" behindCreatures="1" />
+<element name="picture" path="graphics/stickers/picture.png" behindCreatures="1" />
+<element name="picture2" path="graphics/stickers/picture2.png" behindCreatures="1" />
+<element name="plant" path="graphics/stickers/plant.png" behindCreatures="1" />
+<element name="rock" path="graphics/stickers/rock.png" behindCreatures="0" />
+<element name="rock2" path="graphics/stickers/rock2.png" behindCreatures="0" />
+<element name="shield" path="graphics/stickers/shield.png" behindCreatures="1" />
+<element name="window" path="graphics/stickers/window.png" behindCreatures="1" />
+<element name="window2" path="graphics/stickers/window2.png" behindCreatures="1" />
+<element name="window3" path="graphics/stickers/window3.png" behindCreatures="1" />
+<element name="window4" path="graphics/stickers/window4.png" behindCreatures="1" />
+<element name="window5" path="graphics/stickers/window5.png" behindCreatures="1" />
+<element name="windowFlowers" path="graphics/stickers/windowFlowers.png" behindCreatures="1" />
 
 </tiles>

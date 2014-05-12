@@ -17,6 +17,7 @@ import com.tpuquest.entity.helper.ChangeMap;
 import com.tpuquest.entity.helper.Helper;
 import com.tpuquest.entity.helper.ShowMessage;
 import com.tpuquest.entity.helper.Spawn;
+import com.tpuquest.entity.helper.WinGame;
 import com.tpuquest.entity.item.Coin;
 import com.tpuquest.entity.item.Item;
 import com.tpuquest.entity.item.Potion;
@@ -48,11 +49,13 @@ class LevelEditor extends Screen
 	private var coordsText:DrawText;
 	private var elementText:DrawText;
 	private var typeText:DrawText;
+	private var extraText:DrawText;
 	
 	private var cursorPos:PointXY;
 	private var currentPos:PointXY;
 	private var currentType:Int;
 	private var currentElement:Int;
+	private var currentExtra:Bool;
 	
 	private var cursor:Image;
 	private var settingsFrame:Image;
@@ -105,7 +108,7 @@ class LevelEditor extends Screen
         background.scrollX = background.scrollY = 0;
         addGraphic(background).layer = 100; 
 		
-		settingsFrame = Image.createRect(330, 85, 0x424242, 0.5);
+		settingsFrame = Image.createRect(330, 105, 0x424242, 0.5);
 		addGraphic(settingsFrame, 0, 0, 0);
 		settingsFrame.x = 18;
 		settingsFrame.y = 22;
@@ -116,7 +119,7 @@ class LevelEditor extends Screen
 		captionText = new DrawText("Level Editor", GameFont.Imperial, 16, 20, 20, 0xFFFFFF, false);
 		captionText.label.scrollX = captionText.label.scrollY = 0;
 		addGraphic(captionText.label);
-
+			
 		coordsText = new DrawText("Pos: 0, 0", GameFont.Imperial, 16, 20, 40, 0xFFFFFF, false);
 		coordsText.label.scrollX = coordsText.label.scrollY = 0;
 		addGraphic(coordsText.label);
@@ -129,10 +132,15 @@ class LevelEditor extends Screen
 		elementText.label.scrollX = elementText.label.scrollY = 0;
 		addGraphic(elementText.label);	
 		
+		extraText = new DrawText("Collidability: True", GameFont.Imperial, 16, 20, 100, 0xFFFFFF, false);
+		extraText.label.scrollX = extraText.label.scrollY = 0;
+		addGraphic(extraText.label);	
+		
 		currentPos = new PointXY(0, 0);
 		cursorPos = new PointXY(0, 0);
 		currentElement = 0;
 		currentType = 0;
+		currentExtra = false;
 		isCursorChanged = false;
 
 		addGraphic(cursor, 0, 0, 0);
@@ -218,6 +226,7 @@ class LevelEditor extends Screen
 		
 		var temp1:String = "";
 		var temp2:String = "";
+		var temp3:String = "";
 		currentTile.visible = false;
 		currentItem.visible = false;
 		currentCharacter.visible = false;
@@ -234,7 +243,10 @@ class LevelEditor extends Screen
 					elementMax = tilesList.length - 1;
 					currentTile = tilesList[currentElement];
 					temp2 = tilesList[currentElement].tileName;
-
+					
+					currentExtra = currentTile.collidability;
+					temp3 = "Collidability: " + Std.string(currentExtra);
+					
 					currentTile.x = 300 + HXP.camera.x;
 					currentTile.y = 60 + HXP.camera.y;
 					currentTile.visible = true;
@@ -287,6 +299,9 @@ class LevelEditor extends Screen
 					currentSticker = stickersList[currentElement];
 					temp2 = stickersList[currentElement].tileName;
 
+					currentExtra = currentSticker.behindCreatures;
+					temp3 = "Behind creatures: " + Std.string(currentExtra);
+					
 					currentSticker.x = 300 + HXP.camera.x;
 					currentSticker.y = 60 + HXP.camera.y;
 					currentSticker.visible = true;
@@ -314,6 +329,7 @@ class LevelEditor extends Screen
 		}
 		typeText.ChangeStr("Type: " + currentType + ", " + temp1, false);
 		elementText.ChangeStr("Tile: " + currentElement + ", " + temp2, false);
+		extraText.ChangeStr(temp3, false);
 	}
 	
 	public override function update()
@@ -327,17 +343,33 @@ class LevelEditor extends Screen
 				removeList( lvl.getEntities() );
 				HXP.camera.x = 0;
 				HXP.camera.y = 0;
-				isCursorChanged = true;
+				HXP.screen.x = 0;
+				HXP.screen.y = 0;
+				cursor.x = 360;
+				cursor.y = 280;
+				
+				//isCursorChanged = true;
 				cursorPos = new PointXY(0, 0);
 				currentPos = new PointXY(0, 0);
 				lvl = Level.LoadLevel("levels/testLevel.xml", false);
 				addList( lvl.getEntities() );
 				
+				currentElement = 0;
+				currentType = 0;
+				currentExtra = false;
+				isCursorChanged = false;
+		
 				coinImg.visible = false;
 				heartImg.visible = false;
 				coinsText.label.visible = false;
 				hpText.label.visible = false;
 				cursor.visible = true;
+			
+				add(currentCharacter);
+				add(currentHelper);
+				add(currentItem);
+				add(currentSticker);
+				add(currentTile);
 			}
 			
 			var t:String = Std.string(player.money);
@@ -433,15 +465,27 @@ class LevelEditor extends Screen
 				
 				for (x in lvl.characters)
 				{
-					if (Type.getClassName(Type.getClass(x)) == "com.tpuquest.character.Player")
+					if (Type.getClassName(Type.getClass(x)) == "com.tpuquest.entity.character.Player")
 						player = x;
 				}
+				
+				currentCharacter.visible = false;
+				currentHelper.visible = false;
+				currentItem.visible = false;
+				currentSticker.visible = false;
+				currentTile.visible = false;
 				
 				coinImg.visible = true;
 				heartImg.visible = true;
 				coinsText.label.visible = true;
 				hpText.label.visible = true;
 				cursor.visible = false;
+				
+				remove(currentCharacter);
+				remove(currentHelper);
+				remove(currentItem);
+				remove(currentSticker);
+				remove(currentTile);
 			}
 			if ((Input.pressed("up") || Screen.joyCheck("DPAD_UP")) && !Screen.overrideControlByBox)
 			{
@@ -498,6 +542,19 @@ class LevelEditor extends Screen
 				UpdateTools();
 			}
 			
+			if ((Input.pressed(Key.INSERT) || Screen.joyPressed("RS_BUTTON")) && !Screen.overrideControlByBox)
+			{
+				currentExtra = !currentExtra;
+				var temp3:String = "";
+				switch(currentType)
+				{
+					case 0: 
+						temp3 = "Collidability: " + Std.string(currentExtra);
+					case 3:
+						temp3 = "Behind creatures: " + Std.string(currentExtra);
+				}
+				extraText.ChangeStr(temp3, false);
+			}
 			updateText();
 		}
 
@@ -533,7 +590,7 @@ class LevelEditor extends Screen
 						remove(x);
 					}
 				}
-				var temp:Tile = new Tile(new PointXY(tX, tY), tilesList[currentElement].collidability, tilesList[currentElement].imgPath, tilesList[currentElement].soundPath, tilesList[currentElement].tileName);
+				var temp:Tile = new Tile(new PointXY(tX, tY), currentExtra, tilesList[currentElement].imgPath, tilesList[currentElement].soundPath, tilesList[currentElement].tileName);
 				lvl.tiles.push(temp);
 				add(temp);
 			}
@@ -552,11 +609,11 @@ class LevelEditor extends Screen
 				var temp:Item = new Item(new PointXY(0, 0));
 				switch(Type.getClassName(Type.getClass(currentItem)))
 				{
-					case "com.tpuquest.item.Coin":
+					case "com.tpuquest.entity.item.Coin":
 						temp = new Coin(new PointXY(tX -10, tY - 10), cast(currentItem, Coin).coinAmount, cast(currentItem, Coin).imgPath, cast(currentItem, Coin).name);
-					case "com.tpuquest.item.Potion":
+					case "com.tpuquest.entity.item.Potion":
 						temp = new Potion(new PointXY(tX -10, tY - 10), cast(currentItem, Potion).potionAmount, cast(currentItem, Potion).imgPath, cast(currentItem, Potion).name);
-					case "com.tpuquest.item.Weapon":
+					case "com.tpuquest.entity.item.Weapon":
 						temp = new Weapon(new PointXY(tX -10, tY - 10), cast(currentItem, Weapon).weaponDamage, cast(currentItem, Weapon).imgPath, cast(currentItem, Weapon).name);
 				}
 				lvl.items.push(temp);
@@ -577,15 +634,15 @@ class LevelEditor extends Screen
 				var temp:Character = new Character(new Point(0, 0), "");
 				switch(Type.getClassName(Type.getClass(currentCharacter)))
 				{
-					case "com.tpuquest.character.Talker":
+					case "com.tpuquest.entity.character.Talker":
 						temp = new Talker(new Point(tX, tY), currentCharacter.spritePath, currentCharacter.characterName);
-					case "com.tpuquest.character.Trader":
+					case "com.tpuquest.entity.character.Trader":
 						temp = new Trader(new Point(tX, tY), currentCharacter.spritePath, currentCharacter.characterName);
-					case "com.tpuquest.character.Enemy":
+					case "com.tpuquest.entity.character.Enemy":
 						temp = new Enemy(new Point(tX, tY), currentCharacter.spritePath, cast(currentCharacter, Enemy).life, currentCharacter.characterName);
-					case "com.tpuquest.character.Player":
+					case "com.tpuquest.entity.character.Player":
 						temp = new Player(new Point(tX, tY), currentCharacter.spritePath, cast(currentCharacter, Player).life, cast(currentCharacter, Player).money, currentCharacter.characterName);
-					case "com.tpuquest.character.Boss":
+					case "com.tpuquest.entity.character.Boss":
 						temp = new Boss(new Point(tX, tY), currentCharacter.spritePath, cast(currentCharacter, Boss).life, currentCharacter.characterName);
 				}
 				temp.behaviorOn = false;
@@ -604,7 +661,7 @@ class LevelEditor extends Screen
 						remove(x);
 					}
 				}
-				var temp:Sticker = new Sticker(new PointXY(tX, tY), stickersList[currentElement].behindCreatures, stickersList[currentElement].imgPath, stickersList[currentElement].tileName);
+				var temp:Sticker = new Sticker(new PointXY(tX, tY), currentExtra, stickersList[currentElement].imgPath, stickersList[currentElement].tileName);
 				lvl.stickers.push(temp);
 				
 				add(temp);
@@ -625,12 +682,14 @@ class LevelEditor extends Screen
 				
 				switch(Type.getClassName(Type.getClass(currentHelper)))
 				{
-					case "com.tpuquest.helper.ChangeMap":
+					case "com.tpuquest.entity.helper.ChangeMap":
 						temp = new ChangeMap(new PointXY(tX, tY), cast(currentHelper, ChangeMap).nextMapPath, cast(currentHelper, ChangeMap).keepPlayer, cast(currentHelper, ChangeMap).instantly, currentHelper.helperName, true);
-					case "com.tpuquest.helper.ShowMessage":
+					case "com.tpuquest.entity.helper.ShowMessage":
 						temp = new ShowMessage(new PointXY(tX, tY), currentHelper.helperName, true);
-					case "com.tpuquest.helper.Spawn":
+					case "com.tpuquest.entity.helper.Spawn":
 						temp = new Spawn(new PointXY(tX, tY), currentHelper.helperName, true);
+					case "com.tpuquest.entity.helper.WinGame":
+						temp = new WinGame(new PointXY(tX, tY), currentHelper.helperName, true);
 				}
 				
 				lvl.helpers.push(temp);
@@ -767,7 +826,9 @@ class LevelEditor extends Screen
 			if (tC == "1")
 				tCb = true;
 
-			tilesList.push(new Tile(new PointXY(0, 0), tCb, x.get("path"), x.get("soundPath"), x.get("name")));
+			var nameExtractor:String = x.get("path");
+			var nnaamme:String = nameExtractor.split("/")[nameExtractor.split("/").length - 1].split(".")[0];
+			tilesList.push(new Tile(new PointXY(0, 0), tCb, x.get("path"), x.get("soundPath"), nnaamme));
 		}
 		currentTile = tilesList[0];
 		currentTile.visible = true;
@@ -781,7 +842,10 @@ class LevelEditor extends Screen
 			if (tC == "1")
 				tCb = true;
 				
-			stickersList.push(new Sticker(new PointXY(0, 0), tCb, x.get("path"), x.get("name")));
+			var nameExtractor:String = x.get("path");
+			var nnaamme:String = nameExtractor.split("/")[nameExtractor.split("/").length - 1].split(".")[0];
+				
+			stickersList.push(new Sticker(new PointXY(0, 0), tCb, x.get("path"), nnaamme));
 		}
 		currentSticker = stickersList[0];
 		currentSticker.visible = false;
