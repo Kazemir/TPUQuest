@@ -1,8 +1,41 @@
 ﻿<tiles>
 
-<element id="0" name="Grass" path="graphics/tiles/grass.png" collidability="1" soundPath="audio/grass1.ogg" />
-<element id="1" name="GrassGround" path="graphics/tiles/grass_ground.png" collidability="1" soundPath="audio/grass1.ogg" />
-<element id="2" name="Ground" path="graphics/tiles/ground.png" collidability="1" soundPath="audio/gravel2.ogg" />
-<element id="3" name="wallGround" path="graphics/tiles/wall_ground.png" collidability="0" soundPath="" />
+<element path="graphics/tiles/grass.png" collidability="1" soundPath="audio/grass1.ogg" />
+<element path="graphics/tiles/grass_ground.png" collidability="1" soundPath="audio/grass1.ogg" />
+<element path="graphics/tiles/ground.png" collidability="1" soundPath="audio/gravel2.ogg" />
+<element path="graphics/tiles/wall_ground.png" collidability="0" soundPath="audio/gravel2.ogg" />
+
+<element path="graphics/tiles/brick.png" collidability="1" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/brickWall.png" collidability="0" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/brickWall2.png" collidability="0" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/brickWall3.png" collidability="0" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/brickWallDoorDown.png" collidability="0" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/brickWallDoorUp.png" collidability="0" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/brickWallLeft3.png" collidability="0" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/brickWallLeftDown1.png" collidability="0" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/brickWallLeftUp1.png" collidability="0" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/brickWallMiddleDown1.png" collidability="0" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/brickWallMiddleUp1.png" collidability="0" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/brickWallRightDown1.png" collidability="0" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/brickWallRightUp1.png" collidability="0" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/brickWallUp.png" collidability="0" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/marble.png" collidability="1" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/marble2.png" collidability="1" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/marble3.png" collidability="1" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/marble4.png" collidability="1" soundPath="audio/stone.ogg" />
+<element path="graphics/tiles/planksLeft.png" collidability="0" soundPath="audio/wood.ogg" />
+<element path="graphics/tiles/planksMiddle.png" collidability="0" soundPath="audio/wood.ogg" />
+<element path="graphics/tiles/planksRight.png" collidability="0" soundPath="audio/wood.ogg" />
+<element path="graphics/tiles/wood.png" collidability="0" soundPath="audio/wood.ogg" />
+<element path="graphics/tiles/wood2.png" collidability="0" soundPath="audio/wood.ogg" />
+<element path="graphics/tiles/wood3.png" collidability="0" soundPath="audio/wood.ogg" />
+<element path="graphics/tiles/wood4.png" collidability="0" soundPath="audio/wood.ogg" />
+<element path="graphics/tiles/wood5.png" collidability="0" soundPath="audio/wood.ogg" />
+<element path="graphics/tiles/woodenWallLeftDown.png" collidability="0" soundPath="audio/wood.ogg" />
+<element path="graphics/tiles/woodenWallLeftMiddle.png" collidability="0" soundPath="audio/wood.ogg" />
+<element path="graphics/tiles/woodenWallLeftUp.png" collidability="0" soundPath="audio/wood.ogg" />
+<element path="graphics/tiles/woodenWallMiddleDown.png" collidability="0" soundPath="audio/wood.ogg" />
+<element path="graphics/tiles/woodenWallMiddleUp.png" collidability="0" soundPath="audio/wood.ogg" />
+<element path="graphics/tiles/woodenWallMiddle.png" collidability="0" soundPath="audio/wood.ogg" />
 
 </tiles>
