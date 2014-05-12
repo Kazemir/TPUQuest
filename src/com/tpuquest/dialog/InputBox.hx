@@ -8,8 +8,6 @@ import flash.display.Graphics;
 import flash.display.Sprite;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
-import flash.text.TextField;
-import flash.text.TextFieldType;
 
 class InputBox extends Dialog
 {

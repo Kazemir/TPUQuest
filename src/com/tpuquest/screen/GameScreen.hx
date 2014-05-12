@@ -38,15 +38,23 @@ class GameScreen extends Screen
 	private var newPlayerFromHelper:Bool = false;
 	private var notInstantlyMapLoadingUp:Bool = true;
 	
-	public function new() 
+	private var backgroundImage:Image;
+	private var itsContinue:Bool;
+	
+	public function new(itsContinue:Bool) 
 	{
 		super();
+		
+		this.itsContinue = itsContinue;
 	}
 	
 	public override function begin()
 	{
 		LoadCFG();
-		LoadMap(cfgStartMap, true);
+		if(itsContinue)
+			LoadMap(cfgContinueMap, true);
+		else
+			LoadMap(cfgStartMap, true);
 		
 		background.scrollX = background.scrollY = 0;
         addGraphic(background).layer = 101;
@@ -73,10 +81,6 @@ class GameScreen extends Screen
 		addGraphic(coinImg, -5, 670, 53);
 		addGraphic(heartImg, -5, 670, 23);
 		
-		var bg:Image = new Image("graphics/clouds2.png");
-		bg.scrollX = bg.scrollY = 0.05;
-		addGraphic(bg, 100, -100);
-		
 		music = new Sfx("music/MightandMagic_Book1__ShopTheme.ogg");
 		music.play(SettingsMenu.musicVolume / 10, 0, true);
 		
@@ -89,6 +93,7 @@ class GameScreen extends Screen
 		{
 			music.stop();
 			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
+			lvl.SaveLevel(cfgContinueMap);
 			HXP.scene = new MainMenu();
 		}
 		
@@ -180,6 +185,13 @@ class GameScreen extends Screen
         background.color = lvl.bgcolor;
 		background.scrollX = background.scrollY = 0;
         addGraphic(background).layer = 101;
+		
+		if (lvl.bgPicturePath != null)
+		{
+			backgroundImage = new Image(lvl.bgPicturePath);
+			backgroundImage.scrollX = backgroundImage.scrollY = 0.05;
+			addGraphic(backgroundImage, 100, -100);
+		}
 	}
 	
 	public function NextMap( mapPath:String , currentPlayer:Bool = true, instantly:Bool )
