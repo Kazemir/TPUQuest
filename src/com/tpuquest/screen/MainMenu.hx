@@ -69,10 +69,10 @@ class MainMenu extends Screen
 		{
 			case 0:
 				menuMusic.stop();
-				HXP.scene = new GameScreen();
+				HXP.scene = new GameScreen(false);
 			case 1:
 				menuMusic.stop();
-				//HXP.scene = new MainScene();
+				HXP.scene = new GameScreen(true);
 			case 2:
 				HXP.scene = new SettingsMenu();
 			case 3:

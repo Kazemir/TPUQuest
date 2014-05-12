@@ -39,6 +39,7 @@ class Level
 	
 	public var bgcolor:Int;
 	public var levelName:String;
+	public var bgPicturePath:String;
 	
 	public static function ScreenToWorld(vector:PointXY):PointXY
 	{
@@ -73,6 +74,7 @@ class Level
 		cameraPos = new PointXY(0, 0);
 		bgcolor = 0x61c3ff;
 		levelName = name;
+		bgPicturePath = "";
 	}
 	
 	public static function LoadLevel( path:String, behavior:Bool = true ):Level
@@ -82,6 +84,7 @@ class Level
 		var lvlXML:Xml = Xml.parse(File.getContent( path )).firstElement();
 		lvl.bgcolor = Std.parseInt(lvlXML.get("bgcolor"));
 		lvl.levelName = lvlXML.get("name");
+		lvl.bgPicturePath = lvlXML.get("bgpicture");
 		for (section in lvlXML.elements())
 		{
 			switch( section.nodeName )
@@ -171,11 +174,11 @@ class Level
 						var tX = Std.parseInt(element.get("x"));
 						var tY = Std.parseInt(element.get("y"));
 						var tN = element.get("name");
-						var temp:Helper = new Helper(WorldToScreen(new PointXY(tX, tY)), tN);
+						var temp:Helper = new Helper(WorldToScreen(new PointXY(tX, tY)), tN, !behavior);
 						switch(element.get("type"))
 						{
 							case "message":
-								temp = new ShowMessage(WorldToScreen(new PointXY(tX, tY)), tN);
+								temp = new ShowMessage(WorldToScreen(new PointXY(tX, tY)), tN, !behavior);
 							case "nextlevel":
 								var tMP = element.get("mapPath");
 								var tCP = Std.parseInt(element.get("currentPlayer"));
@@ -186,9 +189,9 @@ class Level
 								var tI_b = false;
 								if (tI == 1)
 									tI_b = true;
-								temp = new ChangeMap(WorldToScreen(new PointXY(tX, tY)), tMP, tCP_b, tI_b, tN);
+								temp = new ChangeMap(WorldToScreen(new PointXY(tX, tY)), tMP, tCP_b, tI_b, tN, !behavior);
 							case "spawn":
-								temp = new Spawn(WorldToScreen(new PointXY(tX, tY)), tN);
+								temp = new Spawn(WorldToScreen(new PointXY(tX, tY)), tN, !behavior);
 						}
 						
 						lvl.helpers.push( temp );
@@ -204,6 +207,8 @@ class Level
 		var lvlXML:Xml = Xml.createElement( "level" );
 		lvlXML.set("bgcolor", Std.string(bgcolor));
 		lvlXML.set("name", levelName);
+		if(bgPicturePath != null && bgPicturePath != "")
+			lvlXML.set("bgpicture", bgPicturePath);
 
 		var itemsXML:Xml = Xml.createElement( "items" );
 		for (x in items)
@@ -322,9 +327,9 @@ class Level
 			
 			switch(Type.getClassName(Type.getClass(x)))
 			{
-				case "com.tpuquest.entity.helper.ChangeMap":
-					temp.set("type", "message");
 				case "com.tpuquest.entity.helper.ShowMessage":
+					temp.set("type", "message");
+				case "com.tpuquest.entity.helper.ChangeMap":
 					temp.set("type", "nextlevel");
 					temp.set("mapPath", x.nextMapPath);
 					var tKP:Int = 0;

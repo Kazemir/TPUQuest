@@ -195,12 +195,12 @@ class Player extends Character
 			{
 				switch(Type.getClassName(Type.getClass(ent)))
 				{
-					case "com.tpuquest.helper.ChangeMap":
+					case "com.tpuquest.entity.helper.ChangeMap":
 						var cm:ChangeMap = cast(ent, ChangeMap);
 						currentScene.NextMap(cm.nextMapPath, cm.keepPlayer, cm.instantly);
-					case "com.tpuquest.helper.ShowMessage":
+					case "com.tpuquest.entity.helper.ShowMessage":
 						var sm:ShowMessage = cast(ent, ShowMessage);
-					case "com.tpuquest.helper.Spawn":
+					case "com.tpuquest.entity.helper.Spawn":
 						var sp:Spawn = cast(ent, Spawn);
 				}
 			}

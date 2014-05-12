@@ -146,7 +146,7 @@ class LevelEditor extends Screen
 		addGraphic(cursor, 0, 0, 0);
 		cursor.x = 360;
 		cursor.y = 280;
-		
+
 		var helpFrame:Image = Image.createRect(HXP.width - 50, 25, 0x424242, 0.5);
 		helpFrame.scrollX = helpFrame.scrollY = 0;
 		addGraphic(helpFrame, -9, 25, HXP.height - 25);
@@ -341,6 +341,7 @@ class LevelEditor extends Screen
 				itsTestDude = false;
 				
 				removeList( lvl.getEntities() );
+				player.behaviorOn = false;
 				HXP.camera.x = 0;
 				HXP.camera.y = 0;
 				HXP.screen.x = 0;
@@ -348,7 +349,6 @@ class LevelEditor extends Screen
 				cursor.x = 360;
 				cursor.y = 280;
 				
-				//isCursorChanged = true;
 				cursorPos = new PointXY(0, 0);
 				currentPos = new PointXY(0, 0);
 				lvl = Level.LoadLevel("levels/testLevel.xml", false);

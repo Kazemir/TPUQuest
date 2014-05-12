@@ -1,6 +1,6 @@
 ﻿<cfg>
 
-<newgame mapPath="levels/fungus3.xml" startHP="100" startMoney="0" />
+<newgame mapPath="levels/home.xml" startHP="100" startMoney="0" />
 <continue mapPath="levels/continuePlay_map.xml" />
 
 </cfg>

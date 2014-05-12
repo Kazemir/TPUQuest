@@ -42,4 +42,7 @@
 <element name="window5" path="graphics/stickers/window5.png" behindCreatures="1" />
 <element name="windowFlowers" path="graphics/stickers/windowFlowers.png" behindCreatures="1" />
 
+<element path="graphics/stickers/doorDown.png" behindCreatures="1" />
+<element path="graphics/stickers/doorUp.png" behindCreatures="1" />
+
 </tiles>
