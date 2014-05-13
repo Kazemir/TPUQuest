@@ -85,10 +85,28 @@ class SettingsMenu extends Screen
 			case "ru":
 				textMenuElements[2].ChangeStr("Русский", false);
 			case "en":
-				textMenuElements[2].ChangeStr("English", false);
+				textMenuElements[2].ChangeStr("English", false);			
+			case "de":
+				textMenuElements[2].ChangeStr("Deutsch", false);			
+			case "ua":
+				textMenuElements[2].ChangeStr("Українська", false);
+			case "by":
+				textMenuElements[2].ChangeStr("Беларуская", false);
+			case "ga":
+				textMenuElements[2].ChangeStr("Gagauzça", false);
+			case "fr":
+				textMenuElements[2].ChangeStr("Le français", false);
+			case "es":
+				textMenuElements[2].ChangeStr("Español", false);
+			case "it":
+				textMenuElements[2].ChangeStr("Lingua italiana", false);
+			case "cz":
+				textMenuElements[2].ChangeStr("Český", false);
 		}
 		CLocals.set( language );
 	}
+	
+	private var currentLng:Int = 0;
 	
 	public function actionMenu(positive:Bool)
 	{
@@ -113,10 +131,20 @@ class SettingsMenu extends Screen
 				if (musicVolume > 10)
 					musicVolume = 10;
 			case 2:
-				if ( language == "ru" )
-					language = "en";
+				var a : Array<String> = ["ru", "en", "de", "ua", "by", "ga", "fr", "es", "it", "cz"];
+				currentLng = a.indexOf(SettingsMenu.language, 0);
+
+				if(positive)
+					currentLng++;
 				else
-					language = "ru";
+					currentLng--;
+					
+				if (currentLng < 0)
+					currentLng = a.length - 1;
+				if (currentLng > a.length - 1)
+					currentLng = 0;	
+					
+				SettingsMenu.language = a[currentLng];
 		}
 		MainMenu.menuMusic.volume = SettingsMenu.musicVolume / 10;
 		updateMenu();

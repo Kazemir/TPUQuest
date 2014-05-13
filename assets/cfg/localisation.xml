@@ -3,51 +3,147 @@
     <item id="mainMenu_newGame">
         <ru>Новая игра</ru>
         <en>New Game</en>
+	<de>Neues Spiel</de>
+	<ua>Нова гра</ua>
+	<by>Новая гульня</by>
+	<ga>Eni oyun</ga>
+	<fr>Nouveau jeu</fr>
+	<es>Nuevo juego</es>
+	<it>Nuova gioco</it>
+	<cz>Nová hra</cz>
     </item>
     <item id="mainMenu_continue">
         <ru>Продолжить игру</ru>
         <en>Continue Game</en>
+	<de>Spiel fortsetzen</de>
+	<ua>Продовжити гру</ua>
+	<by>Працягнуць гульню</by>
+	<ga>Новая гульня</ga>
+	<fr>Continuer jeu</fr>
+	<es>Continuar juego</es>
+	<it>Continuare gioco</it>
+	<cz>Pokračovat hru</cz>
     </item>
     <item id="mainMenu_settings">
         <ru>Настройки</ru>
         <en>Settings</en>
+	<de>Einstellungen</de>
+	<ua>Налаштування</ua>
+	<by>Налады</by>
+	<ga>Ayarlar</ga>
+	<fr>Paramètres</fr>
+	<es>Configuración</es>
+	<it>Impostazioni</it>
+	<cz>Nastavení</cz>
     </item>
     <item id="mainMenu_score">
         <ru>Рекорды</ru>
         <en>Score</en>
+	<de>Partitur</de>
+	<ua>Рекорди</ua>
+	<by>Рэкорды</by>
+	<ga>Rekordlar</ga>
+	<fr>Registres</fr>
+	<es>Registros</es>
+	<it>Records</it>
+	<cz>Záznamy</cz>
     </item>
     <item id="mainMenu_authors">
         <ru>Авторы</ru>
         <en>Authors</en>
+	<de>Autoren</de>
+	<ua>Автори</ua>
+	<by>Аўтары</by>
+	<ga>Avtorlar</ga>
+	<fr>Auteurs</fr>
+	<es>Autores</es>
+	<it>Autori</it>
+	<cz>Autoři</cz>
     </item>
     <item id="mainMenu_exit">
         <ru>Выход</ru>
         <en>Exit</en>
+	<de>Ausgang</de>
+	<ua>Вихід</ua>
+	<by>Выхад</by>
+	<ga>Çıkış</ga>
+	<fr>Sortie</fr>
+	<es>Salida</es>
+	<it>Uscita</it>
+	<cz>Výstup</cz>
     </item>
 
     <item id="authorsMenu_dasha">
         <ru>Горбунова Дарья aka "tommy-zola"</ru>
         <en>Gorbunova Dasha</en>
+	<de>Gorbunova Dasha</de>
+	<ua>Горбунова Дарина</ua>
+	<by>Горбунова Дар'я</by>
+	<ga>Gorbunova Dasha</ga>
+	<fr>Gorbunova Daria</fr>
+	<es>Gorbunova Daria</es>
+	<it>Gorbunova Daria</it>
+	<cz>Gorbunova Daria</cz>
     </item>
     <item id="authorsMenu_vova">
         <ru>Кержин Владимир aka "konzhut"</ru>
         <en>Kerzhin Vladimir</en>
+	<de>Kerzhin Vladimir</de>
+	<ua>Кержін Володимир</ua>
+	<by>Кержин Уладзімір</by>
+	<ga>Kerzhin Vladimir</ga>
+	<fr>Kerzhin Vladimir</fr>
+	<es>Kerzhin Vladimir</es>
+	<it>Kerzhin Vladimir</it>
+	<cz>Kerzhin Vladimir</cz>
     </item>
     <item id="authorsMenu_misha">
         <ru>Четвериков Михаил aka "kazemir"</ru>
         <en>Chetverikov Mikhail</en>
+	<de>Chetverikov Mikhail</de>
+	<ua>Четвериков Михайло</ua>
+	<by>Чацверыкоў Міхаіл</by>
+	<ga>Chetverikov Mikhail</ga>
+	<fr>Chetverikov Mikhail</fr>
+	<es>Chetverikov Mikhail</es>
+	<it>Chetverikov Mikhail</it>
+	<cz>Chetverikov Mikhail</cz>
     </item>
 
     <item id="settingsMenu_sound">
         <ru>Звук:</ru>
         <en>Sound:</en>
+	<de>Klang:</de>
+	<ua>Звук:</ua>
+	<by>Гук:</by>
+	<ga>Signal:</ga>
+	<fr>Son:</fr>
+	<es>Sonido:</es>
+	<it>Suono:</it>
+	<cz>Zvuk:</cz>
     </item>
     <item id="settingsMenu_music">
         <ru>Музыка:</ru>
         <en>Music:</en>
+	<de>Musik:</de>
+	<ua>Музика:</ua>
+	<by>Музыка:</by>
+	<ga>Muzika:</ga>
+	<fr>Musique:</fr>
+	<es>Música:</es>
+	<it>Musica:</it>
+	<cz>Hudba:</cz>
     </item>
     <item id="settingsMenu_language">
         <ru>Язык:</ru>
         <en>Language:</en>
+	<de>Sprache:</de>
+	<ua>Мова:</ua>
+	<by>Мова:</by>
+	<ga>Dil:</ga>
+	<fr>Langue:</fr>
+	<es>Lenguaje:</es>
+	<it>Lingua:</it>
+	<cz>Jazyk:</cz>
     </item>
 </data>
