@@ -39,12 +39,26 @@ class Screen extends Scene
 		super.begin();
 	}
 	
+	public function ifBoxUpdate()
+	{
+		
+	}
+	public function ifNotBoxUpdate()
+	{
+		
+	}
+	
 	public override function update()
 	{
 		super.update();
 		
 		prevHatX = Input.joystick(0).hat.x;
 		prevHatY = Input.joystick(0).hat.y;
+		
+		if (overrideControlByBox)
+			ifBoxUpdate();
+		else
+			ifNotBoxUpdate();
 	}
 	
 	private function ExitGame()
