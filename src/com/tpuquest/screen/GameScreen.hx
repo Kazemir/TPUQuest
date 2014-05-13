@@ -1,5 +1,6 @@
 package com.tpuquest.screen;
 import com.haxepunk.Sfx;
+import com.tpuquest.dialog.TradeBox;
 import com.tpuquest.entity.character.Enemy;
 import com.tpuquest.entity.character.Player;
 import com.tpuquest.entity.character.Talker;
@@ -8,6 +9,7 @@ import com.haxepunk.HXP;
 import com.tpuquest.entity.helper.ChangeMap;
 import com.tpuquest.entity.helper.Helper;
 import com.tpuquest.entity.item.Coin;
+import com.tpuquest.entity.item.Item;
 import com.tpuquest.entity.item.Potion;
 import com.tpuquest.utils.DrawText;
 import com.tpuquest.utils.PointXY;
@@ -83,6 +85,13 @@ class GameScreen extends Screen
 		
 		music = new Sfx("music/MightandMagic_Book1__ShopTheme.ogg");
 		music.play(SettingsMenu.musicVolume / 10, 0, true);
+		
+		var traderList:Array<Item> = new Array<Item>();
+		traderList.push(new Potion(new PointXY(0, 0), 25, "graphics/items/potion_red_small.png"));
+		traderList.push(new Potion(new PointXY(0, 0), 50, "graphics/items/potion_red.png"));
+		traderList.push(new Potion(new PointXY(0, 0), 100, "graphics/items/heart.png"));
+		var t:TradeBox = new TradeBox(HXP.halfWidth, HXP.halfHeight, "Шота у Ашота", traderList);
+		add(t);
 		
 		super.begin();
 	}

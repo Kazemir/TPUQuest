@@ -2,6 +2,7 @@ package com.tpuquest.screen;
 import com.haxepunk.HXP;
 import com.haxepunk.Sfx;
 import com.haxepunk.utils.Input;
+import com.tpuquest.dialog.TradeBox;
 import com.tpuquest.utils.DrawText;
 import flash.geom.Point;
 import flash.system.System;

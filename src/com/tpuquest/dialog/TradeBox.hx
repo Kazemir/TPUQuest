@@ -1,6 +1,7 @@
 package com.tpuquest.dialog;
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Stamp;
+import com.haxepunk.utils.Input;
 import com.tpuquest.utils.DrawText;
 import com.tpuquest.screen.Screen;
 import com.tpuquest.entity.item.Item;
@@ -13,9 +14,17 @@ class TradeBox extends Dialog
 	public var captionText:DrawText;
 	public var traderList:Array<Item>;
 	
-	public function new(x:Float, y:Float) 
+	private static var minW:Int = 300;
+	private var goodsCount:Int;
+	private var currentGood:Int;
+	
+	public function new(x:Float, y:Float, caption:String, goods:Array<Item>) 
 	{
 		super(x, y);
+		
+		traderList = goods;
+		goodsCount = goods.length;
+		currentGood = 0;
 		
 		var sprite:Sprite = new Sprite();
         var g:Graphics = sprite.graphics;
@@ -36,10 +45,26 @@ class TradeBox extends Dialog
 	{
 		super.update();
 		
-		if (Input.pressed("action") || Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("A") || Screen.joyPressed("B"))
+		if ( Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B"))
 		{
 			Screen.overrideControlByBox = false;
 			this.scene.remove(this);
+		}
+		if (Input.pressed("action") || Screen.joyPressed("A"))
+		{
+			
+		}
+		if (Input.pressed("left") || Screen.joyCheck("DPAD_LEFT"))
+		{
+			currentGood++;
+			if (currentGood > goodsCount - 1)
+				currentGood = 0;
+		}
+		if (Input.pressed("right") || Screen.joyCheck("DPAD_RIGHT"))
+		{
+			currentGood--;
+			if (currentGood < 0)
+				currentGood = goodsCount - 1;
 		}
 	}
 }
