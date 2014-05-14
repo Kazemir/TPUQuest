@@ -86,7 +86,6 @@ class Player extends Character
 	
 	private function setAnimations()
 	{
-		//setHitbox(Std.int(sprite.scaledWidth), Std.int(sprite.scaledHeight));
 		if (attack)
 		{
 			sprite.play("norm_jump");

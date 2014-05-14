@@ -1,16 +1,28 @@
 package com.tpuquest.entity.character;
+import com.haxepunk.Entity;
 import com.haxepunk.graphics.Spritemap;
+import com.haxepunk.Scene;
 import com.haxepunk.utils.Input;
 import com.haxepunk.HXP;
+import com.tpuquest.entity.helper.ChangeMap;
+import com.tpuquest.entity.helper.ShowMessage;
+import com.tpuquest.entity.helper.Spawn;
+import com.tpuquest.entity.item.Coin;
+import com.tpuquest.entity.item.Potion;
+import com.tpuquest.entity.item.Weapon;
+import com.tpuquest.screen.GameScreen;
+import com.tpuquest.screen.LevelEditor;
+import com.tpuquest.screen.Screen;
+import com.tpuquest.screen.SettingsMenu;
 import com.tpuquest.utils.PointXY;
 import flash.geom.Point;
+import com.haxepunk.Sfx;
 
 class Boss extends Character
 {
 	public var life:Int;
 		
 	private var sprite:Spritemap;
-	private var prevPoint:Point;
 	
 	public static inline var kMoveSpeed:Float = 5;
 	public static inline var kJumpForce:Int = 22;
@@ -23,18 +35,17 @@ class Boss extends Character
 		
 		hasTouchTheGround = true;
 		
-		/*sprite = new Spritemap(spritePath, 32, 32);
-		sprite.add("norm_idle", [8, 8, 8, 9], 3, true);
-		sprite.add("norm_walk", [0, 1, 2, 3, 4, 5, 6, 7], 19, true);
-		sprite.add("norm_jump", [10]);
-		sprite.play("norm_idle");
+		sprite = new Spritemap("graphics/characters/gremlins.png", 30, 30);
+		sprite.add("idle", [5, 5, 5, 5, 5, 15], 3, true);
+		sprite.add("walk", [6, 17, 7, 16], 19, true);
+		sprite.play("idle");
 		
-		sprite.scale = 2.5;
-		sprite.x = -20;*/
+		sprite.scale = 5.0;
+		sprite.x = -20;
 		
 		setHitbox(40, 80);
 		type = "boss";
-		//graphic = sprite;
+		graphic = sprite;
 
 		gravity.y = 1.8;
 		maxVelocity.y = kJumpForce;
@@ -67,23 +78,13 @@ class Boss extends Character
 				sound.play(SettingsMenu.soudVolume / 10);
 			}
 			
-			prevPoint = new Point(x, y);
-			
 			super.update();
-			
-			if(collide("solid", x, y) != null)
-			{
-				x = prevPoint.x;
-				y = prevPoint.y;
-			}
 			
 			if (life <= 0)
 			{
 				life = 0;
 				isDead = true;
 			}
-			if (life > 100)
-				life = 100;
 			
 			setAnimations();
 		}

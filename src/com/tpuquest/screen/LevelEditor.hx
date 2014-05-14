@@ -93,6 +93,7 @@ class LevelEditor extends Screen
 	public function new() 
 	{
 		super();
+
 	}
 	
 	public override function begin()
@@ -100,10 +101,10 @@ class LevelEditor extends Screen
 		super.begin();
 
 		LoadElementLists();
-		
+
 		lvl = new Level();
 		addList( lvl.getEntities() );
-		
+
 		background = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
         background.color = lvl.bgcolor;
         background.scrollX = background.scrollY = 0;
@@ -651,7 +652,7 @@ class LevelEditor extends Screen
 					case "com.tpuquest.entity.character.Trader":
 						temp = new Trader(new Point(tX, tY), currentCharacter.spritePath, currentCharacter.characterName);
 					case "com.tpuquest.entity.character.Enemy":
-						temp = new Enemy(new Point(tX, tY), currentCharacter.spritePath, cast(currentCharacter, Enemy).life, currentCharacter.characterName);
+						temp = new Enemy(new Point(tX, tY), currentCharacter.spritePath, cast(currentCharacter, Enemy).life, cast(currentCharacter, Enemy).enemyType,  currentCharacter.characterName);
 					case "com.tpuquest.entity.character.Player":
 						temp = new Player(new Point(tX, tY), currentCharacter.spritePath, cast(currentCharacter, Player).life, cast(currentCharacter, Player).money, currentCharacter.characterName);
 					case "com.tpuquest.entity.character.Boss":
@@ -818,7 +819,7 @@ class LevelEditor extends Screen
 				case "trader":
 					charactersList.push(new Trader(new Point(0, 0), x.get("spritePath"), x.get("name"), false));
 				case "enemy":
-					charactersList.push(new Enemy(new Point(0, 0), x.get("spritePath"), Std.parseInt(x.get("hp")), x.get("name"), false));
+					charactersList.push(new Enemy(new Point(0, 0), x.get("spritePath"), Std.parseInt(x.get("hp")), Std.parseInt(x.get("enemyType")), x.get("name"), false));
 				case "player":
 					charactersList.push(new Player(new Point(0, 0), x.get("spritePath"), Std.parseInt(x.get("hp")), Std.parseInt(x.get("money")), x.get("name"), false));
 				case "boss":

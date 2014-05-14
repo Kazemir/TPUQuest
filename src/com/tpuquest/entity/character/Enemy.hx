@@ -10,31 +10,40 @@ import flash.geom.Point;
 class Enemy extends Character
 {
 	public var life:Int;
+	public var enemyType:Int; //0 - кусака, 1 - набигака
 	
 	private var sprite:Spritemap;
-	private var prevPoint:Point;
 	
 	public static inline var kMoveSpeed:Float = 5;
 	public static inline var kJumpForce:Int = 22;
 	public var hasTouchTheGround(default, null) : Bool;
 	public var isDead:Bool;
 	
-	public function new(point:Point, spritePath:String, hp:Int = 50, name:String = "", behavior:Bool = true)
+	public function new(point:Point, spritePath:String, hp:Int = 50, enemyType:Int = 0, name:String = "", behavior:Bool = true)
 	{
 		super(point, spritePath, name, behavior);
 		
 		hasTouchTheGround = true;
+		this.enemyType = enemyType;
 		
-		sprite = new Spritemap(spritePath, 32, 32);
-		sprite.add("norm_idle", [8, 8, 8, 9], 3, true);
-		sprite.add("norm_walk", [0, 1, 2, 3, 4, 5, 6, 7], 19, true);
-		sprite.add("norm_jump", [10]);
-		sprite.play("norm_idle");
+		sprite = new Spritemap("graphics/characters/gremlins.png", 30, 30);
+		switch(enemyType)
+		{
+			case 0:
+				sprite.add("idle", [3, 4], 2, true);
+				sprite.play("idle");
+				sprite.scale = 2.5;
+				sprite.x = -20;
+				setHitbox(40, 80);
+			case 1:
+				sprite.add("idle", [0, 0, 0, 0, 0, 10], 3, true);
+				sprite.add("walk", [1, 12, 2, 11], 19, true);
+				sprite.play("idle");
+				sprite.scale = 2.5;
+				sprite.x = -20;
+				setHitbox(40, 80);
+		}
 		
-		sprite.scale = 2.5;
-		sprite.x = -20;
-		
-		setHitbox(40, 80);
 		type = "enemy";
 		graphic = sprite;
 
@@ -52,7 +61,7 @@ class Enemy extends Character
 	{
 		if (!_onGround)
 		{
-			sprite.play("norm_jump");
+			sprite.play("walk");
 			
 			if (velocity.x < 0) // left
 			{
@@ -65,11 +74,11 @@ class Enemy extends Character
 		}
 		else if (velocity.x == 0)
 		{
-			sprite.play("norm_idle");
+			sprite.play("idle");
 		}
 		else
 		{
-			sprite.play("norm_walk");
+			sprite.play("walk");
 
 			if (velocity.x < 0) // left
 			{
@@ -97,16 +106,8 @@ class Enemy extends Character
 				var sound = new Sfx("audio/player_soundJumpStop.wav");
 				sound.play(SettingsMenu.soudVolume / 10);
 			}
-
-			prevPoint = new Point(x, y);
 			
 			super.update();
-			
-			if(collide("solid", x, y) != null)
-			{
-				x = prevPoint.x;
-				y = prevPoint.y;
-			}
 			
 			if (life <= 0)
 			{
@@ -116,7 +117,8 @@ class Enemy extends Character
 			if (life > 100)
 				life = 100;
 			
-			setAnimations();
+			if(enemyType == 1)
+				setAnimations();
 		}
 	}
 }
