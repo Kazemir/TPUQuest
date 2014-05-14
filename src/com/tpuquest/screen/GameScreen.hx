@@ -33,15 +33,17 @@ class GameScreen extends Screen
 	private var cfgStartHP:Int;
 	private var cfgStartMoney:Int;
 	
-	private var background:Image = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
-	private var notInstantlyMapLoadingEngage:Bool = false;
-	private var notInstantlyMapLoadingBackground:Image = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
-	private var mapPathFromHelper:String = "";
-	private var newPlayerFromHelper:Bool = false;
-	private var notInstantlyMapLoadingUp:Bool = true;
+	private var background:Image;
+	private var notInstantlyMapLoadingEngage:Bool;
+	private var notInstantlyMapLoadingBackground:Image;
+	private var mapPathFromHelper:String;
+	private var newPlayerFromHelper:Bool;
+	private var notInstantlyMapLoadingUp:Bool;
 	
 	private var backgroundImage:Image;
 	private var itsContinue:Bool;
+	
+	private var weaponImg:Image;
 	
 	public function new(itsContinue:Bool) 
 	{
@@ -52,11 +54,20 @@ class GameScreen extends Screen
 	
 	public override function begin()
 	{
+		background = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
+		notInstantlyMapLoadingBackground = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 0);
+
+		notInstantlyMapLoadingUp = true;
+		newPlayerFromHelper = false;
+		mapPathFromHelper = "";
+		notInstantlyMapLoadingEngage = false;
+		
 		LoadCFG();
 		if(itsContinue)
 			LoadMap(cfgContinueMap, true);
 		else
 			LoadMap(cfgStartMap, true);
+		
 		
 		background.scrollX = background.scrollY = 0;
         addGraphic(background).layer = 101;
@@ -64,7 +75,8 @@ class GameScreen extends Screen
 		notInstantlyMapLoadingBackground.scrollX = notInstantlyMapLoadingBackground.scrollY = 0;
         notInstantlyMapLoadingBackground.color = 0;
 		notInstantlyMapLoadingBackground.alpha = 0;
-		addGraphic(notInstantlyMapLoadingBackground).layer = -101; 
+		notInstantlyMapLoadingBackground.visible = false;
+		addGraphic(notInstantlyMapLoadingBackground, -101);
 		
 		coinsText = new DrawText("000", GameFont.PixelCyr, 20, 700, 50, 0xFFFFFF, false);
 		coinsText.label.scrollX = coinsText.label.scrollY = 0;
@@ -80,8 +92,13 @@ class GameScreen extends Screen
 		var heartImg:Image = new Image("graphics/items/heart.png");
 		heartImg.scrollX = heartImg.scrollY = 0;
 		
+		weaponImg = new Image("graphics/items/sword.png");
+		weaponImg.scrollX = weaponImg.scrollY = 0;
+		weaponImg.visible = false;
+		
 		addGraphic(coinImg, -5, 670, 53);
 		addGraphic(heartImg, -5, 670, 23);
+		addGraphic(weaponImg, -5, 640, 43);
 		
 		music = new Sfx("music/MightandMagic_Book1__ShopTheme.ogg");
 		music.play(SettingsMenu.musicVolume / 10, 0, true);
@@ -90,15 +107,15 @@ class GameScreen extends Screen
 		traderList.push(new Potion(new PointXY(0, 0), 25, "graphics/items/potion_red_small.png"));
 		traderList.push(new Potion(new PointXY(0, 0), 50, "graphics/items/potion_red.png"));
 		traderList.push(new Potion(new PointXY(0, 0), 100, "graphics/items/heart.png"));
-		var t:TradeBox = new TradeBox(HXP.halfWidth, HXP.halfHeight, "Шота у Ашота", traderList, [5, 10, 20]);
-		add(t);
+		//var t:TradeBox = new TradeBox(HXP.halfWidth, HXP.halfHeight, "Шота у Ашота", traderList, [5, 10, 20]);
+		//add(t);
 		
 		super.begin();
 	}
 	
 	public override function update()
 	{
-		if ((Input.pressed("esc") || Screen.joyPressed("BACK")) && !Screen.overrideControlByBox && !notInstantlyMapLoadingEngage)
+		if ((Input.pressed("esc") || Screen.joyPressed("BACK")) && !Screen.overrideControlByBox)// && !notInstantlyMapLoadingEngage)
 		{
 			music.stop();
 			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
@@ -120,8 +137,14 @@ class GameScreen extends Screen
 		}
 		hpText.ChangeStr(t, false);
 		
+		if (player.weaponized)
+			weaponImg.visible = true;
+		else
+			weaponImg.visible = false;
+		
 		if (notInstantlyMapLoadingEngage)
 		{
+			notInstantlyMapLoadingBackground.visible = true;
 			if (notInstantlyMapLoadingUp)
 			{
 				notInstantlyMapLoadingBackground.alpha += 0.05;
@@ -137,7 +160,10 @@ class GameScreen extends Screen
 			{
 				notInstantlyMapLoadingBackground.alpha -= 0.05;
 				if (notInstantlyMapLoadingBackground.alpha == 0)
+				{
 					notInstantlyMapLoadingEngage = false;
+					notInstantlyMapLoadingBackground.visible = false;
+				}
 			}
 		}
 		else
@@ -195,10 +221,12 @@ class GameScreen extends Screen
 		background.scrollX = background.scrollY = 0;
         addGraphic(background).layer = 101;
 		
+		backgroundImage.visible = false;
 		if (lvl.bgPicturePath != null)
 		{
 			backgroundImage = new Image(lvl.bgPicturePath);
 			backgroundImage.scrollX = backgroundImage.scrollY = 0.05;
+			backgroundImage.visible = true;
 			addGraphic(backgroundImage, 100, -100);
 		}
 	}

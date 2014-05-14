@@ -88,6 +88,7 @@ class LevelEditor extends Screen
 	private var player:Player;
 	private var coinImg:Image;
 	private var heartImg:Image;
+	private var weaponImg:Image;
 	
 	public function new() 
 	{
@@ -175,8 +176,13 @@ class LevelEditor extends Screen
 		heartImg = new Image("graphics/items/heart.png");
 		heartImg.scrollX = heartImg.scrollY = 0;
 		
+		weaponImg = new Image("graphics/items/sword.png");
+		weaponImg.scrollX = weaponImg.scrollY = 0;
+		weaponImg.visible = false;
+		
 		addGraphic(coinImg, -5, 670, 53);
 		addGraphic(heartImg, -5, 670, 23);
+		addGraphic(weaponImg, -5, 640, 43);
 		
 		coinImg.visible = false;
 		heartImg.visible = false;
@@ -361,6 +367,7 @@ class LevelEditor extends Screen
 		
 				coinImg.visible = false;
 				heartImg.visible = false;
+				weaponImg.visible = false;
 				coinsText.label.visible = false;
 				hpText.label.visible = false;
 				cursor.visible = true;
@@ -385,6 +392,11 @@ class LevelEditor extends Screen
 				t = "0" + t;
 			}
 			hpText.ChangeStr(t, false);
+			
+			if (player.weaponized)
+				weaponImg.visible = true;
+			else
+				weaponImg.visible = false;
 		}
 		else
 		{
@@ -424,10 +436,10 @@ class LevelEditor extends Screen
 			}
 			if (Input.pressed(Key.F1) && !Screen.overrideControlByBox)
 			{
-				iB = new InputBox(HXP.halfWidth, HXP.halfHeight, "Загрузка карты", "Список карт:\n------------\n");
-				add(iB);
-				waitingForAnswer = true;
-				typeOfAnswer = 1;
+				removeList( lvl.getEntities() );
+				lvl = new Level();
+				addList( lvl.getEntities() );
+				background.color = lvl.bgcolor;
 			}
 			if (Input.pressed(Key.F2) && !Screen.overrideControlByBox)
 			{

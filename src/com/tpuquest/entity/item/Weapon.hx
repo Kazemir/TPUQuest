@@ -5,7 +5,6 @@ import com.tpuquest.utils.PointXY;
 class Weapon extends Item
 {
 	public var weaponDamage:Int;
-	//public var weaponType:Int;
 	public var imgPath:String;
 	
 	public function new(point:PointXY, damage:Int, imgPath:String, itemName:String = "")
@@ -23,8 +22,6 @@ class Weapon extends Item
 		graphic = img;
 		this.imgPath = imgPath;
 		itemPoint = point;
-		
-		
 	}
 	
 	public override function update()

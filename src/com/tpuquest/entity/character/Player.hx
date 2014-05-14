@@ -9,6 +9,7 @@ import com.tpuquest.entity.helper.ShowMessage;
 import com.tpuquest.entity.helper.Spawn;
 import com.tpuquest.entity.item.Coin;
 import com.tpuquest.entity.item.Potion;
+import com.tpuquest.entity.item.Weapon;
 import com.tpuquest.screen.GameScreen;
 import com.tpuquest.screen.LevelEditor;
 import com.tpuquest.screen.Screen;
@@ -21,17 +22,21 @@ class Player extends Character
 {
 	public var money:Int;
 	public var life:Int;
+	public var weaponDamage:Int;
+	public var weaponized:Bool;
 	
 	private var sprite:Spritemap;
 
-	private static inline var kMoveSpeed:Float = 5;
-	private static inline var kJumpForce:Int = 23;
+	public static inline var kMoveSpeed:Float = 5;
+	public static inline var kJumpForce:Int = 23;
 	public var hasTouchTheGround(default, null) : Bool;
 	public var isDead:Bool;
+	private var attack:Bool;
 	
 	public var controlOn:Bool;
 	
 	private var currentScene:GameScreen;
+	
 	
 	public function new(point:Point, spritePath:String, hp:Int = 100, money:Int = 0, name:String = "", behavior:Bool = true) 
 	{
@@ -68,6 +73,9 @@ class Player extends Character
 		this.life = hp;
 		this.isDead = false;
 		this.controlOn = true;
+		
+		weaponized = false;
+		weaponDamage = 0;
 	}
 	
 	public override function added()
@@ -79,7 +87,11 @@ class Player extends Character
 	private function setAnimations()
 	{
 		//setHitbox(Std.int(sprite.scaledWidth), Std.int(sprite.scaledHeight));
-		if (!_onGround)
+		if (attack)
+		{
+			sprite.play("norm_jump");
+		}
+		else if (!_onGround)
 		{
 			sprite.play("norm_jump");
 			
@@ -145,6 +157,10 @@ class Player extends Character
 					var sound = new Sfx("audio/player_soundJumpStart.wav");
 					sound.play(SettingsMenu.soudVolume / 10);
 				}
+				if ((Input.pressed("action") || Screen.joyCheck("A")) && weaponized)
+				{
+					attack = true;
+				}
 			}
 			
 			super.update();
@@ -175,19 +191,35 @@ class Player extends Character
 			if(ent != null)
 			{
 				var cn:Enemy = cast(ent, Enemy);
-				controlOn = false;
-				var sound = new Sfx("audio/player_soundPain.wav");
-				sound.play(SettingsMenu.soudVolume / 10);
-				life -= 5;
-				if (velocity.x < 0)
+				if (attack)
 				{
-					velocity.x = kMoveSpeed * 5;
+					cn.life -= weaponDamage;
+					if (cn.velocity.x < 0)
+					{
+						cn.velocity.x = Enemy.kMoveSpeed * 5;
+					}
+					else
+					{
+						cn.velocity.x = -Enemy.kMoveSpeed * 5;
+					}
+					cn.velocity.y = -HXP.sign(cn.gravity.y) * Enemy.kJumpForce * 0.5;
 				}
 				else
 				{
-					velocity.x = -kMoveSpeed * 5;
+					controlOn = false;
+					var sound = new Sfx("audio/player_soundPain.wav");
+					sound.play(SettingsMenu.soudVolume / 10);
+					life -= 5;
+					if (velocity.x < 0)
+					{
+						velocity.x = kMoveSpeed * 5;
+					}
+					else
+					{
+						velocity.x = -kMoveSpeed * 5;
+					}
+					velocity.y = -HXP.sign(gravity.y) * kJumpForce * 0.5;
 				}
-				velocity.y = -HXP.sign(gravity.y) * kJumpForce * 0.5;
 			}
 			
 			ent = collide("helper", x, y);
@@ -208,11 +240,17 @@ class Player extends Character
 			ent = collide("weapon", x, y);
 			if(ent != null)
 			{
-				
+				var wp:Weapon = cast(ent, Weapon);
+				weaponized = true;
+				weaponDamage = wp.weaponDamage;
+				scene.remove(wp);
+				var sound = new Sfx("audio/player_soundSword.wav");
+				sound.play(SettingsMenu.soudVolume / 10);
 			}
 			
 			if (life <= 0)
 			{
+				life = 0;
 				isDead = true;
 				controlOn = false;
 				behaviorOn = false;

@@ -9,18 +9,83 @@ class Boss extends Character
 {
 	public var life:Int;
 		
+	private var sprite:Spritemap;
+	private var prevPoint:Point;
+	
+	public static inline var kMoveSpeed:Float = 5;
+	public static inline var kJumpForce:Int = 22;
+	public var hasTouchTheGround(default, null) : Bool;
+	public var isDead:Bool;
+	
 	public function new(point:Point, spritePath:String, hp:Int = 100, name:String = "", behavior:Bool = true) 
 	{
 		super(point, spritePath, name, behavior);
 		
+		hasTouchTheGround = true;
+		
+		/*sprite = new Spritemap(spritePath, 32, 32);
+		sprite.add("norm_idle", [8, 8, 8, 9], 3, true);
+		sprite.add("norm_walk", [0, 1, 2, 3, 4, 5, 6, 7], 19, true);
+		sprite.add("norm_jump", [10]);
+		sprite.play("norm_idle");
+		
+		sprite.scale = 2.5;
+		sprite.x = -20;*/
+		
+		setHitbox(40, 80);
+		type = "boss";
+		//graphic = sprite;
+
+		gravity.y = 1.8;
+		maxVelocity.y = kJumpForce;
+		maxVelocity.x = 5;//kMoveSpeed * 4;
+		friction.x = 0.82; // floor friction
+		friction.y = 0.99; // wall friction
+		
 		this.life = hp;
+		isDead = false;
+	}
+	
+	private function setAnimations()
+	{
+		
 	}
 	
 	public override function update()
 	{
 		if (behaviorOn)
 		{
+			acceleration.x = acceleration.y = 0;
+ 
+			if (!_onGround)
+				hasTouchTheGround = false;
+			
+			if ( !hasTouchTheGround && _onGround) 
+			{
+				hasTouchTheGround = true;
+				var sound = new Sfx("audio/player_soundJumpStop.wav");
+				sound.play(SettingsMenu.soudVolume / 10);
+			}
+			
+			prevPoint = new Point(x, y);
+			
 			super.update();
+			
+			if(collide("solid", x, y) != null)
+			{
+				x = prevPoint.x;
+				y = prevPoint.y;
+			}
+			
+			if (life <= 0)
+			{
+				life = 0;
+				isDead = true;
+			}
+			if (life > 100)
+				life = 100;
+			
+			setAnimations();
 		}
 	}
 }

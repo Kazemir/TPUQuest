@@ -14,8 +14,8 @@ class Enemy extends Character
 	private var sprite:Spritemap;
 	private var prevPoint:Point;
 	
-	private static inline var kMoveSpeed:Float = 5;
-	private static inline var kJumpForce:Int = 22;
+	public static inline var kMoveSpeed:Float = 5;
+	public static inline var kJumpForce:Int = 22;
 	public var hasTouchTheGround(default, null) : Bool;
 	public var isDead:Bool;
 	
@@ -108,8 +108,11 @@ class Enemy extends Character
 				y = prevPoint.y;
 			}
 			
-			if(life <= 0)
+			if (life <= 0)
+			{
+				life = 0;
 				isDead = true;
+			}
 			if (life > 100)
 				life = 100;
 			
