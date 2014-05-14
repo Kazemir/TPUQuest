@@ -1,37 +1,42 @@
 package com.tpuquest.entity.character;
-import com.tpuquest.screen.SettingsMenu;
+import com.haxepunk.Entity;
 import com.haxepunk.graphics.Spritemap;
+import com.haxepunk.Scene;
 import com.haxepunk.utils.Input;
 import com.haxepunk.HXP;
-import com.haxepunk.Sfx;
+import com.tpuquest.entity.helper.ChangeMap;
+import com.tpuquest.entity.helper.ShowMessage;
+import com.tpuquest.entity.helper.Spawn;
+import com.tpuquest.entity.item.Coin;
+import com.tpuquest.entity.item.Potion;
+import com.tpuquest.entity.item.Weapon;
+import com.tpuquest.screen.GameScreen;
+import com.tpuquest.screen.LevelEditor;
+import com.tpuquest.screen.Screen;
+import com.tpuquest.screen.SettingsMenu;
 import com.tpuquest.utils.PointXY;
 import flash.geom.Point;
+import com.haxepunk.Sfx;
 
 class Talker extends Character
 {
-	public var life:Int;
-	
 	private var sprite:Spritemap;
-	private var prevPoint:Point;
+	public var speaking:Bool;
 	
 	private static inline var kMoveSpeed:Float = 5;
 	private static inline var kJumpForce:Int = 22;
-	public var hasTouchTheGround(default, null) : Bool;
-	public var isDead:Bool;
 	
 	public function new(point:Point, spritePath:String, name:String = "", behavior:Bool = true) 
 	{
 		super(point, spritePath, name, behavior);
 		
-		hasTouchTheGround = true;
+		sprite = new Spritemap("graphics/characters/wily.png", 55, 45);
+		sprite.add("idle", [17, 18], 2, true);
+		sprite.add("point", [15, 15, 15, 15, 7, 9, 11, 12], 5, false);
+		sprite.add("speak", [14, 15], 4, true);
+		sprite.play("idle");
 		
-		sprite = new Spritemap(spritePath, 32, 32);
-		sprite.add("norm_idle", [8, 8, 8, 9], 3, true);
-		sprite.add("norm_walk", [0, 1, 2, 3, 4, 5, 6, 7], 19, true);
-		sprite.add("norm_jump", [10]);
-		sprite.play("norm_idle");
-		
-		sprite.scale = 2.5;
+		sprite.scale = 1.7;
 		sprite.x = -20;
 		
 		setHitbox(40, 80);
@@ -44,41 +49,31 @@ class Talker extends Character
 		friction.x = 0.82; // floor friction
 		friction.y = 0.99; // wall friction
 		
-		life = 50;
-		isDead = false;
+		speaking = false;
 	}
 	
 	private function setAnimations()
 	{
-		if (!_onGround)
+		if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
 		{
-			sprite.play("norm_jump");
-			
-			if (velocity.x < 0) // left
+			var pl:Player = cast(scene, GameScreen).player;
+
+			if (pl.distanceFrom(this, false) < 6*40)
 			{
-				sprite.flipped = true;
+				sprite.play("point");
+				if (pl.x < this.x)
+					sprite.flipped = false;
+				else
+					sprite.flipped = true;
 			}
-			else if(velocity.x > 0) // right
+			else
 			{
-				sprite.flipped = false;	
+				sprite.play("idle");
 			}
-		}
-		else if (velocity.x == 0)
-		{
-			sprite.play("norm_idle");
 		}
 		else
 		{
-			sprite.play("norm_walk");
-
-			if (velocity.x < 0) // left
-			{
-				sprite.flipped = true;
-			}
-			else // right
-			{
-				sprite.flipped = false;	
-			}
+			sprite.play("point");
 		}
 	}
 	
@@ -87,62 +82,13 @@ class Talker extends Character
 		if (behaviorOn)
 		{
 			acceleration.x = acceleration.y = 0;
-	 
-			if (!_onGround)
-				hasTouchTheGround = false;
-			
-			if ( !hasTouchTheGround && _onGround) 
-			{
-				hasTouchTheGround = true;
-				var sound = new Sfx("audio/player_soundJumpStop.wav");
-				sound.play(SettingsMenu.soudVolume / 10);
-			}
-
-			prevPoint = new Point(x, y);
 			
 			super.update();
 			
-			if(collide("solid", x, y) != null)
-			{
-				x = prevPoint.x;
-				y = prevPoint.y;
-			}
-			
-			if(life <= 0)
-				isDead = true;
-			if (life > 100)
-				life = 100;
-			
-			setAnimations();
+			if (speaking)
+				sprite.play("speak");
+			else
+				setAnimations();
 		}
 	}
 }
-/*
-
-	underText = new DrawText(nm, GameFont.Imperial, 18, x+sprite.width*8, y-sprite.height*8-15, 0, true);
-
-	public override function update()
-	{
-		velocity = 0;
-
-		counter += HXP.elapsed;
-		
-		if (counter > 2*scale)
-			velocity = 2 * 5*scale;
-		if (counter > 4*scale)
-			velocity = 0;
-		if (counter > 6*scale)
-			velocity = -2 * 5*scale;
-		if (counter > 8*scale)
-		{
-			velocity = 0;	
-			counter = 0;
-		}
-		
-		moveBy(velocity, 0);
- 
-		setAnimations();
-		
-		underText.ChangePoint(x+sprite.width*4, y-10);
-		super.update();
-	}*/

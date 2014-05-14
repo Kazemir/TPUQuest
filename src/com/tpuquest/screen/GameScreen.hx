@@ -24,7 +24,7 @@ class GameScreen extends Screen
 	
 	private var coinsText:DrawText;
 	private var hpText:DrawText;
-	private var player:Player;
+	public var player:Player;
 
 	private var music:Sfx;
 	
@@ -50,6 +50,7 @@ class GameScreen extends Screen
 		super();
 		
 		this.itsContinue = itsContinue;
+
 	}
 	
 	public override function begin()
@@ -61,8 +62,9 @@ class GameScreen extends Screen
 		newPlayerFromHelper = false;
 		mapPathFromHelper = "";
 		notInstantlyMapLoadingEngage = false;
-		
+
 		LoadCFG();
+		
 		if(itsContinue)
 			LoadMap(cfgContinueMap, true);
 		else
@@ -191,6 +193,7 @@ class GameScreen extends Screen
 	
 	public function LoadMap( mapPath:String, newPlayer:Bool = false )
 	{
+
 		lvl = Level.LoadLevel( mapPath );
 		
 		var isExsist = false;
@@ -213,15 +216,17 @@ class GameScreen extends Screen
 		
 		HXP.camera.x = player.x - 400 + 20;
 		HXP.camera.y = player.y - 300 + 40;
-				
-		addList( lvl.getEntities() );
 		
+		addList( lvl.getEntities() );
+
 		background = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
         background.color = lvl.bgcolor;
 		background.scrollX = background.scrollY = 0;
         addGraphic(background).layer = 101;
-		
-		backgroundImage.visible = false;
+
+		if (backgroundImage != null)
+			backgroundImage.visible = false;
+
 		if (lvl.bgPicturePath != null)
 		{
 			backgroundImage = new Image(lvl.bgPicturePath);
@@ -229,6 +234,7 @@ class GameScreen extends Screen
 			backgroundImage.visible = true;
 			addGraphic(backgroundImage, 100, -100);
 		}
+
 	}
 	
 	public function NextMap( mapPath:String , currentPlayer:Bool = true, instantly:Bool )

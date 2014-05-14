@@ -127,7 +127,8 @@ class Level
 								temp = new Trader(WorldToScreenFloat(new Point(tX, tY)), tS, tN, behavior);
 							case "enemy":
 								var tHP = Std.parseInt(element.get("hp"));
-								temp = new Enemy(WorldToScreenFloat(new Point(tX, tY)), tS, tHP, tN, behavior);
+								var tET = Std.parseInt(element.get("enemyType"));
+								temp = new Enemy(WorldToScreenFloat(new Point(tX, tY)), tS, tHP, tET, tN, behavior);
 							case "player":
 								var tHP = Std.parseInt(element.get("hp"));
 								var tM = Std.parseInt(element.get("money"));
@@ -262,6 +263,7 @@ class Level
 				case "com.tpuquest.entity.character.Enemy":
 					temp.set("type", "enemy");		
 					temp.set("hp", x.life);
+					temp.set("enemyType", x.enemyType);
 				case "com.tpuquest.entity.character.Boss":
 					temp.set("type", "boss");	
 					temp.set("hp", x.life);

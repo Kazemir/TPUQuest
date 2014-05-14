@@ -1,9 +1,10 @@
 ﻿<tiles>
 
-<element id="0" name="Player" type="player" spritePath="graphics/characters/character.png" hp="100" money="0" />
-<element id="1" name="Enemy" type="enemy" spritePath="graphics/characters/character.png" hp="100" />
-<element id="2" name="Talker" type="talker" spritePath="graphics/characters/character.png" />
-<element id="3" name="Trader" type="trader" spritePath="graphics/characters/character.png" />
-<element id="4" name="Boss" type="boss" spritePath="graphics/characters/character.png" hp="100" />
+<element name="Player" type="player" spritePath="graphics/characters/character.png" hp="100" money="0" />
+<element name="Biter" type="enemy" spritePath="graphics/characters/gremlins.png" hp="100" enemyType="0" />
+<element name="Goblin" type="enemy" spritePath="graphics/characters/gremlins.png" hp="100" enemyType="1" />
+<element name="Talker" type="talker" spritePath="graphics/characters/wily.png" />
+<element name="Trader" type="trader" spritePath="graphics/characters/lukegg.png" />
+<element name="Boss" type="boss" spritePath="graphics/characters/gremlins.png" hp="500" />
 
 </tiles>
