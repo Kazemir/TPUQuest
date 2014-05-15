@@ -7,6 +7,7 @@ import com.haxepunk.HXP;
 import com.tpuquest.entity.helper.ChangeMap;
 import com.tpuquest.entity.helper.ShowMessage;
 import com.tpuquest.entity.helper.Spawn;
+import com.tpuquest.entity.helper.Teleporter;
 import com.tpuquest.entity.item.Coin;
 import com.tpuquest.entity.item.Potion;
 import com.tpuquest.entity.item.Weapon;
@@ -37,8 +38,7 @@ class Player extends Character
 	
 	private var currentScene:GameScreen;
 	
-	
-	public function new(point:Point, spritePath:String, hp:Int = 100, money:Int = 0, name:String = "", behavior:Bool = true) 
+	public function new(point:Point, spritePath:String, hp:Int = 100, money:Int = 0, weaponDamage:Int = 0, name:String = "", behavior:Bool = true) 
 	{
 		super(point, spritePath, name, behavior);
 		
@@ -65,7 +65,7 @@ class Player extends Character
 
 		gravity.y = 1.8;
 		maxVelocity.y = kJumpForce;
-		maxVelocity.x = 5;//kMoveSpeed * 4;
+		maxVelocity.x = kMoveSpeed;//kMoveSpeed * 4;
 		friction.x = 0.82; // floor friction
 		friction.y = 0.99; // wall friction
 		
@@ -74,8 +74,16 @@ class Player extends Character
 		this.isDead = false;
 		this.controlOn = true;
 		
-		weaponized = false;
-		weaponDamage = 0;
+		if (weaponDamage > 0)
+		{
+			weaponized = true;
+			this.weaponDamage = weaponDamage;
+		}
+		else
+		{
+			weaponized = false;
+			this.weaponDamage = 0;
+		}
 	}
 	
 	public override function added()
@@ -170,6 +178,10 @@ class Player extends Character
 				var cn:Coin = cast(ent, Coin);
 				money += cn.coinAmount;
 				scene.remove(cn);
+				
+				if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
+					currentScene.lvl.items.remove(cn);
+				
 				var sound = new Sfx("audio/player_soundMoney.wav");
 				sound.play(SettingsMenu.soudVolume / 10);
 			}
@@ -180,28 +192,33 @@ class Player extends Character
 				var cn:Potion = cast(ent, Potion);
 				life += cn.potionAmount;
 				scene.remove(cn);
+				
+				if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
+					currentScene.lvl.items.remove(cn);
+				
 				var sound = new Sfx("audio/player_soundPotion.wav");
 				sound.play(SettingsMenu.soudVolume / 10);
 			}
 			
 			ent = collide("enemy", x, y);
-			if (ent == null)
-				ent = collide("boss", x, y);
 			if(ent != null)
 			{
 				var cn:Enemy = cast(ent, Enemy);
 				if (attack)
 				{
 					cn.life -= weaponDamage;
-					if (cn.velocity.x < 0)
+					if (cn.enemyType == 1)
 					{
-						cn.velocity.x = Enemy.kMoveSpeed * 5;
+						if (cn.velocity.x < 0)
+						{
+							cn.velocity.x = Enemy.kMoveSpeed * 5;
+						}
+						else
+						{
+							cn.velocity.x = -Enemy.kMoveSpeed * 5;
+						}
+						cn.velocity.y = -HXP.sign(cn.gravity.y) * Enemy.kJumpForce * 0.5;
 					}
-					else
-					{
-						cn.velocity.x = -Enemy.kMoveSpeed * 5;
-					}
-					cn.velocity.y = -HXP.sign(cn.gravity.y) * Enemy.kJumpForce * 0.5;
 				}
 				else
 				{
@@ -221,6 +238,16 @@ class Player extends Character
 				}
 			}
 			
+			ent = collide("boss", x, y);
+			if (ent != null)
+			{
+				var cn:Boss = cast(ent, Boss);
+				if (attack)
+				{
+					cn.life -= weaponDamage;
+				}
+			}
+			
 			ent = collide("helper", x, y);
 			if(ent != null)
 			{
@@ -233,6 +260,16 @@ class Player extends Character
 						var sm:ShowMessage = cast(ent, ShowMessage);
 					case "com.tpuquest.entity.helper.Spawn":
 						var sp:Spawn = cast(ent, Spawn);
+					case "com.tpuquest.entity.helper.Teleporter":
+						var tp:Teleporter = cast(ent, Teleporter);
+						//controlOn = false;
+						behaviorOn = false;
+						this.set_x(tp.x);
+						this.set_y(tp.y);
+						behaviorOn = true;
+						//this.
+						//controlOn = true;
+						//moveBy(tp.x - x, tp.y - y);
 				}
 			}
 			
@@ -243,6 +280,10 @@ class Player extends Character
 				weaponized = true;
 				weaponDamage = wp.weaponDamage;
 				scene.remove(wp);
+				
+				if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
+					currentScene.lvl.items.remove(wp);
+				
 				var sound = new Sfx("audio/player_soundSword.wav");
 				sound.play(SettingsMenu.soudVolume / 10);
 			}

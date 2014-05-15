@@ -36,10 +36,10 @@ class Talker extends Character
 		sprite.add("speak", [14, 15], 4, true);
 		sprite.play("idle");
 		
-		sprite.scale = 1.7;
-		sprite.x = -20;
+		sprite.scale = 1.8;
+		//sprite.x = -49.5;
 		
-		setHitbox(40, 80);
+		setHitbox(99, 81);
 		type = "talker";
 		graphic = sprite;
 
@@ -50,6 +50,8 @@ class Talker extends Character
 		friction.y = 0.99; // wall friction
 		
 		speaking = false;
+		
+		layer = 1;
 	}
 	
 	private function setAnimations()
@@ -73,7 +75,7 @@ class Talker extends Character
 		}
 		else
 		{
-			sprite.play("point");
+			sprite.play("idle");
 		}
 	}
 	

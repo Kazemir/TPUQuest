@@ -17,10 +17,11 @@ import com.tpuquest.utils.Level;
 import com.haxepunk.graphics.Image;
 import flash.geom.Point;
 import sys.io.File;
+import sys.FileSystem;
 
 class GameScreen extends Screen
 {
-	private var lvl:Level;
+	public var lvl:Level;
 	
 	private var coinsText:DrawText;
 	private var hpText:DrawText;
@@ -66,10 +67,26 @@ class GameScreen extends Screen
 		LoadCFG();
 		
 		if(itsContinue)
-			LoadMap(cfgContinueMap, true);
+			LoadMap(cfgContinueMap, false);
 		else
+		{
+			if(!FileSystem.exists("levels/continue/"))
+					FileSystem.createDirectory("levels/continue/");
+			
+			for (x in FileSystem.readDirectory("levels/continue/"))
+			{
+				try
+				{
+					FileSystem.deleteFile("levels/continue/" + x);
+				}
+				catch(msg:String)
+				{
+					trace(msg);
+				}
+			}
+			
 			LoadMap(cfgStartMap, true);
-		
+		}
 		
 		background.scrollX = background.scrollY = 0;
         addGraphic(background).layer = 101;
@@ -100,7 +117,7 @@ class GameScreen extends Screen
 		
 		addGraphic(coinImg, -5, 670, 53);
 		addGraphic(heartImg, -5, 670, 23);
-		addGraphic(weaponImg, -5, 640, 43);
+		addGraphic(weaponImg, -5, 685, 90);
 		
 		music = new Sfx("music/MightandMagic_Book1__ShopTheme.ogg");
 		music.play(SettingsMenu.musicVolume / 10, 0, true);
@@ -152,9 +169,14 @@ class GameScreen extends Screen
 				notInstantlyMapLoadingBackground.alpha += 0.05;
 				if (notInstantlyMapLoadingBackground.alpha == 1)
 				{
-					player = null;
 					removeList( lvl.getEntities() );
-					LoadMap(mapPathFromHelper, !newPlayerFromHelper);
+					
+					lvl.SaveLevel("levels/continue/" + lvl.levelName + ".xml");
+					if (FileSystem.exists("levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]))
+						LoadMap("levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1], false);
+					else
+						LoadMap(mapPathFromHelper, false);
+					
 					notInstantlyMapLoadingUp = false;
 				}
 			}
@@ -197,16 +219,26 @@ class GameScreen extends Screen
 		lvl = Level.LoadLevel( mapPath );
 		
 		var isExsist = false;
+
 		for (x in lvl.characters)
 		{
 			if (Type.getClassName(Type.getClass(x)) == "com.tpuquest.entity.character.Player")
 			{
-				player = x;
+				var player2:Player = x;
+				if (player != null)
+				{
+					player2.weaponized = player.weaponized;
+					player2.weaponDamage = player.weaponDamage;
+					player2.life = player.life;
+					player2.money = player.money;
+				}
+				player = player2;
+
 				isExsist = true;
 			}
 		}
 		if (!isExsist)
-			player = new Player(new Point(0, 0), "graphics/characters/character.png", 100, 0, "Me", true);
+			player = new Player(new Point(0, 0), "graphics/characters/character.png", 100, 0, 0, "Me", true);
 		
 		if (newPlayer)
 		{
@@ -233,6 +265,8 @@ class GameScreen extends Screen
 			backgroundImage.scrollX = backgroundImage.scrollY = 0.05;
 			backgroundImage.visible = true;
 			addGraphic(backgroundImage, 100, -100);
+			if(lvl.bgPicturePath == "graphics/caspian.jpg")
+				backgroundImage.y = -200;
 		}
 
 	}
@@ -242,7 +276,11 @@ class GameScreen extends Screen
 		if (instantly)
 		{
 			removeList( lvl.getEntities() );
-			LoadMap(mapPath, !currentPlayer);
+			lvl.SaveLevel("levels/continue/" + lvl.levelName + ".xml");
+			if (FileSystem.exists("levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1]))
+				LoadMap("levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1], !currentPlayer);
+			else
+				LoadMap(mapPath, !currentPlayer);
 		}
 		else
 		{

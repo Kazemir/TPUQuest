@@ -1,4 +1,5 @@
 package com.tpuquest.entity.character;
+import com.tpuquest.screen.GameScreen;
 import com.tpuquest.screen.SettingsMenu;
 import com.haxepunk.graphics.Spritemap;
 import com.haxepunk.utils.Input;
@@ -15,7 +16,7 @@ class Enemy extends Character
 	private var sprite:Spritemap;
 	
 	public static inline var kMoveSpeed:Float = 5;
-	public static inline var kJumpForce:Int = 22;
+	public static inline var kJumpForce:Int = 20;
 	public var hasTouchTheGround(default, null) : Bool;
 	public var isDead:Bool;
 	
@@ -32,16 +33,16 @@ class Enemy extends Character
 			case 0:
 				sprite.add("idle", [3, 4], 2, true);
 				sprite.play("idle");
-				sprite.scale = 2.5;
-				sprite.x = -20;
-				setHitbox(40, 80);
+				sprite.scale = 2.7;
+				//sprite.x = -40;
+				setHitbox(81, 80);
 			case 1:
 				sprite.add("idle", [0, 0, 0, 0, 0, 10], 3, true);
-				sprite.add("walk", [1, 12, 2, 11], 19, true);
+				sprite.add("walk", [1, 12, 2, 11], 10, true);
 				sprite.play("idle");
-				sprite.scale = 2.5;
-				sprite.x = -20;
-				setHitbox(40, 80);
+				sprite.scale = 2.7;
+				//sprite.x = -40;
+				setHitbox(81, 80);
 		}
 		
 		type = "enemy";
@@ -49,7 +50,7 @@ class Enemy extends Character
 
 		gravity.y = 1.8;
 		maxVelocity.y = kJumpForce;
-		maxVelocity.x = 5;//kMoveSpeed * 4;
+		maxVelocity.x = kMoveSpeed;//kMoveSpeed * 4;
 		friction.x = 0.82; // floor friction
 		friction.y = 0.99; // wall friction
 		
@@ -91,6 +92,8 @@ class Enemy extends Character
 		}
 	}
 	
+	private var prevPoint:Point = new Point(0, 0);
+	
 	public override function update()
 	{
 		if (behaviorOn)
@@ -113,12 +116,39 @@ class Enemy extends Character
 			{
 				life = 0;
 				isDead = true;
+				if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
+				{
+					var aaa:GameScreen = cast(scene, GameScreen);
+					aaa.remove(this);
+					aaa.lvl.characters.remove(this);
+				}
 			}
-			if (life > 100)
-				life = 100;
+				
+			if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen" && enemyType == 1)
+			{
+				var pl:Player = cast(scene, GameScreen).player;
+				if (pl.distanceFrom(this, false) < 7*40)
+				{
+					if (pl.x < this.x)
+						velocity.x = -kMoveSpeed;
+					else
+						velocity.x = kMoveSpeed;
+					
+					if (x == prevPoint.x && y == prevPoint.y)
+					{
+						velocity.y = -HXP.sign(gravity.y) * kJumpForce;
+					}
+				}
+			}
 			
 			if(enemyType == 1)
 				setAnimations();
+				
+			prevPoint = new Point(x, y);
+		}
+		else
+		{
+			super.update();
 		}
 	}
 }

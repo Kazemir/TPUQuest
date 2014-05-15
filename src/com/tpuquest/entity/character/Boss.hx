@@ -41,9 +41,9 @@ class Boss extends Character
 		sprite.play("idle");
 		
 		sprite.scale = 5.0;
-		sprite.x = -20;
+		sprite.x = -75;
 		
-		setHitbox(40, 80);
+		setHitbox(150, 150);
 		type = "boss";
 		graphic = sprite;
 
