@@ -17,6 +17,7 @@ import com.tpuquest.entity.helper.ChangeMap;
 import com.tpuquest.entity.helper.Helper;
 import com.tpuquest.entity.helper.ShowMessage;
 import com.tpuquest.entity.helper.Spawn;
+import com.tpuquest.entity.helper.Teleporter;
 import com.tpuquest.entity.helper.WinGame;
 import com.tpuquest.entity.item.Coin;
 import com.tpuquest.entity.item.Item;
@@ -183,7 +184,7 @@ class LevelEditor extends Screen
 		
 		addGraphic(coinImg, -5, 670, 53);
 		addGraphic(heartImg, -5, 670, 23);
-		addGraphic(weaponImg, -5, 640, 43);
+		addGraphic(weaponImg, -5, 600, 40);
 		
 		coinImg.visible = false;
 		heartImg.visible = false;
@@ -342,7 +343,26 @@ class LevelEditor extends Screen
 	public override function update()
 	{
 		if (itsTestDude)
-		{
+		{	
+			var t:String = Std.string(player.money);
+			for ( j  in 0...-t.length + 3)
+			{
+				t = "0" + t;
+			}
+			coinsText.ChangeStr(t, false);
+			
+			t = Std.string(player.life);
+			for ( j  in 0...-t.length + 3)
+			{
+				t = "0" + t;
+			}
+			hpText.ChangeStr(t, false);
+			
+			if (player.weaponized)
+				weaponImg.visible = true;
+			else
+				weaponImg.visible = false;
+				
 			if ((Input.pressed("esc") || Screen.joyPressed("BACK")) && !Screen.overrideControlByBox)
 			{
 				itsTestDude = false;
@@ -379,25 +399,6 @@ class LevelEditor extends Screen
 				add(currentSticker);
 				add(currentTile);
 			}
-			
-			var t:String = Std.string(player.money);
-			for ( j  in 0...-t.length + 3)
-			{
-				t = "0" + t;
-			}
-			coinsText.ChangeStr(t, false);
-			
-			t = Std.string(player.life);
-			for ( j  in 0...-t.length + 3)
-			{
-				t = "0" + t;
-			}
-			hpText.ChangeStr(t, false);
-			
-			if (player.weaponized)
-				weaponImg.visible = true;
-			else
-				weaponImg.visible = false;
 		}
 		else
 		{
@@ -654,7 +655,7 @@ class LevelEditor extends Screen
 					case "com.tpuquest.entity.character.Enemy":
 						temp = new Enemy(new Point(tX, tY), currentCharacter.spritePath, cast(currentCharacter, Enemy).life, cast(currentCharacter, Enemy).enemyType,  currentCharacter.characterName);
 					case "com.tpuquest.entity.character.Player":
-						temp = new Player(new Point(tX, tY), currentCharacter.spritePath, cast(currentCharacter, Player).life, cast(currentCharacter, Player).money, currentCharacter.characterName);
+						temp = new Player(new Point(tX, tY), currentCharacter.spritePath, cast(currentCharacter, Player).life, cast(currentCharacter, Player).money, cast(currentCharacter, Player).weaponDamage, currentCharacter.characterName);
 					case "com.tpuquest.entity.character.Boss":
 						temp = new Boss(new Point(tX, tY), currentCharacter.spritePath, cast(currentCharacter, Boss).life, currentCharacter.characterName);
 				}
@@ -703,6 +704,8 @@ class LevelEditor extends Screen
 						temp = new Spawn(new PointXY(tX, tY), currentHelper.helperName, true);
 					case "com.tpuquest.entity.helper.WinGame":
 						temp = new WinGame(new PointXY(tX, tY), currentHelper.helperName, true);
+					case "com.tpuquest.entity.helper.Teleporter":
+						temp = new Teleporter(new PointXY(tX, tY), cast(currentHelper, Teleporter).pointTo, currentHelper.helperName, true);
 				}
 				
 				lvl.helpers.push(temp);
@@ -821,7 +824,7 @@ class LevelEditor extends Screen
 				case "enemy":
 					charactersList.push(new Enemy(new Point(0, 0), x.get("spritePath"), Std.parseInt(x.get("hp")), Std.parseInt(x.get("enemyType")), x.get("name"), false));
 				case "player":
-					charactersList.push(new Player(new Point(0, 0), x.get("spritePath"), Std.parseInt(x.get("hp")), Std.parseInt(x.get("money")), x.get("name"), false));
+					charactersList.push(new Player(new Point(0, 0), x.get("spritePath"), Std.parseInt(x.get("hp")), Std.parseInt(x.get("money")), Std.parseInt(x.get("weaponDamage")), x.get("name"), false));
 				case "boss":
 					charactersList.push(new Boss(new Point(0, 0), x.get("spritePath"), Std.parseInt(x.get("hp")), x.get("name"), false));
 			}
@@ -883,6 +886,8 @@ class LevelEditor extends Screen
 					helpersList.push(new ChangeMap(new PointXY(0, 0), x.get("mapPath"), tCP_b, tI_b, x.get("name"), true));
 				case "spawn":
 					helpersList.push(new Spawn(new PointXY(0, 0), x.get("name"), true));
+				case "teleporter":
+					helpersList.push(new Teleporter(new PointXY(0, 0), new PointXY(Std.parseInt(x.get("xTo")), Std.parseInt(x.get("yTo"))), x.get("name"), true));
 			}
 		}
 		currentHelper = helpersList[0];

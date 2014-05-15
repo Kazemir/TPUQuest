@@ -10,6 +10,7 @@ import com.tpuquest.entity.helper.ChangeMap;
 import com.tpuquest.entity.helper.Helper;
 import com.tpuquest.entity.helper.ShowMessage;
 import com.tpuquest.entity.helper.Spawn;
+import com.tpuquest.entity.helper.Teleporter;
 import com.tpuquest.entity.item.Coin;
 import com.tpuquest.entity.item.Item;
 import com.tpuquest.entity.character.Character;
@@ -132,7 +133,8 @@ class Level
 							case "player":
 								var tHP = Std.parseInt(element.get("hp"));
 								var tM = Std.parseInt(element.get("money"));
-								temp = new Player(WorldToScreenFloat(new Point(tX, tY)), tS, tHP, tM, tN, behavior);
+								var tWD = Std.parseInt(element.get("weaponDamage"));
+								temp = new Player(WorldToScreenFloat(new Point(tX, tY)), tS, tHP, tM, tWD, tN, behavior);
 							case "boss":
 								var tHP = Std.parseInt(element.get("hp"));
 								temp = new Boss(WorldToScreenFloat(new Point(tX, tY)), tS, tHP, tN, behavior);
@@ -193,6 +195,10 @@ class Level
 								temp = new ChangeMap(WorldToScreen(new PointXY(tX, tY)), tMP, tCP_b, tI_b, tN, !behavior);
 							case "spawn":
 								temp = new Spawn(WorldToScreen(new PointXY(tX, tY)), tN, !behavior);
+							case "teleporter":
+								var tXto = Std.parseInt(element.get("xTo"));
+								var tYto = Std.parseInt(element.get("yTo"));
+								temp = new Teleporter(WorldToScreen(new PointXY(tX, tY)), WorldToScreen(new PointXY(tXto, tYto)), tN, !behavior);
 						}
 						
 						lvl.helpers.push( temp );
@@ -271,6 +277,7 @@ class Level
 					temp.set("type", "player");
 					temp.set("hp", x.life);
 					temp.set("money", x.money);
+					temp.set("weaponDamage", x.weaponDamage);
 			}
 			charactersXML.addChild(temp);
 		}
@@ -344,6 +351,10 @@ class Level
 					temp.set("instantly", Std.string(tI));
 				case "com.tpuquest.entity.helper.Spawn":
 					temp.set("type", "spawn");		
+				case "com.tpuquest.entity.helper.Teleporter":
+					temp.set("type", "teleporter");
+					temp.set("xTo", Std.string(Std.int((x.pointTo.x / 40) - 9)));
+					temp.set("yTo", Std.string(Std.int((x.pointTo.y / 40) - 7)));
 			}
 			helpersXML.addChild(temp);
 		}

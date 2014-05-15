@@ -1,8 +1,15 @@
 ﻿<tiles>
 
-<element name="Player" type="player" spritePath="graphics/characters/character.png" hp="100" money="0" />
-<element name="Biter" type="enemy" spritePath="graphics/characters/gremlins.png" hp="100" enemyType="0" />
+<element name="Player" type="player" spritePath="graphics/characters/character.png" hp="100" money="0" weaponDamage="0" />
+<element name="Biter" type="enemy" spritePath="graphics/characters/gremlins.png" hp="50" enemyType="0" />
 <element name="Goblin" type="enemy" spritePath="graphics/characters/gremlins.png" hp="100" enemyType="1" />
+
+<element name="LAV" type="enemy" spritePath="graphics/characters/lav.png" hp="100" enemyType="2" />
+<element name="Vova" type="enemy" spritePath="graphics/characters/vova.png" hp="100" enemyType="3" />
+<element name="Misha" type="enemy" spritePath="graphics/characters/kazemir.png" hp="100" enemyType="4" />
+<element name="Vetal" type="enemy" spritePath="graphics/characters/droz.png" hp="100" enemyType="5" />
+<element name="Seroga" type="enemy" spritePath="graphics/characters/serg.png" hp="100" enemyType="6" />
+
 <element name="Talker" type="talker" spritePath="graphics/characters/wily.png" />
 <element name="Trader" type="trader" spritePath="graphics/characters/lukegg.png" />
 <element name="Boss" type="boss" spritePath="graphics/characters/gremlins.png" hp="500" />

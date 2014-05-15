@@ -33,10 +33,10 @@ class Trader extends Character
 		sprite.add("idle", [0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 1, 3, 4, 5, 6, 6, 6, 6, 6, 7, 8], 3, true);
 		sprite.play("idle");
 		
-		sprite.scale = 0.5;
-		sprite.x = -20;
+		sprite.scale = 0.48;
+		//sprite.x = -20;
 		
-		setHitbox(40, 80);
+		setHitbox(38, 79);
 		type = "trader";
 		graphic = sprite;
 
@@ -45,6 +45,8 @@ class Trader extends Character
 		maxVelocity.x = 5;//kMoveSpeed * 4;
 		friction.x = 0.82; // floor friction
 		friction.y = 0.99; // wall friction
+		
+		layer = 1;
 	}
 	
 	public override function update()
