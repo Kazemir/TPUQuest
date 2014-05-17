@@ -24,7 +24,7 @@ class Boss extends Character
 		
 	private var sprite:Spritemap;
 	
-	public static inline var kMoveSpeed:Float = 5;
+	public static inline var kMoveSpeed:Float = 2;
 	public static inline var kJumpForce:Int = 22;
 	public var hasTouchTheGround(default, null) : Bool;
 	public var isDead:Bool;
@@ -37,7 +37,7 @@ class Boss extends Character
 		
 		sprite = new Spritemap("graphics/characters/gremlins.png", 30, 30);
 		sprite.add("idle", [5, 5, 5, 5, 5, 15], 3, true);
-		sprite.add("walk", [6, 17, 7, 16], 19, true);
+		sprite.add("walk", [6, 17, 7, 16], 5, true);
 		sprite.play("idle");
 		
 		sprite.scale = 5.0;
@@ -59,8 +59,39 @@ class Boss extends Character
 	
 	private function setAnimations()
 	{
-		
+		if (!_onGround)
+		{
+			sprite.play("walk");
+			
+			if (velocity.x < 0) // left
+			{
+				sprite.flipped = true;
+			}
+			else if(velocity.x > 0) // right
+			{
+				sprite.flipped = false;	
+			}
+		}
+		else if (velocity.x == 0)
+		{
+			sprite.play("idle");
+		}
+		else
+		{
+			sprite.play("walk");
+
+			if (velocity.x < 0) // left
+			{
+				sprite.flipped = true;
+			}
+			else // right
+			{
+				sprite.flipped = false;	
+			}
+		}
 	}
+	
+	private var prevPoint:Point = new Point(0, 0);
 	
 	public override function update()
 	{
@@ -84,9 +115,34 @@ class Boss extends Character
 			{
 				life = 0;
 				isDead = true;
+				if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
+				{
+					var aaa:GameScreen = cast(scene, GameScreen);
+					aaa.remove(this);
+					aaa.lvl.characters.remove(this);
+				}
+			}
+			
+			if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
+			{
+				var pl:Player = cast(scene, GameScreen).player;
+				if (pl.distanceFrom(this, false) < 7*40)
+				{
+					if (pl.x < this.x)
+						velocity.x = -kMoveSpeed;
+					else
+						velocity.x = kMoveSpeed;
+					
+					if (x == prevPoint.x && y == prevPoint.y)
+					{
+						velocity.y = -HXP.sign(gravity.y) * kJumpForce;
+					}
+				}
 			}
 			
 			setAnimations();
+			
+			prevPoint = new Point(x, y);
 		}
 	}
 }

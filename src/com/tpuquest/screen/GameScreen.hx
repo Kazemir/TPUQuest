@@ -51,7 +51,6 @@ class GameScreen extends Screen
 		super();
 		
 		this.itsContinue = itsContinue;
-
 	}
 	
 	public override function begin()
@@ -134,7 +133,7 @@ class GameScreen extends Screen
 	
 	public override function update()
 	{
-		if ((Input.pressed("esc") || Screen.joyPressed("BACK")) && !Screen.overrideControlByBox)// && !notInstantlyMapLoadingEngage)
+		if ((Input.pressed("esc") || Screen.joyPressed("BACK")) && !Screen.overrideControlByBox && !notInstantlyMapLoadingEngage)
 		{
 			music.stop();
 			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
@@ -265,8 +264,14 @@ class GameScreen extends Screen
 			backgroundImage.scrollX = backgroundImage.scrollY = 0.05;
 			backgroundImage.visible = true;
 			addGraphic(backgroundImage, 100, -100);
-			if(lvl.bgPicturePath == "graphics/caspian.jpg")
-				backgroundImage.y = -200;
+			if(lvl.bgPicturePath == "graphics/MonsterKnifeBG.jpg")
+				backgroundImage.y = -100;
+		}
+		
+		if (lvl.levelName == "lav")
+		{
+			var enemyLAV:Sfx = new Sfx("audio/enemyLAV.wav");
+			enemyLAV.play(SettingsMenu.soudVolume / 10);
 		}
 
 	}
