@@ -10,6 +10,8 @@
 <element name="Vetal" type="enemy" spritePath="graphics/characters/droz.png" hp="100" enemyType="5" />
 <element name="Seroga" type="enemy" spritePath="graphics/characters/serg.png" hp="100" enemyType="6" />
 
+<element name="Doctor" type="enemy" spritePath="graphics/characters/doctor.png" hp="100" enemyType="7" />
+
 <element name="Talker" type="talker" spritePath="graphics/characters/wily.png" />
 <element name="Trader" type="trader" spritePath="graphics/characters/lukegg.png" />
 <element name="Boss" type="boss" spritePath="graphics/characters/gremlins.png" hp="500" />

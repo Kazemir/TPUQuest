@@ -32,7 +32,7 @@ class Player extends Character
 	public static inline var kJumpForce:Int = 23;
 	public var hasTouchTheGround(default, null) : Bool;
 	public var isDead:Bool;
-	private var attack:Bool;
+	public var attack:Bool;
 	
 	public var controlOn:Bool;
 	
@@ -45,15 +45,12 @@ class Player extends Character
 		hasTouchTheGround = true;
 		
 		sprite = new Spritemap(spritePath, 32, 32);
-		sprite.add("norm_idle", [8, 8, 8, 9], 3, true);
-		sprite.add("norm_walk", [0, 1, 2, 3, 4, 5, 6, 7], 19, true);
-		sprite.add("norm_jump", [10]);
+		sprite.add("idle", [8, 8, 8, 9], 3, true);
+		sprite.add("walk", [0, 1, 2, 3, 4, 5, 6, 7], 19, true);
+		sprite.add("jump", [10]);
+		sprite.add("attack", [16, 15, 14, 13], 20, false);
 
-		sprite.add("grav_idle", [19, 19, 19, 20], 2, true);
-		sprite.add("grav_walk", [11, 12, 13, 14, 15, 16, 17, 18], 19, true);
-		sprite.add("grav_jump", [21]);
-
-		sprite.play("norm_idle");
+		sprite.play("idle");
 	 
 		sprite.scale = 2.5;
 		sprite.x = -20;
@@ -96,11 +93,15 @@ class Player extends Character
 	{
 		if (attack)
 		{
-			sprite.play("norm_jump");
+			if (sprite.complete)
+			{
+				attack = false;
+				setHitbox(40, 80);
+			}
 		}
 		else if (!_onGround)
 		{
-			sprite.play("norm_jump");
+			sprite.play("jump");
 			
 			if (velocity.x < 0) // left
 			{
@@ -113,11 +114,11 @@ class Player extends Character
 		}
 		else if (velocity.x == 0)
 		{
-			sprite.play("norm_idle");
+			sprite.play("idle");
 		}
 		else
 		{
-			sprite.play("norm_walk");
+			sprite.play("walk");
 
 			if (velocity.x < 0) // left
 			{
@@ -167,6 +168,16 @@ class Player extends Character
 				if ((Input.pressed("action") || Screen.joyCheck("A")) && weaponized)
 				{
 					attack = true;
+					sprite.play("attack", true);
+					
+					if (sprite.flipped) //left
+					{
+						setHitbox(60, 80, -20);
+					}
+					else
+					{
+						setHitbox(60, 80, 20);
+					}
 				}
 			}
 			
@@ -204,7 +215,7 @@ class Player extends Character
 			if(ent != null)
 			{
 				var cn:Enemy = cast(ent, Enemy);
-				if (attack)
+				if (attack && controlOn)
 				{
 					cn.life -= weaponDamage;
 					if (cn.enemyType == 1)
@@ -218,9 +229,10 @@ class Player extends Character
 							cn.velocity.x = -Enemy.kMoveSpeed * 5;
 						}
 						cn.velocity.y = -HXP.sign(cn.gravity.y) * Enemy.kJumpForce * 0.5;
+						attack = false;
 					}
 				}
-				else
+				else if(controlOn)
 				{
 					controlOn = false;
 					var sound = new Sfx("audio/player_soundPain.wav");

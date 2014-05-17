@@ -240,6 +240,13 @@ class LevelEditor extends Screen
 		currentCharacter.visible = false;
 		currentSticker.visible = false;
 		currentHelper.visible = false;
+		
+		remove(currentTile);
+		remove(currentItem);
+		remove(currentCharacter);
+		remove(currentSticker);
+		remove(currentHelper);
+		
 		switch(currentType)
 		{
 			case 0:
@@ -252,7 +259,7 @@ class LevelEditor extends Screen
 					currentTile = tilesList[currentElement];
 					temp2 = tilesList[currentElement].tileName;
 					
-					currentExtra = currentTile.collidability;
+					//currentExtra = currentTile.collidability;
 					temp3 = "Collidability: " + Std.string(currentExtra);
 					
 					currentTile.x = 300 + HXP.camera.x;
@@ -307,7 +314,7 @@ class LevelEditor extends Screen
 					currentSticker = stickersList[currentElement];
 					temp2 = stickersList[currentElement].tileName;
 
-					currentExtra = currentSticker.behindCreatures;
+					//currentExtra = currentSticker.behindCreatures;
 					temp3 = "Behind creatures: " + Std.string(currentExtra);
 					
 					currentSticker.x = 300 + HXP.camera.x;
