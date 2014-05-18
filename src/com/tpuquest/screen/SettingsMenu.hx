@@ -152,23 +152,23 @@ class SettingsMenu extends Screen
 	
 	public override function update()
 	{
-		if (Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B"))
+		if (Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B") || Screen.touchPressed("esc"))
 		{
 			HXP.scene = new MainMenu();
 		}
-		if (Input.pressed("up") || Screen.joyPressed("DPAD_UP"))
+		if (Input.pressed("up") || Screen.joyPressed("DPAD_UP") || Screen.touchPressed("up"))
 		{
 			currentMenuElement--;
 		}
-		if (Input.pressed("down") || Screen.joyPressed("DPAD_DOWN"))
+		if (Input.pressed("down") || Screen.joyPressed("DPAD_DOWN") || Screen.touchPressed("down"))
 		{
 			currentMenuElement++;
 		}
-		if (Input.pressed("left") || Screen.joyPressed("DPAD_LEFT"))
+		if (Input.pressed("left") || Screen.joyPressed("DPAD_LEFT") || Screen.touchPressed("left"))
 		{
 			actionMenu(false);
 		}
-		if (Input.pressed("right") || Screen.joyPressed("DPAD_RIGHT"))
+		if (Input.pressed("right") || Screen.joyPressed("DPAD_RIGHT") || Screen.touchPressed("right"))
 		{
 			actionMenu(true);
 		}

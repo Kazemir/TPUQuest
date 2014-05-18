@@ -31,12 +31,12 @@ class MainMenu extends Screen
 		var img:Image = new Image("graphics/bg.jpg");
 		addGraphic(img);
 		
-		textMenuElements.push(new DrawText(CLocals.text.mainMenu_newGame, GameFont.Molot, 32, 400, 240, activeColor, true));
-		textMenuElements.push(new DrawText(CLocals.text.mainMenu_continue, GameFont.Molot, 32, 400, 280, passiveColor, true));
-		textMenuElements.push(new DrawText(CLocals.text.mainMenu_settings, GameFont.Molot, 32, 400, 320, passiveColor, true));
-		textMenuElements.push(new DrawText(CLocals.text.mainMenu_score, GameFont.Molot, 32, 400, 360, passiveColor, true));
-		textMenuElements.push(new DrawText(CLocals.text.mainMenu_authors, GameFont.Molot, 32, 400, 400, passiveColor, true));
-		textMenuElements.push(new DrawText(CLocals.text.mainMenu_exit, GameFont.Molot, 32, 400, 440, passiveColor, true));
+		textMenuElements.push(new DrawText("newGame", GameFont.Molot, 32, 400, 240, activeColor, true));
+		textMenuElements.push(new DrawText("continue", GameFont.Molot, 32, 400, 280, passiveColor, true));
+		textMenuElements.push(new DrawText("settings", GameFont.Molot, 32, 400, 320, passiveColor, true));
+		textMenuElements.push(new DrawText("score", GameFont.Molot, 32, 400, 360, passiveColor, true));
+		textMenuElements.push(new DrawText("authors", GameFont.Molot, 32, 400, 400, passiveColor, true));
+		textMenuElements.push(new DrawText("exit", GameFont.Molot, 32, 400, 440, passiveColor, true));
 		
 		for (i in 0...textMenuElements.length) 
 		{
@@ -88,22 +88,22 @@ class MainMenu extends Screen
 	
 	public override function update()
 	{
-		if (Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B"))
+		if (Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B") || Screen.touchPressed("esc"))
 		{
 			menuMusic.stop();
 			ExitGame();
 		}
-		if (Input.pressed("up") || Screen.joyPressed("DPAD_UP"))
+		if (Input.pressed("up") || Screen.joyPressed("DPAD_UP") || Screen.touchPressed("up"))
 		{
 			currentMenuElement--;
 			changeMenu();
 		}
-		if (Input.pressed("down") || Screen.joyPressed("DPAD_DOWN"))
+		if (Input.pressed("down") || Screen.joyPressed("DPAD_DOWN") || Screen.touchPressed("down"))
 		{
 			currentMenuElement++;
 			changeMenu();
 		}
-		if (Input.pressed("action") || Screen.joyPressed("START") || Screen.joyPressed("A"))
+		if (Input.pressed("action") || Screen.joyPressed("START") || Screen.joyPressed("A") || Screen.touchPressed("action"))
 		{
 			actionMenu();
 		}
@@ -111,6 +111,12 @@ class MainMenu extends Screen
 		{
 			menuMusic.stop();
 			HXP.scene = new LevelEditor();
+		}
+		
+		for (x in Input.touches)
+		{
+			textMenuElements[0].label.richText = Std.string(x.sceneX) + ", " + Std.string(x.sceneY);
+			textMenuElements[1].label.richText = Std.string(x.x) + ", " + Std.string(x.y);
 		}
 		
 		super.update();

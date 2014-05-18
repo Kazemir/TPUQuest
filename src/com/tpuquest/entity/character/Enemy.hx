@@ -27,7 +27,8 @@ class Enemy extends Character
 		
 		hasTouchTheGround = true;
 		this.enemyType = enemyType;
-		
+		this.life = hp;
+		this.isDead = false;
 		
 		switch(enemyType)
 		{
@@ -36,6 +37,7 @@ class Enemy extends Character
 				sprite.add("idle", [3, 4], 2, true);
 				sprite.play("idle");
 				sprite.scale = 2.7;
+				hp = 40;
 				//sprite.x = -40;
 				setHitbox(81, 80);
 			case 1:	//Goblin
@@ -44,6 +46,7 @@ class Enemy extends Character
 				sprite.add("walk", [1, 12, 2, 11], 10, true);
 				sprite.play("idle");
 				sprite.scale = 2.7;
+				hp = 50;
 				setHitbox(81, 80);
 			case 2:	//LAV
 				sprite = new Spritemap("graphics/characters/lav.png", 303, 152);
@@ -89,6 +92,7 @@ class Enemy extends Character
 				sprite.add("idle", [0], 3, false);
 				sprite.play("idle");
 				sprite.scale = 0.2255;
+				hp = 9999;
 				//sprite.y = -(106 - 80);
 				//setHitbox(58, 106, 0);
 			default:
@@ -107,9 +111,6 @@ class Enemy extends Character
 		maxVelocity.x = kMoveSpeed;//kMoveSpeed * 4;
 		friction.x = 0.82; // floor friction
 		friction.y = 0.99; // wall friction
-		
-		life = hp;
-		isDead = false;
 	}
 	
 	private function setAnimations()
@@ -187,7 +188,8 @@ class Enemy extends Character
 						case 6:	//Seroga
 							sound = new Sfx("audio/LAV_Pelew.wav");
 					}*/
-					sound.play(SettingsMenu.soudVolume / 10);
+					if(enemyType < 2 || enemyType > 6)
+						sound.play(SettingsMenu.soudVolume / 10);
 				}
 			}
 			
