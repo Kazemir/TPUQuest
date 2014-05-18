@@ -12,6 +12,8 @@ import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileOutput;
 
+import openfl.utils.SystemPath;
+
 typedef Record = { name : String, score : Int };
 
 class ScoresMenu extends Screen
@@ -50,7 +52,7 @@ class ScoresMenu extends Screen
 	
 	public override function update()
 	{
-		if (Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B"))
+		if (Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B") || Screen.touchPressed("esc"))
 		{
 			HXP.scene = new MainMenu();
 		}
@@ -61,9 +63,9 @@ class ScoresMenu extends Screen
 	private function LoadScores()
 	{
 		var scoresData:Xml;
-		if ( FileSystem.exists( "scores.xml" ) )
+		if ( FileSystem.exists( SystemPath.applicationStorageDirectory + "scores.xml" ) )
 		{
-			scoresData = Xml.parse(File.getContent( "scores.xml" ));
+			scoresData = Xml.parse(File.getContent( SystemPath.applicationStorageDirectory + "scores.xml" ));
 			scoresList = new Array<Record>();
 			
 			var i:Int = 0;
@@ -100,7 +102,7 @@ class ScoresMenu extends Screen
 				scoresList.push(  { name : "AAA", score : 0 } );
 			}
 			
-			var fout:FileOutput = File.write( "scores.xml", false );
+			var fout:FileOutput = File.write( SystemPath.applicationStorageDirectory + "scores.xml", false );
 			fout.writeString( scoresData.toString() );
 			fout.close();
 		}

@@ -28,7 +28,7 @@ class AuthorsMenu extends Screen
 	
 	public override function update()
 	{
-		if (Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B"))
+		if (Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B") || Screen.touchPressed("esc"))
 		{
 			HXP.scene = new MainMenu();
 		}

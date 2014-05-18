@@ -1,5 +1,6 @@
 package com.tpuquest.screen;
 import com.haxepunk.graphics.Backdrop;
+import com.haxepunk.graphics.Image;
 import com.haxepunk.graphics.Text;
 import com.haxepunk.Scene;
 import com.haxepunk.utils.Input;
@@ -14,6 +15,12 @@ import sys.io.FileOutput;
 import sys.FileSystem;
 
 import com.haxepunk.utils.Joystick;
+import com.haxepunk.utils.Touch;
+import com.haxepunk.HXP;
+
+//#if android
+import openfl.utils.SystemPath;
+//#end
 
 class Screen extends Scene
 {
@@ -24,6 +31,11 @@ class Screen extends Scene
 		super();
 		
 		overrideControlByBox = false;
+#if android
+		var img:Image = new Image("graphics/androidOverlay.png");
+		addGraphic(img, -999);
+		img.scrollX = img.scrollY = 0;
+#end
 	}
 	
 	public override function begin()
@@ -64,13 +76,13 @@ class Screen extends Scene
 	private function ExitGame()
 	{
 		var config:Xml = Xml.createElement("settings");
-		if ( FileSystem.exists("config.xml") )
+		if ( FileSystem.exists(SystemPath.applicationStorageDirectory + "config.xml") )
 		{
 			config.set("sound", Std.string(SettingsMenu.soudVolume));
 			config.set("music", Std.string(SettingsMenu.musicVolume));
 			config.set("language", SettingsMenu.language);
 			
-			var fout:FileOutput = File.write( "config.xml", false );
+			var fout:FileOutput = File.write(SystemPath.applicationStorageDirectory + "config.xml", false );
 			fout.writeString( config.toString() );
 			fout.close();
 		}
@@ -173,6 +185,72 @@ class Screen extends Scene
 				return Input.joystick(0).pressed(8);
 			case "RS_BUTTON":
 				return Input.joystick(0).pressed(9);
+		}
+		return false;
+	}
+	
+	public static function touchPressed(area:String):Bool
+	{
+		var tapSize:Float = 129.0;
+		for (x in Input.touches)
+		{
+			if (x.pressed)
+			{
+				switch(area)
+				{
+					case "esc":
+						if (x.sceneX <= tapSize && x.sceneY <= tapSize && x.sceneX >= 0 && x.sceneY >= 0)
+							return true;
+					case "action":
+						if (x.sceneX <= HXP.screen.width && x.sceneY <= HXP.screen.height && x.sceneX > HXP.screen.width - tapSize && x.sceneY > HXP.screen.height - tapSize)
+							return true;
+					case "left":
+						if (x.sceneX <= tapSize && x.sceneY <= HXP.screen.height && x.sceneX > 0 && x.sceneY > HXP.screen.height - tapSize)
+							return true;
+					case "right":
+						if (x.sceneX <= tapSize * 3 && x.sceneY <= HXP.screen.height && x.sceneX > tapSize * 2 && x.sceneY > HXP.screen.height - tapSize)
+							return true;
+					case "up":
+						if (x.sceneX <= tapSize * 2 && x.sceneY <= HXP.screen.height - tapSize && x.sceneX > tapSize && x.sceneY > HXP.screen.height - tapSize * 2)
+							return true;
+					case "down":
+						if (x.sceneX <= tapSize * 2 && x.sceneY <= HXP.screen.height && x.sceneX > tapSize && x.sceneY > HXP.screen.height - tapSize)
+							return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public static function touchCheck(area:String):Bool
+	{
+		var tapSize:Float = 129.0;
+		for (x in Input.touches)
+		{
+			if (x.time > 0)
+			{
+				switch(area)
+				{
+					case "esc":
+						if (x.sceneX <= tapSize && x.sceneY <= tapSize && x.sceneX >= 0 && x.sceneY >= 0)
+							return true;
+					case "action":
+						if (x.sceneX <= HXP.screen.width && x.sceneY <= HXP.screen.height && x.sceneX > HXP.screen.width - tapSize && x.sceneY > HXP.screen.height - tapSize)
+							return true;
+					case "left":
+						if (x.sceneX <= tapSize && x.sceneY <= HXP.screen.height && x.sceneX > 0 && x.sceneY > HXP.screen.height - tapSize)
+							return true;
+					case "right":
+						if (x.sceneX <= tapSize * 3 && x.sceneY <= HXP.screen.height && x.sceneX > tapSize * 2 && x.sceneY > HXP.screen.height - tapSize)
+							return true;
+					case "up":
+						if (x.sceneX <= tapSize * 2 && x.sceneY <= HXP.screen.height - tapSize && x.sceneX > tapSize && x.sceneY > HXP.screen.height - tapSize * 2)
+							return true;
+					case "down":
+						if (x.sceneX <= tapSize * 2 && x.sceneY <= HXP.screen.height && x.sceneX > tapSize && x.sceneY > HXP.screen.height - tapSize)
+							return true;
+				}
+			}
 		}
 		return false;
 	}

@@ -18,6 +18,8 @@ import com.tpuquest.utils.PointXY;
 import flash.geom.Point;
 import com.haxepunk.Sfx;
 
+import com.haxepunk.graphics.Emitter;
+
 class Boss extends Character
 {
 	public var life:Int;
@@ -41,7 +43,7 @@ class Boss extends Character
 		sprite.play("idle");
 		
 		sprite.scale = 5.0;
-		sprite.x = -75;
+		//sprite.x = -75;
 		
 		setHitbox(150, 150);
 		type = "boss";
@@ -121,6 +123,12 @@ class Boss extends Character
 					aaa.remove(this);
 					aaa.lvl.characters.remove(this);
 				}
+				
+				var sound = new Sfx("audio/enemy_death.wav");
+				sound.play(SettingsMenu.soudVolume / 10);
+				
+				//var ggg:Emitter = new Emitter("graphics/items/coin.png");
+				//ggg.
 			}
 			
 			if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")

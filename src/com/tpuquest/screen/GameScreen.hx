@@ -19,6 +19,8 @@ import flash.geom.Point;
 import sys.io.File;
 import sys.FileSystem;
 
+import openfl.utils.SystemPath;
+
 class GameScreen extends Screen
 {
 	public var lvl:Level;
@@ -63,20 +65,20 @@ class GameScreen extends Screen
 		mapPathFromHelper = "";
 		notInstantlyMapLoadingEngage = false;
 
-		LoadCFG();
+		/*LoadCFG();
 		
 		if(itsContinue)
-			LoadMap(cfgContinueMap, false);
+			LoadMap(SystemPath.applicationDirectory + cfgContinueMap, false);
 		else
 		{
-			if(!FileSystem.exists("levels/continue/"))
-					FileSystem.createDirectory("levels/continue/");
+			if(!FileSystem.exists(SystemPath.applicationDirectory + "levels/continue/"))
+					FileSystem.createDirectory(SystemPath.applicationDirectory + "levels/continue/");
 			
-			for (x in FileSystem.readDirectory("levels/continue/"))
+			for (x in FileSystem.readDirectory(SystemPath.applicationDirectory + "levels/continue/"))
 			{
 				try
 				{
-					FileSystem.deleteFile("levels/continue/" + x);
+					FileSystem.deleteFile(SystemPath.applicationDirectory + "levels/continue/" + x);
 				}
 				catch(msg:String)
 				{
@@ -84,8 +86,12 @@ class GameScreen extends Screen
 				}
 			}
 			
-			LoadMap(cfgStartMap, true);
-		}
+			LoadMap(SystemPath.applicationDirectory + cfgStartMap, true);
+		}*/
+		if(itsContinue)
+			LoadMap(SystemPath.applicationDirectory + "fungus.xml", true);
+		else
+			LoadMap(SystemPath.applicationStorageDirectory + "fungus.xml", true);
 		
 		background.scrollX = background.scrollY = 0;
         addGraphic(background).layer = 101;
@@ -133,11 +139,11 @@ class GameScreen extends Screen
 	
 	public override function update()
 	{
-		if ((Input.pressed("esc") || Screen.joyPressed("BACK")) && !Screen.overrideControlByBox && !notInstantlyMapLoadingEngage)
+		if ((Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.touchPressed("esc")) && !Screen.overrideControlByBox && !notInstantlyMapLoadingEngage)
 		{
 			music.stop();
 			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
-			lvl.SaveLevel(cfgContinueMap);
+			lvl.SaveLevel(SystemPath.applicationDirectory + cfgContinueMap);
 			HXP.scene = new MainMenu();
 		}
 		
@@ -170,11 +176,11 @@ class GameScreen extends Screen
 				{
 					removeList( lvl.getEntities() );
 					
-					lvl.SaveLevel("levels/continue/" + lvl.levelName + ".xml");
-					if (FileSystem.exists("levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]))
-						LoadMap("levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1], false);
+					lvl.SaveLevel(SystemPath.applicationDirectory + "levels/continue/" + lvl.levelName + ".xml");
+					if (FileSystem.exists(SystemPath.applicationDirectory + "levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]))
+						LoadMap(SystemPath.applicationDirectory + "levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1], false);
 					else
-						LoadMap(mapPathFromHelper, false);
+						LoadMap(SystemPath.applicationDirectory + mapPathFromHelper, false);
 					
 					notInstantlyMapLoadingUp = false;
 				}
@@ -195,7 +201,7 @@ class GameScreen extends Screen
 	
 	private function LoadCFG()
 	{
-		var config:Xml = Xml.parse(File.getContent( "cfg/mainCFG.xml" )).firstElement();
+		var config:Xml = Xml.parse(File.getContent( SystemPath.applicationDirectory + "cfg/mainCFG.xml" )).firstElement();
 		
 		for (x in config.elements())
 		{
@@ -281,11 +287,11 @@ class GameScreen extends Screen
 		if (instantly)
 		{
 			removeList( lvl.getEntities() );
-			lvl.SaveLevel("levels/continue/" + lvl.levelName + ".xml");
-			if (FileSystem.exists("levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1]))
-				LoadMap("levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1], !currentPlayer);
+			lvl.SaveLevel(SystemPath.applicationDirectory + "levels/continue/" + lvl.levelName + ".xml");
+			if (FileSystem.exists(SystemPath.applicationDirectory + "levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1]))
+				LoadMap(SystemPath.applicationDirectory + "levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1], !currentPlayer);
 			else
-				LoadMap(mapPath, !currentPlayer);
+				LoadMap(SystemPath.applicationDirectory + mapPath, !currentPlayer);
 		}
 		else
 		{

@@ -96,7 +96,7 @@ class Player extends Character
 			if (sprite.complete)
 			{
 				attack = false;
-				setHitbox(40, 80);
+				setHitbox(40, 80, 0, 0);
 			}
 		}
 		else if (!_onGround)
@@ -150,34 +150,38 @@ class Player extends Character
 			
 			if (controlOn && !Screen.overrideControlByBox)
 			{
-				if (Input.check("left") || Screen.joyCheck("DPAD_LEFT"))
+				if (Input.check("left") || Screen.joyCheck("DPAD_LEFT") || Screen.touchCheck("left"))
 				{
 					acceleration.x = -kMoveSpeed;
 				}
-				if (Input.check("right") || Screen.joyCheck("DPAD_RIGHT"))
+				if (Input.check("right") || Screen.joyCheck("DPAD_RIGHT") || Screen.touchCheck("right"))
 				{
 					acceleration.x = kMoveSpeed;
 				}
-				if ((Input.pressed("jump") || Screen.joyCheck("X")) && _onGround)
+				if ((Input.pressed("jump") || Screen.joyPressed("X") || Screen.touchPressed("up")) && _onGround)
 				{
 					acceleration.y = -HXP.sign(gravity.y) * kJumpForce;
 					
 					var sound = new Sfx("audio/player_soundJumpStart.wav");
 					sound.play(SettingsMenu.soudVolume / 10);
 				}
-				if ((Input.pressed("action") || Screen.joyCheck("A")) && weaponized)
+				if ((Input.pressed("action") || Screen.joyPressed("A") || Screen.touchPressed("action")) && weaponized)
 				{
 					attack = true;
 					sprite.play("attack", true);
 					
 					if (sprite.flipped) //left
 					{
-						setHitbox(60, 80, -20);
+						setHitbox(70, 80, 30);
 					}
 					else
 					{
-						setHitbox(60, 80, 20);
+						setHitbox(70, 80, 0);
 					}
+					
+					setAnimations();
+					var sound = new Sfx("audio/player_attack.wav");
+					sound.play(SettingsMenu.soudVolume / 10);
 				}
 			}
 			
@@ -229,8 +233,9 @@ class Player extends Character
 							cn.velocity.x = -Enemy.kMoveSpeed * 5;
 						}
 						cn.velocity.y = -HXP.sign(cn.gravity.y) * Enemy.kJumpForce * 0.5;
-						attack = false;
 					}
+					attack = false;
+					setHitbox(40, 80, 0, 0);
 				}
 				else if(controlOn)
 				{
@@ -254,9 +259,28 @@ class Player extends Character
 			if (ent != null)
 			{
 				var cn:Boss = cast(ent, Boss);
-				if (attack)
+				if (attack && controlOn)
 				{
 					cn.life -= weaponDamage;
+					
+					attack = false;
+					setHitbox(40, 80, 0, 0);
+				}
+				else if(controlOn)
+				{
+					controlOn = false;
+					var sound = new Sfx("audio/player_soundPain.wav");
+					sound.play(SettingsMenu.soudVolume / 10);
+					life -= 5;
+					if (velocity.x < 0)
+					{
+						velocity.x = kMoveSpeed * 5;
+					}
+					else
+					{
+						velocity.x = -kMoveSpeed * 5;
+					}
+					velocity.y = -HXP.sign(gravity.y) * kJumpForce * 0.5;
 				}
 			}
 			
@@ -267,6 +291,7 @@ class Player extends Character
 				{
 					case "com.tpuquest.entity.helper.ChangeMap":
 						var cm:ChangeMap = cast(ent, ChangeMap);
+						//currentScene.lvl.helpers.remove(cm);
 						currentScene.NextMap(cm.nextMapPath, cm.keepPlayer, cm.instantly);
 					case "com.tpuquest.entity.helper.ShowMessage":
 						var sm:ShowMessage = cast(ent, ShowMessage);
