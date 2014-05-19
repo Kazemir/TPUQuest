@@ -29,7 +29,8 @@ class Enemy extends Character
 		this.enemyType = enemyType;
 		this.life = hp;
 		this.isDead = false;
-		
+		type = "enemy";
+				
 		switch(enemyType)
 		{
 			case 0:	//Biter
@@ -37,7 +38,7 @@ class Enemy extends Character
 				sprite.add("idle", [3, 4], 2, true);
 				sprite.play("idle");
 				sprite.scale = 2.7;
-				hp = 40;
+				life = 30;
 				//sprite.x = -40;
 				setHitbox(81, 80);
 			case 1:	//Goblin
@@ -46,7 +47,7 @@ class Enemy extends Character
 				sprite.add("walk", [1, 12, 2, 11], 10, true);
 				sprite.play("idle");
 				sprite.scale = 2.7;
-				hp = 50;
+				life = 60;
 				setHitbox(81, 80);
 			case 2:	//LAV
 				sprite = new Spritemap("graphics/characters/lav.png", 303, 152);
@@ -54,7 +55,7 @@ class Enemy extends Character
 				sprite.play("idle");
 				sprite.scale = 1.05;
 				setHitbox(303, 160);
-				hp = 10;
+				life = 10;
 			case 3:	//Vova
 				sprite = new Spritemap("graphics/characters/vova.png", 132, 378);
 				sprite.add("idle", [0], 3, false);
@@ -70,7 +71,7 @@ class Enemy extends Character
 				sprite.scale = 0.23;
 				sprite.y = -(79 - 80);
 				setHitbox(44, 79, 0, (79 - 80));
-				hp = 10;
+				life = 10;
 			case 5:	//Vetal
 				sprite = new Spritemap("graphics/characters/droz.png", 138, 348);
 				sprite.add("idle", [0], 3, false);
@@ -78,7 +79,7 @@ class Enemy extends Character
 				sprite.scale = 0.23;
 				sprite.y = -(80 - 80);
 				setHitbox(32, 80, 0, (80 - 80));
-				hp = 10;
+				life = 10;
 			case 6:	//Seroga
 				sprite = new Spritemap("graphics/characters/serg.png", 252, 462);
 				sprite.add("idle", [0], 3, false);
@@ -86,15 +87,16 @@ class Enemy extends Character
 				sprite.scale = 0.23;
 				sprite.y = -(106 - 80);
 				setHitbox(58, 106, 0, (106 - 80));
-				hp = 10;
+				life = 10;
 			case 7:	//Doctor
 				sprite = new Spritemap("graphics/characters/doctor.png", 891, 532);
 				sprite.add("idle", [0], 3, false);
 				sprite.play("idle");
 				sprite.scale = 0.2255;
-				hp = 9999;
+				life = 9999;
 				//sprite.y = -(106 - 80);
-				//setHitbox(58, 106, 0);
+				setHitbox(201, 120);
+				type = "static";
 			default:
 				sprite = new Spritemap("graphics/characters/gremlins.png", 30, 30);
 				sprite.add("idle", [3, 4], 2, true);
@@ -103,7 +105,6 @@ class Enemy extends Character
 				setHitbox(81, 80);
 		}
 		
-		type = "enemy";
 		graphic = sprite;
 
 		gravity.y = 1.8;

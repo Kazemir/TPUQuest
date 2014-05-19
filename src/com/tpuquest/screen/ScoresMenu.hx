@@ -63,9 +63,15 @@ class ScoresMenu extends Screen
 	private function LoadScores()
 	{
 		var scoresData:Xml;
+#if android
 		if ( FileSystem.exists( SystemPath.applicationStorageDirectory + "scores.xml" ) )
 		{
 			scoresData = Xml.parse(File.getContent( SystemPath.applicationStorageDirectory + "scores.xml" ));
+#else
+		if ( FileSystem.exists( "scores.xml" ) )
+		{
+			scoresData = Xml.parse(File.getContent( "scores.xml" ));
+#end
 			scoresList = new Array<Record>();
 			
 			var i:Int = 0;
@@ -101,8 +107,11 @@ class ScoresMenu extends Screen
 				
 				scoresList.push(  { name : "AAA", score : 0 } );
 			}
-			
+#if android	
 			var fout:FileOutput = File.write( SystemPath.applicationStorageDirectory + "scores.xml", false );
+#else
+			var fout:FileOutput = File.write( "scores.xml", false );
+#end
 			fout.writeString( scoresData.toString() );
 			fout.close();
 		}
