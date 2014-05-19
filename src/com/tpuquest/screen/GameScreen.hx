@@ -29,7 +29,7 @@ class GameScreen extends Screen
 	private var hpText:DrawText;
 	public var player:Player;
 
-	private var music:Sfx;
+	public var music:Sfx;
 	
 	private var cfgStartMap:String;
 	private var cfgContinueMap:String;

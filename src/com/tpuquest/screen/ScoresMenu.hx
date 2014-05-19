@@ -18,7 +18,7 @@ typedef Record = { name : String, score : Int };
 
 class ScoresMenu extends Screen
 {
-	private var textPlayersElements:Array<DrawText>;
+	private static var textPlayersElements:Array<DrawText>;
 	private static var scoresList:Array<Record> = new Array<Record>();
 
 	public function new() 
@@ -60,7 +60,7 @@ class ScoresMenu extends Screen
 		super.update();
 	}
 	
-	private function LoadScores()
+	public static function LoadScores()
 	{
 		var scoresData:Xml;
 #if android
@@ -115,11 +115,9 @@ class ScoresMenu extends Screen
 			fout.writeString( scoresData.toString() );
 			fout.close();
 		}
-
-		CLocals.set( SettingsMenu.language );
 	}
 	
-	public function AddNewResult( name:String, score:Int)
+	public static function AddNewResult( name:String, score:Int)
 	{
 		if (name.length > 12)
 			name = name.substring(0, 11);
@@ -149,5 +147,25 @@ class ScoresMenu extends Screen
 			}
 			textPlayersElements[i + 10].ChangeStr( t, false );
 		}
+	}
+	
+	public static function SaveScores()
+	{
+		var scoresData:Xml = Xml.createElement( "scores" );
+		
+		for (i in 0...10) 
+		{
+			var temp:Xml = Xml.createElement("player" + Std.string(i + 1));
+			temp.set("name", scoresList[i].name);
+			temp.set("score", Std.string(scoresList[i].score));
+			scoresData.addChild(temp);
+		}
+#if android	
+		var fout:FileOutput = File.write( SystemPath.applicationStorageDirectory + "scores.xml", false );
+#else
+		var fout:FileOutput = File.write( "scores.xml", false );
+#end
+		fout.writeString( scoresData.toString() );
+		fout.close();
 	}
 }

@@ -13,6 +13,7 @@ import com.tpuquest.entity.item.Potion;
 import com.tpuquest.entity.item.Weapon;
 import com.tpuquest.screen.GameScreen;
 import com.tpuquest.screen.LevelEditor;
+import com.tpuquest.screen.LoseScreen;
 import com.tpuquest.screen.Screen;
 import com.tpuquest.screen.SettingsMenu;
 import com.tpuquest.utils.PointXY;
@@ -91,13 +92,23 @@ class Player extends Character
 	
 	private function setAnimations()
 	{
-		if (attack)
+		if (attack || sprite.currentAnim == "attack")
 		{
 			if (sprite.complete)
 			{
 				attack = false;
 				setHitbox(40, 80, 0, 0);
+				sprite.play("idle");
 			}
+			
+			/*if (velocity.x < 0) // left
+			{
+				sprite.flipped = true;
+			}
+			else // right
+			{
+				sprite.flipped = false;	
+			}*/
 		}
 		else if (!_onGround)
 		{
@@ -179,7 +190,7 @@ class Player extends Character
 						setHitbox(70, 80, 0);
 					}
 					
-					setAnimations();
+					//setAnimations();
 					var sound = new Sfx("audio/player_attack.wav");
 					sound.play(SettingsMenu.soudVolume / 10);
 				}
@@ -234,6 +245,11 @@ class Player extends Character
 						}
 						cn.velocity.y = -HXP.sign(cn.gravity.y) * Enemy.kJumpForce * 0.5;
 					}
+					
+					var sound = new Sfx("audio/enemy_pain.wav");
+					if(cn.enemyType < 2 || cn.enemyType > 7)
+						sound.play(SettingsMenu.soudVolume / 10);
+						
 					attack = false;
 					setHitbox(40, 80, 0, 0);
 				}
@@ -291,7 +307,11 @@ class Player extends Character
 				{
 					case "com.tpuquest.entity.helper.ChangeMap":
 						var cm:ChangeMap = cast(ent, ChangeMap);
-						//currentScene.lvl.helpers.remove(cm);
+						//var temp:ChangeMap = new ChangeMap(new PointXY(Std.int(cm.x), Std.int(cm.y)), cm.nextMapPath, cm.keepPlayer, cm.instantly);
+						currentScene.lvl.helpers.remove(cm);
+						currentScene.remove(cm);
+						
+						//currentScene.NextMap(temp.nextMapPath, temp.keepPlayer, temp.instantly);
 						currentScene.NextMap(cm.nextMapPath, cm.keepPlayer, cm.instantly);
 					case "com.tpuquest.entity.helper.ShowMessage":
 						var sm:ShowMessage = cast(ent, ShowMessage);
@@ -331,6 +351,8 @@ class Player extends Character
 				isDead = true;
 				controlOn = false;
 				behaviorOn = false;
+				
+				HXP.scene = new LoseScreen();
 			}
 			if (life > 100)
 				life = 100;
