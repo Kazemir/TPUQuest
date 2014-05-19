@@ -14,6 +14,7 @@ import com.tpuquest.screen.GameScreen;
 import com.tpuquest.screen.LevelEditor;
 import com.tpuquest.screen.Screen;
 import com.tpuquest.screen.SettingsMenu;
+import com.tpuquest.screen.WinScreen;
 import com.tpuquest.utils.PointXY;
 import flash.geom.Point;
 import com.haxepunk.Sfx;
@@ -117,15 +118,19 @@ class Boss extends Character
 			{
 				life = 0;
 				isDead = true;
+					
+				var sound = new Sfx("audio/enemy_death.wav");
+				sound.play(SettingsMenu.soudVolume / 10);
+				
 				if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
 				{
 					var aaa:GameScreen = cast(scene, GameScreen);
 					aaa.remove(this);
 					aaa.lvl.characters.remove(this);
+					
+					aaa.music.stop();
+					HXP.scene = new WinScreen(aaa.player.money, aaa.player.life);
 				}
-				
-				var sound = new Sfx("audio/enemy_death.wav");
-				sound.play(SettingsMenu.soudVolume / 10);
 				
 				//var ggg:Emitter = new Emitter("graphics/items/coin.png");
 				//ggg.

@@ -63,7 +63,7 @@ class Enemy extends Character
 				sprite.scale = 0.23;
 				sprite.y = -(87 - 80);
 				setHitbox(30, 87, 0, (87 - 80));
-				hp = 10;
+				life = 10;
 			case 4:	//Misha
 				sprite = new Spritemap("graphics/characters/kazemir.png", 192, 342);
 				sprite.add("idle", [0], 3, false);
@@ -189,7 +189,7 @@ class Enemy extends Character
 						case 6:	//Seroga
 							sound = new Sfx("audio/LAV_Pelew.wav");
 					}*/
-					if(enemyType < 2 || enemyType > 6)
+					if(enemyType < 2 || enemyType > 7)
 						sound.play(SettingsMenu.soudVolume / 10);
 				}
 			}
