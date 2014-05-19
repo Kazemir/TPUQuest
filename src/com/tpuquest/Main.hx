@@ -6,9 +6,9 @@ import com.tpuquest.unitTests.*;
 import com.haxepunk.RenderMode;
 import com.tpuquest.utils.CLocals;
 
-//#if android
+#if android
 import openfl.utils.SystemPath;
-//#end
+#end
 
 import haxe.xml.*;
 
@@ -46,6 +46,7 @@ class Main extends Engine
 #end
 		HXP.screen.scale = 1;
 		LoadConfig();
+		
 		HXP.scene = new SplashScreen();
 	}
 
@@ -57,9 +58,15 @@ class Main extends Engine
 	private static function LoadConfig()
 	{
 		var config:Xml;
+#if android
 		if ( FileSystem.exists(SystemPath.applicationStorageDirectory + "config.xml") )
 		{
 			config = Xml.parse(File.getContent( SystemPath.applicationStorageDirectory + "config.xml" )).firstElement();
+#else
+		if ( FileSystem.exists("config.xml") )
+		{
+			config = Xml.parse(File.getContent( "config.xml" )).firstElement();
+#end
 			SettingsMenu.soudVolume = Std.parseInt(config.get("sound"));
 			SettingsMenu.musicVolume = Std.parseInt(config.get("music"));
 			SettingsMenu.language = config.get("language");
@@ -71,12 +78,15 @@ class Main extends Engine
 			config.set("sound", Std.string(SettingsMenu.soudVolume));
 			config.set("music", Std.string(SettingsMenu.musicVolume));
 			config.set("language", SettingsMenu.language);
-			
+#if android
 			var fout:FileOutput = File.write( SystemPath.applicationStorageDirectory + "config.xml", false );
+#else
+			var fout:FileOutput = File.write( "config.xml", false );
+#end
 			fout.writeString( config.toString() );
 			fout.close();
 		}
 
-		//CLocals.set( SettingsMenu.language );
+		CLocals.set( SettingsMenu.language );
 	}
 }

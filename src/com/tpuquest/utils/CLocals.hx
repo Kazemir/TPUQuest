@@ -1,8 +1,9 @@
 package com.tpuquest.utils;
 
-//#if android
+#if android
 import openfl.utils.SystemPath;
-//#end
+#end
+
 
 class CLocalsProxy extends haxe.xml.Proxy<"assets/cfg/localisation.xml", String> { }
 
@@ -13,7 +14,11 @@ class CLocals {
     public static function set( lang = "ru" ) : Void 
 	{
 		try {
-			var l_xmlString = sys.io.File.getContent( SystemPath.applicationDirectory + "cfg/localisation.xml" );
+#if android
+			var l_xmlString = sys.io.File.getContent( SystemPath.applicationDirectory +"cfg/localisation.xml" );
+#else
+			var l_xmlString = sys.io.File.getContent( "cfg/localisation.xml" );
+#end
 			var l_xmlFast   = new haxe.xml.Fast( Xml.parse( l_xmlString ).firstElement() );
 			for ( i_node in l_xmlFast.nodes.item ) 
 			{

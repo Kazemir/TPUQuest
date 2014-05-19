@@ -76,13 +76,21 @@ class Screen extends Scene
 	private function ExitGame()
 	{
 		var config:Xml = Xml.createElement("settings");
+#if android
 		if ( FileSystem.exists(SystemPath.applicationStorageDirectory + "config.xml") )
+#else
+		if ( FileSystem.exists("config.xml") )
+#end
 		{
 			config.set("sound", Std.string(SettingsMenu.soudVolume));
 			config.set("music", Std.string(SettingsMenu.musicVolume));
 			config.set("language", SettingsMenu.language);
 			
+#if android
 			var fout:FileOutput = File.write(SystemPath.applicationStorageDirectory + "config.xml", false );
+#else
+			var fout:FileOutput = File.write("config.xml", false );
+#end
 			fout.writeString( config.toString() );
 			fout.close();
 		}

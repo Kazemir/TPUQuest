@@ -65,8 +65,9 @@ class GameScreen extends Screen
 		mapPathFromHelper = "";
 		notInstantlyMapLoadingEngage = false;
 
-		/*LoadCFG();
+		LoadCFG();
 		
+#if android
 		if(itsContinue)
 			LoadMap(SystemPath.applicationDirectory + cfgContinueMap, false);
 		else
@@ -87,11 +88,30 @@ class GameScreen extends Screen
 			}
 			
 			LoadMap(SystemPath.applicationDirectory + cfgStartMap, true);
-		}*/
+		}
+#else
 		if(itsContinue)
-			LoadMap(SystemPath.applicationDirectory + "fungus.xml", true);
+			LoadMap(cfgContinueMap, false);
 		else
-			LoadMap(SystemPath.applicationStorageDirectory + "fungus.xml", true);
+		{
+			if(!FileSystem.exists("levels/continue/"))
+					FileSystem.createDirectory("levels/continue/");
+			
+			for (x in FileSystem.readDirectory("levels/continue/"))
+			{
+				try
+				{
+					FileSystem.deleteFile("levels/continue/" + x);
+				}
+				catch(msg:String)
+				{
+					trace(msg);
+				}
+			}
+			
+			LoadMap(cfgStartMap, true);
+		}
+#end
 		
 		background.scrollX = background.scrollY = 0;
         addGraphic(background).layer = 101;
@@ -143,7 +163,11 @@ class GameScreen extends Screen
 		{
 			music.stop();
 			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
+#if android
 			lvl.SaveLevel(SystemPath.applicationDirectory + cfgContinueMap);
+#else
+			lvl.SaveLevel(cfgContinueMap);
+#end
 			HXP.scene = new MainMenu();
 		}
 		
@@ -175,13 +199,19 @@ class GameScreen extends Screen
 				if (notInstantlyMapLoadingBackground.alpha == 1)
 				{
 					removeList( lvl.getEntities() );
-					
+#if android
 					lvl.SaveLevel(SystemPath.applicationDirectory + "levels/continue/" + lvl.levelName + ".xml");
 					if (FileSystem.exists(SystemPath.applicationDirectory + "levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]))
 						LoadMap(SystemPath.applicationDirectory + "levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1], false);
 					else
 						LoadMap(SystemPath.applicationDirectory + mapPathFromHelper, false);
-					
+#else
+					lvl.SaveLevel("levels/continue/" + lvl.levelName + ".xml");
+					if (FileSystem.exists("levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]))
+						LoadMap("levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1], false);
+					else
+						LoadMap(mapPathFromHelper, false);
+#end
 					notInstantlyMapLoadingUp = false;
 				}
 			}
@@ -201,8 +231,11 @@ class GameScreen extends Screen
 	
 	private function LoadCFG()
 	{
+#if android
 		var config:Xml = Xml.parse(File.getContent( SystemPath.applicationDirectory + "cfg/mainCFG.xml" )).firstElement();
-		
+#else
+		var config:Xml = Xml.parse(File.getContent( "cfg/mainCFG.xml" )).firstElement();
+#end
 		for (x in config.elements())
 		{
 			if (x.nodeName == "newgame")
@@ -287,11 +320,19 @@ class GameScreen extends Screen
 		if (instantly)
 		{
 			removeList( lvl.getEntities() );
+#if android
 			lvl.SaveLevel(SystemPath.applicationDirectory + "levels/continue/" + lvl.levelName + ".xml");
 			if (FileSystem.exists(SystemPath.applicationDirectory + "levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1]))
 				LoadMap(SystemPath.applicationDirectory + "levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1], !currentPlayer);
 			else
 				LoadMap(SystemPath.applicationDirectory + mapPath, !currentPlayer);
+#else
+			lvl.SaveLevel("levels/continue/" + lvl.levelName + ".xml");
+			if (FileSystem.exists("levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1]))
+				LoadMap("levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1], !currentPlayer);
+			else
+				LoadMap(mapPath, !currentPlayer);
+#end
 		}
 		else
 		{
