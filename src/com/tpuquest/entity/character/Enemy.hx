@@ -109,9 +109,9 @@ class Enemy extends Character
 
 		gravity.y = 1.8;
 		maxVelocity.y = kJumpForce;
-		maxVelocity.x = kMoveSpeed;//kMoveSpeed * 4;
-		friction.x = 0.82; // floor friction
-		friction.y = 0.99; // wall friction
+		maxVelocity.x = kMoveSpeed;
+		friction.x = 0.82;
+		friction.y = 0.99;
 	}
 	
 	private function setAnimations()
@@ -176,19 +176,7 @@ class Enemy extends Character
 				if (pl.attack)
 				{
 					var sound = new Sfx("audio/enemy_pain.wav");
-					/*switch(enemyType)
-					{
-						case 2:	//LAV
-							sound = new Sfx("audio/LAV_pain.wav");
-						case 3:	//Vova
-							sound = new Sfx("audio/LAV_Roul2.wav");
-						case 4:	//Misha
-							sound = new Sfx("audio/LAV_Kaz.wav");
-						case 5:	//Vetal
-							sound = new Sfx("audio/LAV_Droz.wav");
-						case 6:	//Seroga
-							sound = new Sfx("audio/LAV_Pelew.wav");
-					}*/
+					
 					if(enemyType < 2 || enemyType > 7)
 						sound.play(SettingsMenu.soudVolume / 10);
 				}

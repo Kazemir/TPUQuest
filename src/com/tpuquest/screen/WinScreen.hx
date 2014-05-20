@@ -5,6 +5,7 @@ import com.haxepunk.graphics.Image;
 import com.tpuquest.dialog.InputBox;
 import com.tpuquest.utils.DrawText;
 import com.haxepunk.utils.Input;
+import com.tpuquest.utils.CLocals;
 
 class WinScreen extends Screen
 {
@@ -65,7 +66,7 @@ class WinScreen extends Screen
 		
 		if (itsTime && base.alpha == 0)
 		{
-			iB = new InputBox(HXP.halfWidth, HXP.halfHeight + HXP.halfHeight / 2, "Сохранение рекорда", "Вы набрали " + Std.string(score) + " очков. Введите ваше имя:");
+			iB = new InputBox(HXP.halfWidth, HXP.halfHeight + HXP.halfHeight / 2, CLocals.text.game_winInput_caption, CLocals.text.game_winInput_text1 + Std.string(score) + CLocals.text.game_winInput_text2);
 			add(iB);
 			waitingForAnswer = true;
 			itsTime = false;

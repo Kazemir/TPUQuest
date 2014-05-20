@@ -15,6 +15,7 @@ import com.tpuquest.entity.character.Talker;
 import com.tpuquest.entity.character.Trader;
 import com.tpuquest.entity.helper.ChangeMap;
 import com.tpuquest.entity.helper.Helper;
+import com.tpuquest.entity.helper.KillTheHuman;
 import com.tpuquest.entity.helper.ShowMessage;
 import com.tpuquest.entity.helper.Spawn;
 import com.tpuquest.entity.helper.Teleporter;
@@ -713,6 +714,8 @@ class LevelEditor extends Screen
 						temp = new WinGame(new PointXY(tX, tY), currentHelper.helperName, true);
 					case "com.tpuquest.entity.helper.Teleporter":
 						temp = new Teleporter(new PointXY(tX, tY), cast(currentHelper, Teleporter).pointTo, currentHelper.helperName, true);
+					case "com.tpuquest.entity.helper.KillTheHuman":
+						temp = new KillTheHuman(new PointXY(tX, tY), currentHelper.helperName, true);
 				}
 				
 				lvl.helpers.push(temp);
@@ -895,6 +898,8 @@ class LevelEditor extends Screen
 					helpersList.push(new Spawn(new PointXY(0, 0), x.get("name"), true));
 				case "teleporter":
 					helpersList.push(new Teleporter(new PointXY(0, 0), new PointXY(Std.parseInt(x.get("xTo")), Std.parseInt(x.get("yTo"))), x.get("name"), true));
+				case "killer":
+					helpersList.push(new KillTheHuman(new PointXY(0, 0), x.get("name"), true));
 			}
 		}
 		currentHelper = helpersList[0];

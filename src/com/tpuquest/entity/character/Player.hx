@@ -57,15 +57,14 @@ class Player extends Character
 		sprite.x = -20;
 		
 		setHitbox(40, 80);
-		//setHitboxTo(sprite);
 		type = "player";
 		graphic = sprite;
 
 		gravity.y = 1.8;
 		maxVelocity.y = kJumpForce;
-		maxVelocity.x = kMoveSpeed;//kMoveSpeed * 4;
-		friction.x = 0.82; // floor friction
-		friction.y = 0.99; // wall friction
+		maxVelocity.x = kMoveSpeed;
+		friction.x = 0.82;
+		friction.y = 0.99;
 		
 		this.money = money;
 		this.life = hp;
@@ -100,15 +99,6 @@ class Player extends Character
 				setHitbox(40, 80, 0, 0);
 				sprite.play("idle");
 			}
-			
-			/*if (velocity.x < 0) // left
-			{
-				sprite.flipped = true;
-			}
-			else // right
-			{
-				sprite.flipped = false;	
-			}*/
 		}
 		else if (!_onGround)
 		{
@@ -324,6 +314,8 @@ class Player extends Character
 						//this.
 						//controlOn = true;
 						//moveBy(tp.x - x, tp.y - y);*/
+					case "com.tpuquest.entity.helper.KillTheHuman":
+						life = 0;
 				}
 			}
 			
