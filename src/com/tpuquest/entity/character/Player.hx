@@ -4,11 +4,13 @@ import com.haxepunk.graphics.Spritemap;
 import com.haxepunk.Scene;
 import com.haxepunk.utils.Input;
 import com.haxepunk.HXP;
+import com.tpuquest.dialog.TradeBox;
 import com.tpuquest.entity.helper.ChangeMap;
 import com.tpuquest.entity.helper.ShowMessage;
 import com.tpuquest.entity.helper.Spawn;
 import com.tpuquest.entity.helper.Teleporter;
 import com.tpuquest.entity.item.Coin;
+import com.tpuquest.entity.item.Item;
 import com.tpuquest.entity.item.Potion;
 import com.tpuquest.entity.item.Weapon;
 import com.tpuquest.screen.GameScreen;
@@ -19,6 +21,7 @@ import com.tpuquest.screen.SettingsMenu;
 import com.tpuquest.utils.PointXY;
 import flash.geom.Point;
 import com.haxepunk.Sfx;
+import com.tpuquest.utils.CLocals;
 
 class Player extends Character
 {
@@ -332,6 +335,18 @@ class Player extends Character
 				
 				var sound = new Sfx("audio/player_soundSword.wav");
 				sound.play(SettingsMenu.soudVolume / 10);
+			}
+			
+			ent = collide("trader", x, y);
+			if(ent != null && (Input.pressed("action") || Screen.joyPressed("A") || Screen.touchPressed("action")))
+			{
+				var traderList:Array<Item> = new Array<Item>();
+				traderList.push(new Potion(new PointXY(0, 0), 25, "graphics/items/potion_red_small.png"));
+				traderList.push(new Potion(new PointXY(0, 0), 50, "graphics/items/potion_red.png"));
+				//traderList.push(new Weapon(new PointXY(0, 0), 50, "graphics/items/sword.png"));
+				traderList.push(new Potion(new PointXY(0, 0), 100, "graphics/items/heart.png"));
+				var t:TradeBox = new TradeBox(HXP.halfWidth, HXP.halfHeight, CLocals.text.game_traderBox_caption, traderList, [5, 10, 15]);
+				currentScene.add(t);
 			}
 			
 			if (life <= 0)
