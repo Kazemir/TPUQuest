@@ -307,11 +307,8 @@ class Player extends Character
 				{
 					case "com.tpuquest.entity.helper.ChangeMap":
 						var cm:ChangeMap = cast(ent, ChangeMap);
-						//var temp:ChangeMap = new ChangeMap(new PointXY(Std.int(cm.x), Std.int(cm.y)), cm.nextMapPath, cm.keepPlayer, cm.instantly);
 						currentScene.lvl.helpers.remove(cm);
 						currentScene.remove(cm);
-						
-						//currentScene.NextMap(temp.nextMapPath, temp.keepPlayer, temp.instantly);
 						currentScene.NextMap(cm.nextMapPath, cm.keepPlayer, cm.instantly);
 					case "com.tpuquest.entity.helper.ShowMessage":
 						var sm:ShowMessage = cast(ent, ShowMessage);
@@ -319,14 +316,14 @@ class Player extends Character
 						var sp:Spawn = cast(ent, Spawn);
 					case "com.tpuquest.entity.helper.Teleporter":
 						var tp:Teleporter = cast(ent, Teleporter);
-						//controlOn = false;
+						/*//controlOn = false;
 						behaviorOn = false;
 						this.set_x(tp.x);
 						this.set_y(tp.y);
 						behaviorOn = true;
 						//this.
 						//controlOn = true;
-						//moveBy(tp.x - x, tp.y - y);
+						//moveBy(tp.x - x, tp.y - y);*/
 				}
 			}
 			
@@ -352,6 +349,7 @@ class Player extends Character
 				controlOn = false;
 				behaviorOn = false;
 				
+				currentScene.music.stop();
 				HXP.scene = new LoseScreen();
 			}
 			if (life > 100)

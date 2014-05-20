@@ -12,13 +12,15 @@ import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileOutput;
 
+#if android
 import openfl.utils.SystemPath;
+#end
 
 typedef Record = { name : String, score : Int };
 
 class ScoresMenu extends Screen
 {
-	private static var textPlayersElements:Array<DrawText>;
+	private var textPlayersElements:Array<DrawText>;
 	private static var scoresList:Array<Record> = new Array<Record>();
 
 	public function new() 
@@ -46,7 +48,8 @@ class ScoresMenu extends Screen
 		}
 		
 		LoadScores();
-
+		UpdateText();
+		
 		super.begin();
 	}
 	
@@ -74,20 +77,9 @@ class ScoresMenu extends Screen
 #end
 			scoresList = new Array<Record>();
 			
-			var i:Int = 0;
 			for (temp in scoresData.firstChild().iterator())
 			{
-				textPlayersElements[i].ChangeStr( temp.get( "name" ), false );
-				var t:String = temp.get( "score" );
-				
-				scoresList.push(  { name : temp.get( "name" ), score : Std.parseInt(t) } );
-				
-				for ( j  in 0...-t.length + 9)
-				{
-					t = "0" + t;
-				}
-				textPlayersElements[i + 10].ChangeStr( t, false );
-				i++;
+				scoresList.push(  { name : temp.get( "name" ), score : Std.parseInt( temp.get( "score" )) } );
 			}
 		}
 		else
@@ -101,9 +93,6 @@ class ScoresMenu extends Screen
 				temp.set("name", "AAA");
 				temp.set("score", "0");
 				scoresData.addChild(temp);
-				
-				textPlayersElements[i].ChangeStr( temp.get( "name" ), false );
-				textPlayersElements[i + 10].ChangeStr( temp.get( "score" ), false );
 				
 				scoresList.push(  { name : "AAA", score : 0 } );
 			}
@@ -135,18 +124,6 @@ class ScoresMenu extends Screen
 		} );
 		
 		scoresList.splice(10, 1);
-		
-		for (i in 0...10) 
-		{
-			textPlayersElements[i].ChangeStr( scoresList[i].name, false );
-			
-			var t:String = Std.string(scoresList[i].score);
-			for ( j  in 0...-t.length + 9)
-			{
-				t = "0" + t;
-			}
-			textPlayersElements[i + 10].ChangeStr( t, false );
-		}
 	}
 	
 	public static function SaveScores()
@@ -167,5 +144,20 @@ class ScoresMenu extends Screen
 #end
 		fout.writeString( scoresData.toString() );
 		fout.close();
+	}
+	
+	private function UpdateText()
+	{
+		for (i in 0...10) 
+		{
+			textPlayersElements[i].ChangeStr( scoresList[i].name, false );
+			
+			var t:String = Std.string(scoresList[i].score);
+			for ( j  in 0...-t.length + 9)
+			{
+				t = "0" + t;
+			}
+			textPlayersElements[i + 10].ChangeStr( t, false );
+		}
 	}
 }

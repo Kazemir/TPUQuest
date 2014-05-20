@@ -57,7 +57,7 @@ class WinScreen extends Screen
 			music.stop();
 			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
 			
-			HXP.scene = new MainMenu();
+			HXP.scene = new ScoresMenu();
 		}
 		
 		if(base.alpha != 0)
@@ -65,19 +65,12 @@ class WinScreen extends Screen
 		
 		if (itsTime && base.alpha == 0)
 		{
-			iB = new InputBox(HXP.halfWidth, HXP.halfHeight+HXP.halfHeight/2, "Сохранение рекорда", "Вы набрали " + Std.string(score) + " очков. Введите ваше имя:");
+			iB = new InputBox(HXP.halfWidth, HXP.halfHeight + HXP.halfHeight / 2, "Сохранение рекорда", "Вы набрали " + Std.string(score) + " очков. Введите ваше имя:");
 			add(iB);
 			waitingForAnswer = true;
 			itsTime = false;
 		}
 		
-		/*if ((Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B") || Screen.touchPressed("esc")) && !Screen.overrideControlByBox)
-		{
-			music.stop();
-			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
-			
-			HXP.scene = new MainMenu();
-		}*/
 		super.update();
 	}
 }
