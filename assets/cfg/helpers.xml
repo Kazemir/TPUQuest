@@ -4,5 +4,6 @@
 <element name="toTOWER" type="nextlevel" mapPath="levels/tower.xml" keepPlayer="1" instantly="0" />
 <element name="toLAV" type="nextlevel" mapPath="levels/lav.xml" keepPlayer="1" instantly="0" />
 <element name="towerTrick" type="teleporter" xTo="13" yTo="2" />
+<element name="death" type="killer" />
 
 </tiles>

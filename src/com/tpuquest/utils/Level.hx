@@ -8,6 +8,7 @@ import com.tpuquest.entity.character.Talker;
 import com.tpuquest.entity.character.Trader;
 import com.tpuquest.entity.helper.ChangeMap;
 import com.tpuquest.entity.helper.Helper;
+import com.tpuquest.entity.helper.KillTheHuman;
 import com.tpuquest.entity.helper.ShowMessage;
 import com.tpuquest.entity.helper.Spawn;
 import com.tpuquest.entity.helper.Teleporter;
@@ -199,6 +200,8 @@ class Level
 								var tXto = Std.parseInt(element.get("xTo"));
 								var tYto = Std.parseInt(element.get("yTo"));
 								temp = new Teleporter(WorldToScreen(new PointXY(tX, tY)), WorldToScreen(new PointXY(tXto, tYto)), tN, !behavior);
+							case "killer":
+								temp = new KillTheHuman(WorldToScreen(new PointXY(tX, tY)), tN, !behavior);
 						}
 						
 						lvl.helpers.push( temp );
@@ -355,6 +358,9 @@ class Level
 					temp.set("type", "teleporter");
 					temp.set("xTo", Std.string(Std.int((x.pointTo.x / 40) - 9)));
 					temp.set("yTo", Std.string(Std.int((x.pointTo.y / 40) - 7)));
+				case "com.tpuquest.entity.helper.KillTheHuman":
+					temp.set("type", "killer");
+					
 			}
 			helpersXML.addChild(temp);
 		}

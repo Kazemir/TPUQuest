@@ -109,6 +109,22 @@
 	<it>Chetverikov Mikhail</it>
 	<cz>Chetverikov Mikhail</cz>
     </item>
+    <item id="authorsMenu_roland">
+        <ru>Владимир Коноплёв (НВГУ, студент гр. 54)</ru>
+        <en>Vladimir Konoplyov</en>
+    </item>
+    <item id="authorsMenu_droz">
+        <ru>Виталий Хорольский (НВГУ, студент гр. 54)</ru>
+        <en>Vitaly Khorolsky</en>
+    </item>
+    <item id="authorsMenu_twopm">
+        <ru>Рома Широков (ТУСУР, студент гр. 8ИМ31)</ru>
+        <en>Roma Shirokov</en>
+    </item>
+    <item id="authorsMenu_pelew">
+        <ru>Сергей Конькин (ТПУ, магистрант гр. 8ИМ31)</ru>
+        <en>Sergey Konkin</en>
+    </item>
 
     <item id="settingsMenu_sound">
         <ru>Звук:</ru>
@@ -145,5 +161,27 @@
 	<es>Lenguaje:</es>
 	<it>Lingua:</it>
 	<cz>Jazyk:</cz>
+    </item>
+
+    <item id="game_winInput_caption">
+        <ru>Сохранение рекорда</ru>
+        <en>Saving the records</en>
+	<de>Speichern von Punkten</de>
+    </item>
+    <item id="game_winInput_text1">
+        <ru>Вы набрали </ru>
+        <en>You scored </en>
+	<de>Sie erzielte </de>
+    </item>
+    <item id="game_winInput_text2">
+        <ru> очков. Введите ваше имя!</ru>
+        <en> points. Enter your name!</en>
+	<de> Punkte. Geben Sie Ihren Namen!</de>
+    </item>
+
+    <item id="gameMenu_Exit">
+        <ru>Выйти в главное меню</ru>
+        <en>Exit to main menu</en>
+	<de>Ausgang zum Hauptmenü</de>
     </item>
 </data>

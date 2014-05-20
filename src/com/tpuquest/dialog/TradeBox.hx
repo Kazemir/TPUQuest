@@ -19,6 +19,8 @@ class TradeBox extends Dialog
 	private var goodsCount:Int;
 	private var currentGood:Int;
 	
+	private var frameImg:Stamp;
+	
 	public function new(x:Float, y:Float, caption:String, goods:Array<Item>, price:Array<Int>) 
 	{
 		super(x, y);
@@ -64,7 +66,7 @@ class TradeBox extends Dialog
 		
 		var img:BitmapData = new BitmapData(frameW, 28 + tradeFrameH + 4, true, 0xd1d1d1);
 		img.draw(sprite);
-		
+
 		graphic = new Stamp(img);
 		graphic.scrollX = graphic.scrollY = 0;
 		

@@ -1,5 +1,6 @@
 package com.tpuquest.screen;
 import com.haxepunk.Sfx;
+import com.tpuquest.dialog.GameMenu;
 import com.tpuquest.dialog.TradeBox;
 import com.tpuquest.entity.character.Enemy;
 import com.tpuquest.entity.character.Player;
@@ -32,7 +33,7 @@ class GameScreen extends Screen
 	public var music:Sfx;
 	
 	private var cfgStartMap:String;
-	private var cfgContinueMap:String;
+	public var cfgContinueMap:String;
 	private var cfgStartHP:Int;
 	private var cfgStartMoney:Int;
 	
@@ -47,6 +48,8 @@ class GameScreen extends Screen
 	private var itsContinue:Bool;
 	
 	private var weaponImg:Image;
+	
+	private var gameMenu:GameMenu;
 	
 	public function new(itsContinue:Bool) 
 	{
@@ -161,14 +164,17 @@ class GameScreen extends Screen
 	{
 		if ((Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.touchPressed("esc")) && !Screen.overrideControlByBox && !notInstantlyMapLoadingEngage)
 		{
-			music.stop();
+			/*music.stop();
 			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
 #if android
 			lvl.SaveLevel(SystemPath.applicationDirectory + cfgContinueMap);
 #else
 			lvl.SaveLevel(cfgContinueMap);
 #end
-			HXP.scene = new MainMenu();
+			HXP.scene = new MainMenu();*/
+			
+			gameMenu = new GameMenu(HXP.halfWidth, HXP.halfHeight);
+			add(gameMenu);
 		}
 		
 		var t:String = Std.string(player.money);
