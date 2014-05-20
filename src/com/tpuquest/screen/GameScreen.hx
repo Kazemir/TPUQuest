@@ -150,13 +150,6 @@ class GameScreen extends Screen
 		music = new Sfx("music/MightandMagic_Book1__ShopTheme.ogg");
 		music.play(SettingsMenu.musicVolume / 10, 0, true);
 		
-		var traderList:Array<Item> = new Array<Item>();
-		traderList.push(new Potion(new PointXY(0, 0), 25, "graphics/items/potion_red_small.png"));
-		traderList.push(new Potion(new PointXY(0, 0), 50, "graphics/items/potion_red.png"));
-		traderList.push(new Potion(new PointXY(0, 0), 100, "graphics/items/heart.png"));
-		//var t:TradeBox = new TradeBox(HXP.halfWidth, HXP.halfHeight, "Шота у Ашота", traderList, [5, 10, 20]);
-		//add(t);
-		
 		super.begin();
 	}
 	
@@ -164,15 +157,6 @@ class GameScreen extends Screen
 	{
 		if ((Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.touchPressed("esc")) && !Screen.overrideControlByBox && !notInstantlyMapLoadingEngage)
 		{
-			/*music.stop();
-			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
-#if android
-			lvl.SaveLevel(SystemPath.applicationDirectory + cfgContinueMap);
-#else
-			lvl.SaveLevel(cfgContinueMap);
-#end
-			HXP.scene = new MainMenu();*/
-			
 			gameMenu = new GameMenu(HXP.halfWidth, HXP.halfHeight);
 			add(gameMenu);
 		}

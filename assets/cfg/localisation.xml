@@ -178,6 +178,11 @@
         <en> points. Enter your name!</en>
 	<de> Punkte. Geben Sie Ihren Namen!</de>
     </item>
+	
+	<item id="game_traderBox_caption">
+        <ru>Торговец</ru>
+        <en>Trader</en>
+    </item>
 
     <item id="gameMenu_Exit">
         <ru>Выйти в главное меню</ru>
