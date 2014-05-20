@@ -31,11 +31,11 @@ class Main extends Engine
 
 	public function new()
 	{
-//#if android
-//		super(screenWidth, screenHeight, frameRate, false, RenderMode.HARDWARE);
-//#else
+#if android
+		super(screenWidth, screenHeight, frameRate, false, RenderMode.HARDWARE);
+#else
 		super(screenWidth, screenHeight, frameRate, false, RenderMode.BUFFER);
-//#end
+#end
 	}
 
 	override public function init()

@@ -131,9 +131,6 @@ class Boss extends Character
 					aaa.music.stop();
 					HXP.scene = new WinScreen(aaa.player.money, aaa.player.life);
 				}
-				
-				//var ggg:Emitter = new Emitter("graphics/items/coin.png");
-				//ggg.
 			}
 			
 			if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
