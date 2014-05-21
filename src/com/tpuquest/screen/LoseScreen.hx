@@ -42,10 +42,14 @@ class LoseScreen extends Screen
 			base.alpha += 0.01;
 		
 		if (base.alpha == 1)
+		{
+			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
 			HXP.scene = new MainMenu();
+		}
 			
 		if (Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B") || Screen.touchPressed("esc"))
 		{
+			MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
 			HXP.scene = new MainMenu();
 		}
 		super.update();

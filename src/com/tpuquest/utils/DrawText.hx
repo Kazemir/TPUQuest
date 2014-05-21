@@ -15,7 +15,7 @@ class DrawText
 	public var label:Text;
 	public var center:Bool;
 	
-	public function new(str:String, font:GameFont, size:Int, x:Float, y:Float, color:Int = 0xFFFFFF, centred:Bool = true, width:Int = -1, height:Int = -1)
+	public function new(str:String, font:GameFont, size:Int, x:Float, y:Float, color:Int = 0xFFFFFF, centred:Bool = true, width:Int = -1, height:Int = -1, centredAligm:Bool = true)
 	{
 		if (size <= 0 || color < 0 || color > 0xFFFFFF)
 			throw "Error! Incorrect parameters!";
@@ -39,7 +39,10 @@ class DrawText
 			label = new Text(str, x, y);
 		else
 		{
-			label = new Text(str, x, y, width, height, { wordWrap:true, align:"center", size:size, font:fnt, resizable:false });
+			if(centredAligm)
+				label = new Text(str, x, y, width, height, { wordWrap:true, align:"center", size:size, font:fnt, resizable:false });
+			else
+				label = new Text(str, x, y, width, height, { wordWrap:true, align:"left", size:size, font:fnt, resizable:false });
 		}
 
 		label.color = color;

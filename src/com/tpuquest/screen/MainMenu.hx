@@ -10,6 +10,7 @@ import com.haxepunk.graphics.Image;
 import com.haxepunk.Entity;
 import com.haxepunk.utils.Key;
 import com.tpuquest.utils.CLocals;
+import sys.FileSystem;
 
 class MainMenu extends Screen
 {
@@ -72,8 +73,11 @@ class MainMenu extends Screen
 				menuMusic.stop();
 				HXP.scene = new GameScreen(false);
 			case 1:
-				menuMusic.stop();
-				HXP.scene = new GameScreen(true);
+				if (FileSystem.exists("levels/continuePlay_map.xml"))
+				{
+					menuMusic.stop();
+					HXP.scene = new GameScreen(true);
+				}
 			case 2:
 				HXP.scene = new SettingsMenu();
 			case 3:

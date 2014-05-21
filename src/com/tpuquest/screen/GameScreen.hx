@@ -1,5 +1,6 @@
 package com.tpuquest.screen;
 import com.haxepunk.Sfx;
+import com.tpuquest.dialog.DialogBox;
 import com.tpuquest.dialog.GameMenu;
 import com.tpuquest.dialog.TradeBox;
 import com.tpuquest.entity.character.Enemy;
@@ -19,6 +20,7 @@ import com.haxepunk.graphics.Image;
 import flash.geom.Point;
 import sys.io.File;
 import sys.FileSystem;
+import com.tpuquest.utils.CLocals;
 
 import openfl.utils.SystemPath;
 

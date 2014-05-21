@@ -163,7 +163,7 @@ class TradeBox extends Dialog
 				currentScene.player.money -= priceList[currentGood];
 			}
 		}
-		if (Input.pressed("right") || Screen.joyCheck("DPAD_RIGHT"))
+		if (Input.pressed("right") || Screen.joyPressed("DPAD_RIGHT"))
 		{
 			currentGood++;
 			
@@ -172,7 +172,7 @@ class TradeBox extends Dialog
 				
 			updateFrame();
 		}
-		if (Input.pressed("left") || Screen.joyCheck("DPAD_LEFT"))
+		if (Input.pressed("left") || Screen.joyPressed("DPAD_LEFT"))
 		{
 			currentGood--;
 			

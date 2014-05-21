@@ -183,7 +183,11 @@
         <ru>Торговец</ru>
         <en>Trader</en>
     </item>
-
+	<item id="game_talkerBox_caption">
+        <ru>Безумец</ru>
+        <en>Madguy</en>
+    </item>
+	
     <item id="gameMenu_Exit">
         <ru>Выйти в главное меню</ru>
         <en>Exit to main menu</en>

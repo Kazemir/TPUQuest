@@ -4,6 +4,7 @@ import com.haxepunk.graphics.Spritemap;
 import com.haxepunk.Scene;
 import com.haxepunk.utils.Input;
 import com.haxepunk.HXP;
+import com.tpuquest.dialog.DialogBox;
 import com.tpuquest.dialog.TradeBox;
 import com.tpuquest.entity.helper.ChangeMap;
 import com.tpuquest.entity.helper.ShowMessage;
@@ -338,7 +339,7 @@ class Player extends Character
 			}
 			
 			ent = collide("trader", x, y);
-			if(ent != null && (Input.pressed("action") || Screen.joyPressed("A") || Screen.touchPressed("action")))
+			if(ent != null && (Input.pressed("action") || Screen.joyPressed("A") || Screen.touchPressed("action")) && !Screen.overrideControlByBox)
 			{
 				var traderList:Array<Item> = new Array<Item>();
 				traderList.push(new Potion(new PointXY(0, 0), 25, "graphics/items/potion_red_small.png"));
@@ -346,6 +347,13 @@ class Player extends Character
 				//traderList.push(new Weapon(new PointXY(0, 0), 50, "graphics/items/sword.png"));
 				traderList.push(new Potion(new PointXY(0, 0), 100, "graphics/items/heart.png"));
 				var t:TradeBox = new TradeBox(HXP.halfWidth, HXP.halfHeight, CLocals.text.game_traderBox_caption, traderList, [5, 10, 15]);
+				currentScene.add(t);
+			}
+			
+			ent = collide("talker", x, y);
+			if(ent != null && (Input.pressed("action") || Screen.joyPressed("A") || Screen.touchPressed("action")) && !Screen.overrideControlByBox)
+			{
+				var t:DialogBox = new DialogBox(HXP.halfWidth, HXP.halfHeight, CLocals.text.game_talkerBox_caption);
 				currentScene.add(t);
 			}
 			
