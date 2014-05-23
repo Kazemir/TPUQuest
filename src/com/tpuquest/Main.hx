@@ -15,7 +15,6 @@ import haxe.xml.*;
 //#if windows
 import sys.FileSystem;
 import sys.io.File;
-import sys.io.FileOutput;
 //#elseif flash
 
 //#elseif html5
@@ -31,11 +30,7 @@ class Main extends Engine
 
 	public function new()
 	{
-#if android
 		super(screenWidth, screenHeight, frameRate, false, RenderMode.HARDWARE);
-#else
-		super(screenWidth, screenHeight, frameRate, false, RenderMode.BUFFER);
-#end
 	}
 
 	override public function init()
@@ -59,9 +54,9 @@ class Main extends Engine
 	{
 		var config:Xml;
 #if android
-		if ( FileSystem.exists(SystemPath.applicationStorageDirectory + "config.xml") )
+		if ( FileSystem.exists(SystemPath.applicationStorageDirectory + "/config.xml") )
 		{
-			config = Xml.parse(File.getContent( SystemPath.applicationStorageDirectory + "config.xml" )).firstElement();
+			config = Xml.parse(File.getContent( SystemPath.applicationStorageDirectory + "/config.xml" )).firstElement();
 #else
 		if ( FileSystem.exists("config.xml") )
 		{
@@ -79,12 +74,10 @@ class Main extends Engine
 			config.set("music", Std.string(SettingsMenu.musicVolume));
 			config.set("language", SettingsMenu.language);
 #if android
-			var fout:FileOutput = File.write( SystemPath.applicationStorageDirectory + "config.xml", false );
+			File.saveContent(SystemPath.applicationStorageDirectory + "/config.xml", config.toString());
 #else
-			var fout:FileOutput = File.write( "config.xml", false );
+			File.saveContent("config.xml", config.toString());
 #end
-			fout.writeString( config.toString() );
-			fout.close();
 		}
 
 		CLocals.set( SettingsMenu.language );

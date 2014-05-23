@@ -2,6 +2,7 @@ package com.tpuquest.screen;
 import com.haxepunk.HXP;
 import com.haxepunk.Sfx;
 import com.haxepunk.utils.Input;
+import com.haxepunk.utils.Touch;
 import com.tpuquest.dialog.TradeBox;
 import com.tpuquest.utils.DrawText;
 import flash.geom.Point;
@@ -10,7 +11,10 @@ import com.haxepunk.graphics.Image;
 import com.haxepunk.Entity;
 import com.haxepunk.utils.Key;
 import com.tpuquest.utils.CLocals;
+import openfl.Assets;
 import sys.FileSystem;
+
+import openfl.utils.SystemPath;
 
 class MainMenu extends Screen
 {
@@ -32,12 +36,12 @@ class MainMenu extends Screen
 		var img:Image = new Image("graphics/bg.jpg");
 		addGraphic(img);
 		
-		textMenuElements.push(new DrawText(CLocals.text.mainMenu_newGame, GameFont.Molot, 32, 400, 240, activeColor, true));
-		textMenuElements.push(new DrawText(CLocals.text.mainMenu_continue, GameFont.Molot, 32, 400, 280, passiveColor, true));
-		textMenuElements.push(new DrawText(CLocals.text.mainMenu_settings, GameFont.Molot, 32, 400, 320, passiveColor, true));
-		textMenuElements.push(new DrawText(CLocals.text.mainMenu_score, GameFont.Molot, 32, 400, 360, passiveColor, true));
-		textMenuElements.push(new DrawText(CLocals.text.mainMenu_authors, GameFont.Molot, 32, 400, 400, passiveColor, true));
-		textMenuElements.push(new DrawText(CLocals.text.mainMenu_exit, GameFont.Molot, 32, 400, 440, passiveColor, true));
+		textMenuElements.push(new DrawText(CLocals.text.mainMenu_newGame, GameFont.Molot, 32, HXP.halfWidth, 240, activeColor, true));
+		textMenuElements.push(new DrawText(CLocals.text.mainMenu_continue, GameFont.Molot, 32, HXP.halfWidth, 280, passiveColor, true));
+		textMenuElements.push(new DrawText(CLocals.text.mainMenu_settings, GameFont.Molot, 32, HXP.halfWidth, 320, passiveColor, true));
+		textMenuElements.push(new DrawText(CLocals.text.mainMenu_score, GameFont.Molot, 32, HXP.halfWidth, 360, passiveColor, true));
+		textMenuElements.push(new DrawText(CLocals.text.mainMenu_authors, GameFont.Molot, 32, HXP.halfWidth, 400, passiveColor, true));
+		textMenuElements.push(new DrawText(CLocals.text.mainMenu_exit, GameFont.Molot, 32, HXP.halfWidth, 440, passiveColor, true));
 		
 		for (i in 0...textMenuElements.length) 
 		{
@@ -73,7 +77,11 @@ class MainMenu extends Screen
 				menuMusic.stop();
 				HXP.scene = new GameScreen(false);
 			case 1:
+#if android
+				if (FileSystem.exists(SystemPath.applicationStorageDirectory + "levels/continuePlay_map.xml"))
+#else
 				if (FileSystem.exists("levels/continuePlay_map.xml"))
+#end
 				{
 					menuMusic.stop();
 					HXP.scene = new GameScreen(true);

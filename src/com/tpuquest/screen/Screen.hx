@@ -11,7 +11,6 @@ import flash.system.System;
 
 import haxe.xml.*;
 import sys.io.File;
-import sys.io.FileOutput;
 import sys.FileSystem;
 
 import com.haxepunk.utils.Joystick;
@@ -19,6 +18,7 @@ import com.haxepunk.utils.Touch;
 import com.haxepunk.HXP;
 
 //#if android
+import openfl.Assets;
 import openfl.utils.SystemPath;
 //#end
 
@@ -32,7 +32,7 @@ class Screen extends Scene
 		
 		overrideControlByBox = false;
 #if android
-		var img:Image = new Image("graphics/androidOverlay.png");
+		var img:Image = new Image(Assets.getBitmapData("graphics/androidOverlay.png"));
 		addGraphic(img, -999);
 		img.scrollX = img.scrollY = 0;
 #end
@@ -77,7 +77,7 @@ class Screen extends Scene
 	{
 		var config:Xml = Xml.createElement("settings");
 #if android
-		if ( FileSystem.exists(SystemPath.applicationStorageDirectory + "config.xml") )
+		if ( FileSystem.exists(SystemPath.applicationStorageDirectory + "/config.xml") )
 #else
 		if ( FileSystem.exists("config.xml") )
 #end
@@ -87,12 +87,10 @@ class Screen extends Scene
 			config.set("language", SettingsMenu.language);
 			
 #if android
-			var fout:FileOutput = File.write(SystemPath.applicationStorageDirectory + "config.xml", false );
+			File.saveContent(SystemPath.applicationStorageDirectory + "/config.xml", config.toString());
 #else
-			var fout:FileOutput = File.write("config.xml", false );
+			File.saveContent("config.xml", config.toString());
 #end
-			fout.writeString( config.toString() );
-			fout.close();
 		}
 		
 		System.exit(0);
@@ -207,22 +205,22 @@ class Screen extends Scene
 				switch(area)
 				{
 					case "esc":
-						if (x.sceneX <= tapSize && x.sceneY <= tapSize && x.sceneX >= 0 && x.sceneY >= 0)
+						if (x.x <= tapSize && x.y <= tapSize && x.x >= 0 && x.y >= 0)
 							return true;
 					case "action":
-						if (x.sceneX <= HXP.screen.width && x.sceneY <= HXP.screen.height && x.sceneX > HXP.screen.width - tapSize && x.sceneY > HXP.screen.height - tapSize)
+						if (x.x <= HXP.screen.width && x.y <= HXP.screen.height && x.x > HXP.screen.width - tapSize && x.y > HXP.screen.height - tapSize)
 							return true;
 					case "left":
-						if (x.sceneX <= tapSize && x.sceneY <= HXP.screen.height && x.sceneX > 0 && x.sceneY > HXP.screen.height - tapSize)
+						if (x.x <= tapSize && x.y <= HXP.screen.height && x.x > 0 && x.y > HXP.screen.height - tapSize)
 							return true;
 					case "right":
-						if (x.sceneX <= tapSize * 3 && x.sceneY <= HXP.screen.height && x.sceneX > tapSize * 2 && x.sceneY > HXP.screen.height - tapSize)
+						if (x.x <= tapSize * 3 && x.y <= HXP.screen.height && x.x > tapSize * 2 && x.y > HXP.screen.height - tapSize)
 							return true;
 					case "up":
-						if (x.sceneX <= tapSize * 2 && x.sceneY <= HXP.screen.height - tapSize && x.sceneX > tapSize && x.sceneY > HXP.screen.height - tapSize * 2)
+						if (x.x <= tapSize * 2 && x.y <= HXP.screen.height - tapSize && x.x > tapSize && x.y > HXP.screen.height - tapSize * 2)
 							return true;
 					case "down":
-						if (x.sceneX <= tapSize * 2 && x.sceneY <= HXP.screen.height && x.sceneX > tapSize && x.sceneY > HXP.screen.height - tapSize)
+						if (x.x <= tapSize * 2 && x.y <= HXP.screen.height && x.x > tapSize && x.y > HXP.screen.height - tapSize)
 							return true;
 				}
 			}
@@ -240,22 +238,22 @@ class Screen extends Scene
 				switch(area)
 				{
 					case "esc":
-						if (x.sceneX <= tapSize && x.sceneY <= tapSize && x.sceneX >= 0 && x.sceneY >= 0)
+						if (x.x <= tapSize && x.y <= tapSize && x.x >= 0 && x.y >= 0)
 							return true;
 					case "action":
-						if (x.sceneX <= HXP.screen.width && x.sceneY <= HXP.screen.height && x.sceneX > HXP.screen.width - tapSize && x.sceneY > HXP.screen.height - tapSize)
+						if (x.x <= HXP.screen.width && x.y <= HXP.screen.height && x.x > HXP.screen.width - tapSize && x.y > HXP.screen.height - tapSize)
 							return true;
 					case "left":
-						if (x.sceneX <= tapSize && x.sceneY <= HXP.screen.height && x.sceneX > 0 && x.sceneY > HXP.screen.height - tapSize)
+						if (x.x <= tapSize && x.y <= HXP.screen.height && x.x > 0 && x.y > HXP.screen.height - tapSize)
 							return true;
 					case "right":
-						if (x.sceneX <= tapSize * 3 && x.sceneY <= HXP.screen.height && x.sceneX > tapSize * 2 && x.sceneY > HXP.screen.height - tapSize)
+						if (x.x <= tapSize * 3 && x.y <= HXP.screen.height && x.x > tapSize * 2 && x.y > HXP.screen.height - tapSize)
 							return true;
 					case "up":
-						if (x.sceneX <= tapSize * 2 && x.sceneY <= HXP.screen.height - tapSize && x.sceneX > tapSize && x.sceneY > HXP.screen.height - tapSize * 2)
+						if (x.x <= tapSize * 2 && x.y <= HXP.screen.height - tapSize && x.x > tapSize && x.y > HXP.screen.height - tapSize * 2)
 							return true;
 					case "down":
-						if (x.sceneX <= tapSize * 2 && x.sceneY <= HXP.screen.height && x.sceneX > tapSize && x.sceneY > HXP.screen.height - tapSize)
+						if (x.x <= tapSize * 2 && x.y <= HXP.screen.height && x.x > tapSize && x.y > HXP.screen.height - tapSize)
 							return true;
 				}
 			}

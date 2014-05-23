@@ -29,6 +29,11 @@ import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileOutput;
 
+#if android
+import openfl.Assets;
+import openfl.utils.SystemPath;
+#end
+
 class Level
 {
 	public var items:Array<Dynamic>;
@@ -79,11 +84,19 @@ class Level
 		bgPicturePath = "";
 	}
 	
-	public static function LoadLevel( path:String, behavior:Bool = true ):Level
+	public static function LoadLevel( path:String, fromAssets:Bool = true, behavior:Bool = true ):Level
 	{
 		var lvl:Level = new Level();
+		var lvlXML:Xml;
 		
-		var lvlXML:Xml = Xml.parse(File.getContent( path )).firstElement();
+#if android
+		if(fromAssets)
+			lvlXML = Xml.parse(Assets.getText( path )).firstElement();
+		else
+			lvlXML = Xml.parse(File.getContent( path )).firstElement();
+#else
+		lvlXML = Xml.parse(File.getContent( path )).firstElement();
+#end
 		lvl.bgcolor = Std.parseInt(lvlXML.get("bgcolor"));
 		lvl.levelName = lvlXML.get("name");
 		lvl.bgPicturePath = lvlXML.get("bgpicture");
@@ -371,9 +384,13 @@ class Level
 		lvlXML.addChild(stickersXML);
 		lvlXML.addChild(helpersXML);
 		
+#if android
+		File.saveContent(path, lvlXML.toString());
+#else
 		var fout:FileOutput = File.write( path, false );
 		fout.writeString( lvlXML.toString() );
 		fout.close();
+#end
 	}
 	
 	public function getEntities():Array<Entity>

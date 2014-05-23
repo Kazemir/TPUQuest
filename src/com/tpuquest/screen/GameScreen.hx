@@ -22,6 +22,7 @@ import sys.io.File;
 import sys.FileSystem;
 import com.tpuquest.utils.CLocals;
 
+import openfl.Assets;
 import openfl.utils.SystemPath;
 
 class GameScreen extends Screen
@@ -74,25 +75,25 @@ class GameScreen extends Screen
 		
 #if android
 		if(itsContinue)
-			LoadMap(SystemPath.applicationDirectory + cfgContinueMap, false);
+			LoadMap(SystemPath.applicationStorageDirectory + cfgContinueMap, false, false);
 		else
 		{
-			if(!FileSystem.exists(SystemPath.applicationDirectory + "levels/continue/"))
-					FileSystem.createDirectory(SystemPath.applicationDirectory + "levels/continue/");
+			if(!FileSystem.exists(SystemPath.applicationStorageDirectory + "levels/continue/"))
+					FileSystem.createDirectory(SystemPath.applicationStorageDirectory + "levels/continue/");
 			
-			for (x in FileSystem.readDirectory(SystemPath.applicationDirectory + "levels/continue/"))
+			for (x in FileSystem.readDirectory(SystemPath.applicationStorageDirectory + "levels/continue/"))
 			{
 				try
 				{
-					FileSystem.deleteFile(SystemPath.applicationDirectory + "levels/continue/" + x);
+					FileSystem.deleteFile(SystemPath.applicationStorageDirectory + "levels/continue/" + x);
 				}
 				catch(msg:String)
 				{
 					trace(msg);
 				}
 			}
-			
-			LoadMap(SystemPath.applicationDirectory + cfgStartMap, true);
+
+			LoadMap(cfgStartMap, true, true);
 		}
 #else
 		if(itsContinue)
@@ -192,11 +193,11 @@ class GameScreen extends Screen
 				{
 					removeList( lvl.getEntities() );
 #if android
-					lvl.SaveLevel(SystemPath.applicationDirectory + "levels/continue/" + lvl.levelName + ".xml");
-					if (FileSystem.exists(SystemPath.applicationDirectory + "levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]))
-						LoadMap(SystemPath.applicationDirectory + "levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1], false);
+					lvl.SaveLevel(SystemPath.applicationStorageDirectory + "levels/continue/" + lvl.levelName + ".xml");
+					if (FileSystem.exists(SystemPath.applicationStorageDirectory + "levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]))
+						LoadMap(SystemPath.applicationDirectory + "levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1], false, false);
 					else
-						LoadMap(SystemPath.applicationDirectory + mapPathFromHelper, false);
+						LoadMap(mapPathFromHelper, false, true);
 #else
 					lvl.SaveLevel("levels/continue/" + lvl.levelName + ".xml");
 					if (FileSystem.exists("levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]))
@@ -224,7 +225,7 @@ class GameScreen extends Screen
 	private function LoadCFG()
 	{
 #if android
-		var config:Xml = Xml.parse(File.getContent( SystemPath.applicationDirectory + "cfg/mainCFG.xml" )).firstElement();
+		var config:Xml = Xml.parse(Assets.getText( "cfg/mainCFG.xml" )).firstElement();
 #else
 		var config:Xml = Xml.parse(File.getContent( "cfg/mainCFG.xml" )).firstElement();
 #end
@@ -243,10 +244,10 @@ class GameScreen extends Screen
 		}
 	}
 	
-	public function LoadMap( mapPath:String, newPlayer:Bool = false )
+	public function LoadMap( mapPath:String, newPlayer:Bool = false, fromAssets:Bool = true )
 	{
 
-		lvl = Level.LoadLevel( mapPath );
+		lvl = Level.LoadLevel( mapPath, fromAssets );
 		
 		var isExsist = false;
 
@@ -313,11 +314,11 @@ class GameScreen extends Screen
 		{
 			removeList( lvl.getEntities() );
 #if android
-			lvl.SaveLevel(SystemPath.applicationDirectory + "levels/continue/" + lvl.levelName + ".xml");
-			if (FileSystem.exists(SystemPath.applicationDirectory + "levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1]))
-				LoadMap(SystemPath.applicationDirectory + "levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1], !currentPlayer);
+			lvl.SaveLevel(SystemPath.applicationStorageDirectory + "levels/continue/" + lvl.levelName + ".xml");
+			if (FileSystem.exists(SystemPath.applicationStorageDirectory + "levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1]))
+				LoadMap(SystemPath.applicationStorageDirectory + "levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1], !currentPlayer, false );
 			else
-				LoadMap(SystemPath.applicationDirectory + mapPath, !currentPlayer);
+				LoadMap(mapPath, !currentPlayer, true);
 #else
 			lvl.SaveLevel("levels/continue/" + lvl.levelName + ".xml");
 			if (FileSystem.exists("levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1]))

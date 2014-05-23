@@ -187,7 +187,7 @@ class GameMenu extends Dialog
 				currentScene.music.stop();
 				MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
 #if android
-				currentScene.lvl.SaveLevel(SystemPath.applicationDirectory + currentScene.cfgContinueMap);
+				currentScene.lvl.SaveLevel(SystemPath.applicationStorageDirectory + currentScene.cfgContinueMap);
 #else
 				currentScene.lvl.SaveLevel(currentScene.cfgContinueMap);
 #end

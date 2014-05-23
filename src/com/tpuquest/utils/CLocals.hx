@@ -1,9 +1,9 @@
 package com.tpuquest.utils;
 
 #if android
+import openfl.Assets;
 import openfl.utils.SystemPath;
 #end
-
 
 class CLocalsProxy extends haxe.xml.Proxy<"assets/cfg/localisation.xml", String> { }
 
@@ -15,7 +15,7 @@ class CLocals {
 	{
 		try {
 #if android
-			var l_xmlString = sys.io.File.getContent( SystemPath.applicationDirectory +"cfg/localisation.xml" );
+			var l_xmlString = Assets.getText("cfg/localisation.xml");
 #else
 			var l_xmlString = sys.io.File.getContent( "cfg/localisation.xml" );
 #end
