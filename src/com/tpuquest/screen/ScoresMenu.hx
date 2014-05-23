@@ -67,9 +67,9 @@ class ScoresMenu extends Screen
 	{
 		var scoresData:Xml;
 #if android
-		if ( FileSystem.exists( SystemPath.applicationStorageDirectory + "scores.xml" ) )
+		if ( FileSystem.exists( SystemPath.applicationStorageDirectory + "/scores.xml" ) )
 		{
-			scoresData = Xml.parse(File.getContent( SystemPath.applicationStorageDirectory + "scores.xml" ));
+			scoresData = Xml.parse(File.getContent( SystemPath.applicationStorageDirectory + "/scores.xml" ));
 #else
 		if ( FileSystem.exists( "scores.xml" ) )
 		{
@@ -97,7 +97,7 @@ class ScoresMenu extends Screen
 				scoresList.push(  { name : "AAA", score : 0 } );
 			}
 #if android	
-			var fout:FileOutput = File.write( SystemPath.applicationStorageDirectory + "scores.xml", false );
+			var fout:FileOutput = File.write( SystemPath.applicationStorageDirectory + "/scores.xml", false );
 #else
 			var fout:FileOutput = File.write( "scores.xml", false );
 #end
@@ -138,7 +138,7 @@ class ScoresMenu extends Screen
 			scoresData.addChild(temp);
 		}
 #if android	
-		var fout:FileOutput = File.write( SystemPath.applicationStorageDirectory + "scores.xml", false );
+		var fout:FileOutput = File.write( SystemPath.applicationStorageDirectory + "/scores.xml", false );
 #else
 		var fout:FileOutput = File.write( "scores.xml", false );
 #end

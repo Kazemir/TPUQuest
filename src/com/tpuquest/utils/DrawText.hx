@@ -57,19 +57,18 @@ class DrawText
 	
 	public function ChangeStr(str:String, centred:Bool = true)
 	{
-		//var sX = label.scrollX;
-		//var sY = label.scrollY;
 		label.richText = str;
 		if(centred)
 			label.centerOrigin();
 		center = centred;
-		//label.scrollX = sX;
-		//label.scrollY = sY;
 	}
 	
 	public function ChangeColor(color:Int)
 	{
 		label.color = color;
+		var temp:String = label.richText;
+		label.richText = temp + " ";
+		label.richText = temp;
 	}
 	
 	public function ChangePoint(x:Float, y:Float)
