@@ -1,6 +1,7 @@
 package com.tpuquest.utils;
 import com.haxepunk.Graphic;
 import com.haxepunk.graphics.Graphiclist;
+import com.haxepunk.graphics.Tilemap;
 import com.tpuquest.entity.character.Boss;
 import com.tpuquest.entity.character.Enemy;
 import com.tpuquest.entity.character.Player;
@@ -29,10 +30,7 @@ import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileOutput;
 
-#if android
 import openfl.Assets;
-import openfl.utils.SystemPath;
-#end
 
 class Level
 {
@@ -84,19 +82,13 @@ class Level
 		bgPicturePath = "";
 	}
 	
-	public static function LoadLevel( path:String, fromAssets:Bool = true, behavior:Bool = true ):Level
+	public static function LoadLevel( path:String, behavior:Bool = true ):Level
 	{
 		var lvl:Level = new Level();
 		var lvlXML:Xml;
 		
-#if android
-		if(fromAssets)
-			lvlXML = Xml.parse(Assets.getText( path )).firstElement();
-		else
-			lvlXML = Xml.parse(File.getContent( path )).firstElement();
-#else
-		lvlXML = Xml.parse(File.getContent( path )).firstElement();
-#end
+		lvlXML = Xml.parse(Assets.getText( path )).firstElement();
+
 		lvl.bgcolor = Std.parseInt(lvlXML.get("bgcolor"));
 		lvl.levelName = lvlXML.get("name");
 		lvl.bgPicturePath = lvlXML.get("bgpicture");
@@ -384,13 +376,165 @@ class Level
 		lvlXML.addChild(stickersXML);
 		lvlXML.addChild(helpersXML);
 		
-#if android
 		File.saveContent(path, lvlXML.toString());
-#else
-		var fout:FileOutput = File.write( path, false );
-		fout.writeString( lvlXML.toString() );
-		fout.close();
-#end
+	}
+	
+	public function SaveOldInNewFormat( path:String )
+	{
+		var lvlXML:Xml = Xml.createElement( "level" );
+		lvlXML.set("bgcolor", Std.string(bgcolor));
+		lvlXML.set("name", levelName);
+		if(bgPicturePath != null && bgPicturePath != "")
+			lvlXML.set("bgpicture", bgPicturePath);
+
+		var itemsXML:Xml = Xml.createElement( "items" );
+		for (x in items)
+		{
+			var temp:Xml = Xml.createElement( "element" );
+			var tX = x.itemPoint.x;
+			var tY = x.itemPoint.y;
+			
+			tX = Std.int((tX / 40) - 9);
+			tY = Std.int((tY / 40) - 7);
+			temp.set("x", Std.string(tX));
+			temp.set("y", Std.string(tY));
+			switch(Type.getClassName(Type.getClass(x)))
+			{
+				case "com.tpuquest.entity.item.Coin":
+					temp.set("type", "coin");
+					temp.set("coinAmount", Std.string(x.coinAmount));
+					temp.set("path", x.imgPath);
+				case "com.tpuquest.entity.item.Potion":
+					temp.set("type", "potion");
+					temp.set("potionAmount", Std.string(x.potionAmount));
+					temp.set("path", x.imgPath);
+				case "com.tpuquest.entity.item.Weapon":
+					temp.set("type", "weapon");
+					temp.set("weaponDamage", Std.string(x.weaponDamage));
+					temp.set("path", x.imgPath);
+			}
+			itemsXML.addChild(temp);
+		}
+		
+		var charactersXML:Xml = Xml.createElement( "characters" );
+		for (x in characters)
+		{
+			var temp:Xml = Xml.createElement( "element" );
+			var tX:Float = x.x;
+			var tY:Float = x.y;
+			
+			tX = (tX / 40) - 9;
+			tY = (tY / 40) - 7;
+			temp.set("x", Std.string(tX));
+			temp.set("y", Std.string(tY));
+			temp.set("name", x.characterName);
+			temp.set("spritePath", x.spritePath);
+			
+			switch(Type.getClassName(Type.getClass(x)))
+			{
+				case "com.tpuquest.entity.character.Talker":
+					temp.set("type", "talker");
+				case "com.tpuquest.entity.character.Trader":
+					temp.set("type", "trader");
+				case "com.tpuquest.entity.character.Enemy":
+					temp.set("type", "enemy");		
+					temp.set("hp", x.life);
+					temp.set("enemyType", x.enemyType);
+				case "com.tpuquest.entity.character.Boss":
+					temp.set("type", "boss");	
+					temp.set("hp", x.life);
+				case "com.tpuquest.entity.character.Player":
+					temp.set("type", "player");
+					temp.set("hp", x.life);
+					temp.set("money", x.money);
+					temp.set("weaponDamage", x.weaponDamage);
+			}
+			charactersXML.addChild(temp);
+		}
+		
+		var tilesXML:Xml = Xml.createElement( "tiles" );
+		var tilesMap:TileGrid = new TileGrid(0, 0, 4000, 4000, "graphics/tileset.png", 10);
+		for (x in tiles)
+		{
+			var id:Int = 0;
+			/*switch(x.imgPath)
+			{
+				
+			}*/
+			tilesMap.addTile(x.tilePoint.x, x.tilePoint.y, id, x.collidability);
+		}
+		tilesXML.set("tilesData", tilesMap.tileMap.saveToString());
+		tilesXML.set("gridData", tilesMap.collideGrid.saveToString());
+		
+		var stickersXML:Xml = Xml.createElement( "stickers" );
+		var stickersMapBehind:TileGrid = new TileGrid(0, 0, 4000, 4000, "graphics/stickerset.png", 1);
+		var stickersMap:TileGrid = new TileGrid(0, 0, 4000, 4000, "graphics/stickerset.png", -1);
+		for (x in stickers)
+		{
+			var id:Int = 0;
+			/*switch(x.imgPath)
+			{
+				
+			}*/
+			if(x.behindCreatures)
+				stickersMapBehind.addTile(x.tilePoint.x, x.tilePoint.y, id, false);
+			else
+				stickersMap.addTile(x.tilePoint.x, x.tilePoint.y, id, false);
+		}
+		stickersXML.set("tilesDataBehind", stickersMapBehind.tileMap.saveToString());
+		stickersXML.set("gridDataBehind", stickersMapBehind.collideGrid.saveToString());
+		
+		stickersXML.set("tilesData", stickersMap.tileMap.saveToString());
+		stickersXML.set("gridData", stickersMap.collideGrid.saveToString());
+		
+		var helpersXML:Xml = Xml.createElement( "helpers" );
+		for (x in helpers)
+		{
+			var temp:Xml = Xml.createElement( "element" );
+			var tX = x.helperPoint.x;
+			var tY = x.helperPoint.y;
+			
+			tX = Std.int((tX / 40) - 9);
+			tY = Std.int((tY / 40) - 7);
+			temp.set("x", Std.string(tX));
+			temp.set("y", Std.string(tY));
+			temp.set("name", x.helperName);
+			
+			switch(Type.getClassName(Type.getClass(x)))
+			{
+				case "com.tpuquest.entity.helper.ShowMessage":
+					temp.set("type", "message");
+				case "com.tpuquest.entity.helper.ChangeMap":
+					temp.set("type", "nextlevel");
+					temp.set("mapPath", x.nextMapPath);
+					var tKP:Int = 0;
+					if (x.keepPlayer)
+						tKP = 1;
+					temp.set("currentPlayer", Std.string(tKP));
+					var tI:Int = 0;
+					if (x.instantly)
+						tI = 1;
+					temp.set("instantly", Std.string(tI));
+				case "com.tpuquest.entity.helper.Spawn":
+					temp.set("type", "spawn");		
+				case "com.tpuquest.entity.helper.Teleporter":
+					temp.set("type", "teleporter");
+					temp.set("xTo", Std.string(Std.int((x.pointTo.x / 40) - 9)));
+					temp.set("yTo", Std.string(Std.int((x.pointTo.y / 40) - 7)));
+				case "com.tpuquest.entity.helper.KillTheHuman":
+					temp.set("type", "killer");
+					
+			}
+			helpersXML.addChild(temp);
+		}
+		
+		lvlXML.addChild(itemsXML);
+		lvlXML.addChild(charactersXML);
+		lvlXML.addChild(tilesXML);
+		lvlXML.addChild(stickersXML);
+		lvlXML.addChild(helpersXML);
+
+		File.saveContent(path, lvlXML.toString());
 	}
 	
 	public function getEntities():Array<Entity>

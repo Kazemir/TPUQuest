@@ -41,7 +41,9 @@ class MainMenu extends Screen
 		textMenuElements.push(new DrawText(CLocals.text.mainMenu_settings, GameFont.Molot, 32, HXP.halfWidth, 320, passiveColor, true));
 		textMenuElements.push(new DrawText(CLocals.text.mainMenu_score, GameFont.Molot, 32, HXP.halfWidth, 360, passiveColor, true));
 		textMenuElements.push(new DrawText(CLocals.text.mainMenu_authors, GameFont.Molot, 32, HXP.halfWidth, 400, passiveColor, true));
+#if !android
 		textMenuElements.push(new DrawText(CLocals.text.mainMenu_exit, GameFont.Molot, 32, HXP.halfWidth, 440, passiveColor, true));
+#end
 		
 		for (i in 0...textMenuElements.length) 
 		{
@@ -56,8 +58,8 @@ class MainMenu extends Screen
 	public function changeMenu()
 	{
 		if (currentMenuElement < 0)
-			currentMenuElement = 5;
-		if (currentMenuElement > 5)
+			currentMenuElement = textMenuElements.length - 1;
+		if (currentMenuElement > textMenuElements.length - 1)
 			currentMenuElement = 0;
 		
 		for (i in 0...textMenuElements.length) 
@@ -102,7 +104,9 @@ class MainMenu extends Screen
 	{
 		if (Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B") || Screen.touchPressed("esc"))
 		{
+#if !android
 			menuMusic.stop();
+#end
 			ExitGame();
 		}
 		if (Input.pressed("up") || Screen.joyPressed("DPAD_UP") || Screen.touchPressed("up"))

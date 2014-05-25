@@ -6,7 +6,9 @@ import com.haxepunk.Scene;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
 import com.tpuquest.utils.DrawText;
+import flash.Lib;
 import haxe.Utf8;
+//import nme.system.System;
 import flash.system.System;
 
 import haxe.xml.*;
@@ -17,10 +19,10 @@ import com.haxepunk.utils.Joystick;
 import com.haxepunk.utils.Touch;
 import com.haxepunk.HXP;
 
-//#if android
+#if android
 import openfl.Assets;
 import openfl.utils.SystemPath;
-//#end
+#end
 
 class Screen extends Scene
 {
@@ -32,9 +34,9 @@ class Screen extends Scene
 		
 		overrideControlByBox = false;
 #if android
-		var img:Image = new Image(Assets.getBitmapData("graphics/androidOverlay.png"));
-		addGraphic(img, -999);
-		img.scrollX = img.scrollY = 0;
+		var androidOverlay:Image = new Image("graphics/androidOverlay.png");
+		addGraphic(androidOverlay, -999);
+		androidOverlay.scrollX = androidOverlay.scrollY = 0;
 #end
 	}
 	
@@ -51,14 +53,14 @@ class Screen extends Scene
 		super.begin();
 	}
 	
-	public function ifBoxUpdate()
+	/*public function ifBoxUpdate()
 	{
 		
 	}
 	public function ifNotBoxUpdate()
 	{
 		
-	}
+	}*/
 	
 	public override function update()
 	{
@@ -67,10 +69,10 @@ class Screen extends Scene
 		prevHatX = Input.joystick(0).hat.x;
 		prevHatY = Input.joystick(0).hat.y;
 		
-		if (overrideControlByBox)
+		/*if (overrideControlByBox)
 			ifBoxUpdate();
 		else
-			ifNotBoxUpdate();
+			ifNotBoxUpdate();*/
 	}
 	
 	private function ExitGame()
@@ -92,8 +94,15 @@ class Screen extends Scene
 			File.saveContent("config.xml", config.toString());
 #end
 		}
+#if android
+		//System.resume();
+		//var aaa:op
 		
 		System.exit(0);
+		
+#else
+		System.exit(0);
+#end
 	}
 	
 	public static function joyCheck(key:String):Bool
@@ -222,6 +231,9 @@ class Screen extends Scene
 					case "down":
 						if (x.x <= tapSize * 2 && x.y <= HXP.screen.height && x.x > tapSize && x.y > HXP.screen.height - tapSize)
 							return true;
+					case "jump":
+						if (x.x <= HXP.screen.width && x.y <= HXP.screen.height - tapSize && x.x > HXP.screen.width - tapSize && x.y > HXP.screen.height - tapSize * 2)
+							return true;
 				}
 			}
 		}
@@ -254,6 +266,9 @@ class Screen extends Scene
 							return true;
 					case "down":
 						if (x.x <= tapSize * 2 && x.y <= HXP.screen.height && x.x > tapSize && x.y > HXP.screen.height - tapSize)
+							return true;
+					case "jump":
+						if (x.x <= HXP.screen.width && x.y <= HXP.screen.height - tapSize && x.x > HXP.screen.width - tapSize && x.y > HXP.screen.height - tapSize * 2)
 							return true;
 				}
 			}
