@@ -97,12 +97,10 @@ class ScoresMenu extends Screen
 				scoresList.push(  { name : "AAA", score : 0 } );
 			}
 #if android	
-			var fout:FileOutput = File.write( SystemPath.applicationStorageDirectory + "/scores.xml", false );
+			File.saveContent(SystemPath.applicationStorageDirectory + "/scores.xml", scoresData.toString() );
 #else
-			var fout:FileOutput = File.write( "scores.xml", false );
+			File.saveContent("scores.xml", scoresData.toString() );
 #end
-			fout.writeString( scoresData.toString() );
-			fout.close();
 		}
 	}
 	
@@ -138,12 +136,10 @@ class ScoresMenu extends Screen
 			scoresData.addChild(temp);
 		}
 #if android	
-		var fout:FileOutput = File.write( SystemPath.applicationStorageDirectory + "/scores.xml", false );
+			File.saveContent(SystemPath.applicationStorageDirectory + "/scores.xml", scoresData.toString() );
 #else
-		var fout:FileOutput = File.write( "scores.xml", false );
+			File.saveContent("scores.xml", scoresData.toString() );
 #end
-		fout.writeString( scoresData.toString() );
-		fout.close();
 	}
 	
 	private function UpdateText()

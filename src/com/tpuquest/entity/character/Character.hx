@@ -91,15 +91,21 @@ class Character extends Entity
 		{
 			if (walkSound == null)
 			{
-				var t:Tile = cast(e, Tile);
-				walkSound = new Sfx(t.soundPath);
-				walkSound.play(SettingsMenu.soudVolume / 10, 1);
+				if (Type.getClassName(Type.getClass(e)) == "com.tpuquest.entity.Tile")
+				{
+					var t:Tile = cast(e, Tile);
+					walkSound = new Sfx(t.soundPath);
+					walkSound.play(SettingsMenu.soudVolume / 10, 1);
+				}
 			}
 			if (!walkSound.playing)
 			{
-				var t:Tile = cast(e, Tile);
-				walkSound = new Sfx(t.soundPath);
-				walkSound.play(SettingsMenu.soudVolume / 10, 1);
+				if (Type.getClassName(Type.getClass(e)) == "com.tpuquest.entity.Tile")
+				{
+					var t:Tile = cast(e, Tile);
+					walkSound = new Sfx(t.soundPath);
+					walkSound.play(SettingsMenu.soudVolume / 10, 1);
+				}
 			}
 		}
 		

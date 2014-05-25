@@ -12,11 +12,11 @@
 	<android permission="android.permission.WRITE_EXTERNAL_STORAGE"/>
 	
 	<source path="src" />
-
-	<haxelib name="openfl" />
-	<haxelib name="openfl-bitfive" if="html5" />
-	<haxelib name="openfl-native" if="android" />
+	
 	<haxelib name="HaxePunk" />
+	<haxelib name="openfl" />
+	<haxelib name="openfl-native" if="android" />
+	<?haxelib name="nme" if="android" ?>
 
 	<assets path="assets/graphics" rename="graphics" include="*.png|*.jpg" />
 	<assets path="assets/audio" rename="audio" include="*.wav|*.ogg|*.mp3" />
@@ -26,4 +26,6 @@
 	<assets path="assets/levels" rename="levels" include="*.xml" />
 	
 	<icon path="assets/icon.svg" />
+	<icon path="assets/icon.ico" />
+
 </project>

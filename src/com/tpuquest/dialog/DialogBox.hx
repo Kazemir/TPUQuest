@@ -11,6 +11,7 @@ import flash.display.Sprite;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
 import sys.io.File;
+import openfl.Assets;
 
 class DialogBox extends Dialog
 {
@@ -37,7 +38,8 @@ class DialogBox extends Dialog
 		
 		var message:String;
 		var startMSG:String = "";
-		var dialogs:Xml = Xml.parse(File.getContent( "cfg/dialog_talker.xml" )).firstElement();
+		var dialogs:Xml = Xml.parse(Assets.getText( "cfg/dialog_talker.xml" )).firstElement();
+
 		for (x in dialogs.elements())
 		{
 			if (Std.parseInt(x.get("type")) == -1)
@@ -142,11 +144,6 @@ class DialogBox extends Dialog
 			currentScene = cast(scene, GameScreen);
 	}
 	
-	/*private function setupGraphic(captionText:String, currentAnswer:Int = -1)
-	{
-		
-	}*/
-	
 	private function updateDialogs():String
 	{
 		var temp:String = "";
@@ -171,7 +168,6 @@ class DialogBox extends Dialog
 		}
 		if (Input.pressed("action") || Screen.joyPressed("START") || Screen.joyPressed("A") || Screen.touchPressed("action"))
 		{
-			//this = new DialogBox(x, y, captionText.label.richText, currentDialog);
 			messageText.label.richText = listOfAnswers[currentDialog];
 		}
 		if (Input.pressed("down") || Screen.joyPressed("DPAD_DOWN") || Screen.touchPressed("down"))

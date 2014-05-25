@@ -163,7 +163,7 @@ class Player extends Character
 				{
 					acceleration.x = kMoveSpeed;
 				}
-				if ((Input.pressed("jump") || Screen.joyPressed("X") || Screen.touchPressed("up")) && _onGround)
+				if ((Input.pressed("jump") || Screen.joyPressed("X") || Screen.touchPressed("up") || Screen.touchPressed("jump")) && _onGround)
 				{
 					acceleration.y = -HXP.sign(gravity.y) * kJumpForce;
 					

@@ -5,6 +5,7 @@ import com.tpuquest.screen.*;
 import com.tpuquest.unitTests.*;
 import com.haxepunk.RenderMode;
 import com.tpuquest.utils.CLocals;
+import flash.events.KeyboardEvent;
 
 #if android
 import openfl.utils.SystemPath;
@@ -12,14 +13,8 @@ import openfl.utils.SystemPath;
 
 import haxe.xml.*;
 
-//#if windows
 import sys.FileSystem;
 import sys.io.File;
-//#elseif flash
-
-//#elseif html5
-
-//#end
 
 class Main extends Engine
 {
@@ -42,6 +37,10 @@ class Main extends Engine
 		HXP.screen.scale = 1;
 		LoadConfig();
 		
+/*#if android
+		HXP.stage.addEventListener (KeyboardEvent.KEY_UP, stage_onKeyUp);
+#end*/
+		
 		HXP.scene = new SplashScreen();
 	}
 
@@ -49,6 +48,25 @@ class Main extends Engine
 	{ 
 		new Main();
 	}
+	
+	override public function focusLost () {
+		paused = true;
+	}
+	
+	override public function focusGained () {
+		paused = false;
+	}
+	
+	/*private function stage_onKeyUp (event:KeyboardEvent):Void 
+	{
+#if android
+		if (event.keyCode == 27) 
+		{
+			event.stopImmediatePropagation();
+			nme.Lib.exit ();
+		}
+#end
+	}*/
 	
 	private static function LoadConfig()
 	{

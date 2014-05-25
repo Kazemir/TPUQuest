@@ -1,6 +1,7 @@
 package com.tpuquest.dialog;
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Stamp;
+import com.haxepunk.HXP;
 import com.tpuquest.utils.DrawText;
 import com.tpuquest.screen.Screen;
 import flash.display.BitmapData;
@@ -89,6 +90,10 @@ class InputBox extends Dialog
 		Input.keyString = "";
 		
 		Screen.overrideControlByBox = true;
+#if android
+		HXP.stage.needsSoftKeyboard = true;
+		HXP.stage.requestSoftKeyboard();
+#end
 	}
 	
 	public function getInput():String
