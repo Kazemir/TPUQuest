@@ -10,7 +10,6 @@ import flash.display.Graphics;
 import flash.display.Sprite;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
-import sys.io.File;
 import openfl.Assets;
 
 class DialogBox extends Dialog

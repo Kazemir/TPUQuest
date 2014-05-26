@@ -14,10 +14,6 @@ import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
 import com.tpuquest.utils.CLocals;
 
-#if android
-import openfl.utils.SystemPath;
-#end
-
 class GameMenu extends Dialog
 {
 	private var captionText:DrawText;
@@ -186,11 +182,9 @@ class GameMenu extends Dialog
 			case 2:
 				currentScene.music.stop();
 				MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
-#if android
-				currentScene.lvl.SaveLevel(SystemPath.applicationStorageDirectory + currentScene.cfgContinueMap);
-#else
+				
 				currentScene.lvl.SaveLevel(currentScene.cfgContinueMap);
-#end
+
 				HXP.scene = new MainMenu();
 			case 5:
 				if(positive)
@@ -237,6 +231,7 @@ class GameMenu extends Dialog
 		
 				currentMenuElement = 0;
 				changeMenu();
+				cast(currentScene, Screen).SaveSettings();
 			}
 		}
 		if (Input.pressed("up") || Screen.joyPressed("DPAD_UP") || Screen.touchPressed("up"))

@@ -49,9 +49,11 @@ class WinScreen extends Screen
 		{
 			if (iB.getInput() != "")
 			{
+#if !flash
 				ScoresMenu.LoadScores();
 				ScoresMenu.AddNewResult(iB.getInput(), score);
 				ScoresMenu.SaveScores();
+#end
 			}
 			waitingForAnswer = false;
 			
