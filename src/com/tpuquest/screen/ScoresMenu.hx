@@ -1,4 +1,5 @@
 package com.tpuquest.screen;
+import com.haxepunk.utils.Data;
 import com.tpuquest.screen.ScoresMenu.Record;
 import com.tpuquest.utils.DrawText;
 import com.haxepunk.HXP;
@@ -8,9 +9,11 @@ import com.haxepunk.Entity;
 import com.tpuquest.utils.CLocals;
 
 import haxe.xml.*;
+
+#if !flash
 import sys.FileSystem;
 import sys.io.File;
-import sys.io.FileOutput;
+#end
 
 #if android
 import openfl.utils.SystemPath;
@@ -27,7 +30,7 @@ class ScoresMenu extends Screen
 	{
 		super();
 	}
-	
+
 	public override function begin()
 	{
 		var img:Image = new Image("graphics/bg.jpg");
@@ -70,6 +73,11 @@ class ScoresMenu extends Screen
 		if ( FileSystem.exists( SystemPath.applicationStorageDirectory + "/scores.xml" ) )
 		{
 			scoresData = Xml.parse(File.getContent( SystemPath.applicationStorageDirectory + "/scores.xml" ));
+#elseif flash
+		Data.load("tpuquuest_data");
+		if (Data.read("scores") != null)
+		{
+			scoresData = Xml.parse(Data.read("scores"));
 #else
 		if ( FileSystem.exists( "scores.xml" ) )
 		{
@@ -98,6 +106,9 @@ class ScoresMenu extends Screen
 			}
 #if android	
 			File.saveContent(SystemPath.applicationStorageDirectory + "/scores.xml", scoresData.toString() );
+#elseif flash
+			Data.write("scores", scoresData.toString());
+			Data.save("tpuquuest_data", true);
 #else
 			File.saveContent("scores.xml", scoresData.toString() );
 #end
@@ -137,6 +148,9 @@ class ScoresMenu extends Screen
 		}
 #if android	
 			File.saveContent(SystemPath.applicationStorageDirectory + "/scores.xml", scoresData.toString() );
+#elseif flash
+			Data.write("scores", scoresData.toString());
+			Data.save("tpuquuest_data", true);
 #else
 			File.saveContent("scores.xml", scoresData.toString() );
 #end

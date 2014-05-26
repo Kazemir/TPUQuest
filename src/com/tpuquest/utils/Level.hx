@@ -2,6 +2,7 @@ package com.tpuquest.utils;
 import com.haxepunk.Graphic;
 import com.haxepunk.graphics.Graphiclist;
 import com.haxepunk.graphics.Tilemap;
+import com.haxepunk.utils.Data;
 import com.tpuquest.entity.character.Boss;
 import com.tpuquest.entity.character.Enemy;
 import com.tpuquest.entity.character.Player;
@@ -26,9 +27,15 @@ import com.haxepunk.HXP;
 import flash.geom.Point;
 
 import haxe.xml.*;
+
+#if !flash
 import sys.FileSystem;
 import sys.io.File;
-import sys.io.FileOutput;
+#end
+
+#if android
+import openfl.utils.SystemPath;
+#end
 
 import openfl.Assets;
 
@@ -82,13 +89,27 @@ class Level
 		bgPicturePath = "";
 	}
 	
-	public static function LoadLevel( path:String, behavior:Bool = true ):Level
+	public static function LoadLevel( path:String, fromAssets:Bool = true, behavior:Bool = true ):Level
 	{
 		var lvl:Level = new Level();
 		var lvlXML:Xml;
-		
-		lvlXML = Xml.parse(Assets.getText( path )).firstElement();
 
+		if (fromAssets)
+		{
+			lvlXML = Xml.parse(Assets.getText( path )).firstElement();
+		}
+		else
+		{
+#if android
+		lvlXML = Xml.parse(File.getContent( SystemPath.applicationStorageDirectory + path )).firstElement();
+#elseif flash
+		Data.load("tpuquuest_levels");
+		lvlXML = Xml.parse(Data.read(path)).firstElement();
+#else
+		lvlXML = Xml.parse(File.getContent( path )).firstElement();
+#end
+		}
+		
 		lvl.bgcolor = Std.parseInt(lvlXML.get("bgcolor"));
 		lvl.levelName = lvlXML.get("name");
 		lvl.bgPicturePath = lvlXML.get("bgpicture");
@@ -216,7 +237,7 @@ class Level
 			
 		return lvl;
 	}
-	
+
 	public function SaveLevel( path:String )
 	{
 		var lvlXML:Xml = Xml.createElement( "level" );
@@ -376,7 +397,15 @@ class Level
 		lvlXML.addChild(stickersXML);
 		lvlXML.addChild(helpersXML);
 		
+#if android
+		File.saveContent(SystemPath.applicationStorageDirectory + path, lvlXML.toString());
+#elseif flash
+		Data.load("tpuquuest_levels");
+		Data.write(path, lvlXML.toString());
+		Data.save("tpuquuest_levels");
+#else
 		File.saveContent(path, lvlXML.toString());
+#end
 	}
 	
 	public function SaveOldInNewFormat( path:String )
@@ -457,10 +486,10 @@ class Level
 		for (x in tiles)
 		{
 			var id:Int = 0;
-			/*switch(x.imgPath)
-			{
+			//switch(x.imgPath)
+			//{
 				
-			}*/
+			//}
 			tilesMap.addTile(x.tilePoint.x, x.tilePoint.y, id, x.collidability);
 		}
 		tilesXML.set("tilesData", tilesMap.tileMap.saveToString());
@@ -472,10 +501,10 @@ class Level
 		for (x in stickers)
 		{
 			var id:Int = 0;
-			/*switch(x.imgPath)
-			{
+			//switch(x.imgPath)
+			//{
 				
-			}*/
+			//}
 			if(x.behindCreatures)
 				stickersMapBehind.addTile(x.tilePoint.x, x.tilePoint.y, id, false);
 			else
@@ -534,9 +563,17 @@ class Level
 		lvlXML.addChild(stickersXML);
 		lvlXML.addChild(helpersXML);
 
+#if android
+		File.saveContent(SystemPath.applicationStorageDirectory + path, lvlXML.toString());
+#elseif flash
+		Data.load("tpuquuest_levels");
+		Data.write(path, lvlXML.toString());
+		Data.save("tpuquuest_levels");
+#else
 		File.saveContent(path, lvlXML.toString());
+#end
 	}
-	
+
 	public function getEntities():Array<Entity>
 	{
 		var entList:Array<Entity> = new Array<Entity>();

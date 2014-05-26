@@ -1,6 +1,7 @@
 package com.tpuquest;
 import com.haxepunk.Engine;
 import com.haxepunk.HXP;
+import com.haxepunk.utils.Data;
 import com.tpuquest.screen.*;
 import com.tpuquest.unitTests.*;
 import com.haxepunk.RenderMode;
@@ -13,8 +14,10 @@ import openfl.utils.SystemPath;
 
 import haxe.xml.*;
 
+#if !flash
 import sys.FileSystem;
 import sys.io.File;
+#end
 
 class Main extends Engine
 {
@@ -25,7 +28,11 @@ class Main extends Engine
 
 	public function new()
 	{
+#if !flash
 		super(screenWidth, screenHeight, frameRate, false, RenderMode.HARDWARE);
+#else
+		super(screenWidth, screenHeight, frameRate, false, RenderMode.BUFFER);
+#end
 	}
 
 	override public function init()
@@ -70,11 +77,17 @@ class Main extends Engine
 	
 	private static function LoadConfig()
 	{
+
 		var config:Xml;
 #if android
 		if ( FileSystem.exists(SystemPath.applicationStorageDirectory + "/config.xml") )
 		{
 			config = Xml.parse(File.getContent( SystemPath.applicationStorageDirectory + "/config.xml" )).firstElement();
+#elseif flash
+		Data.load("tpuquuest_data");
+		if (Data.read("settings") != null)
+		{
+			config = Xml.parse(Data.read("settings")).firstElement();
 #else
 		if ( FileSystem.exists("config.xml") )
 		{
@@ -93,11 +106,13 @@ class Main extends Engine
 			config.set("language", SettingsMenu.language);
 #if android
 			File.saveContent(SystemPath.applicationStorageDirectory + "/config.xml", config.toString());
+#elseif flash
+			Data.write("settings", config.toString());
+			Data.save("tpuquuest_data", true);
 #else
 			File.saveContent("config.xml", config.toString());
 #end
 		}
-
 		CLocals.set( SettingsMenu.language );
 	}
 }

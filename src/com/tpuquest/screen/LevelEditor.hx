@@ -35,12 +35,14 @@ import com.haxepunk.utils.Key;
 import flash.geom.Rectangle;
 import com.haxepunk.graphics.Image;
 import com.haxepunk.Entity;
+import openfl.Assets;
 
-import haxe.io.Eof;
+#if !flash
 import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileInput;
 import sys.io.FileOutput;
+#end
 
 import com.tpuquest.dialog.InputBox;
 import com.tpuquest.dialog.MessageBox;
@@ -97,7 +99,7 @@ class LevelEditor extends Screen
 		super();
 
 	}
-	
+#if !flash
 	public override function begin()
 	{
 		super.begin();
@@ -805,7 +807,7 @@ class LevelEditor extends Screen
 		stickersList = new Array<Dynamic>();
 		helpersList = new Array<Dynamic>();
 		
-		var xmlItems:Xml = Xml.parse(File.getContent("cfg/items.xml")).firstElement();
+		var xmlItems:Xml = Xml.parse(Assets.getText("cfg/items.xml")).firstElement();
 		for (x in xmlItems.elements())
 		{
 			switch(x.get("type"))
@@ -822,7 +824,7 @@ class LevelEditor extends Screen
 		currentItem.visible = false;
 		currentItem.layer = 0;
 
-		var xmlCharacters:Xml = Xml.parse(File.getContent("cfg/characters.xml")).firstElement();
+		var xmlCharacters:Xml = Xml.parse(Assets.getText("cfg/characters.xml")).firstElement();
 		for (x in xmlCharacters.elements())
 		{
 			switch(x.get("type"))
@@ -844,7 +846,7 @@ class LevelEditor extends Screen
 		currentCharacter.layer = 0;
 		currentCharacter.behaviorOn = false;
 
-		var xmlTiles:Xml = Xml.parse(File.getContent("cfg/tiles.xml")).firstElement();
+		var xmlTiles:Xml = Xml.parse(Assets.getText("cfg/tiles.xml")).firstElement();
 		for (x in xmlTiles.elements())
 		{
 			var tC = x.get("collidability");
@@ -860,7 +862,7 @@ class LevelEditor extends Screen
 		currentTile.visible = true;
 		currentTile.layer = 0;
 		
-		var xmlStickers:Xml = Xml.parse(File.getContent("cfg/stickers.xml")).firstElement();
+		var xmlStickers:Xml = Xml.parse(Assets.getText("cfg/stickers.xml")).firstElement();
 		for (x in xmlStickers.elements())
 		{
 			var tC = x.get("behindCreatures");
@@ -877,7 +879,7 @@ class LevelEditor extends Screen
 		currentSticker.visible = false;
 		//currentSticker.layer = 0;
 		
-		var xmlHelpers:Xml = Xml.parse(File.getContent("cfg/helpers.xml")).firstElement();
+		var xmlHelpers:Xml = Xml.parse(Assets.getText("cfg/helpers.xml")).firstElement();
 		for (x in xmlHelpers.elements())
 		{
 			switch(x.get("type"))
@@ -908,4 +910,5 @@ class LevelEditor extends Screen
 		
 		elementMax = tilesList.length - 1;
 	}
+#end
 }

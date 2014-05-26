@@ -2,6 +2,7 @@ package com.tpuquest.screen;
 import com.haxepunk.graphics.Tilemap;
 import com.haxepunk.masks.SlopedGrid;
 import com.haxepunk.Sfx;
+import com.haxepunk.utils.Data;
 import com.tpuquest.dialog.DialogBox;
 import com.tpuquest.dialog.GameMenu;
 import com.tpuquest.dialog.TradeBox;
@@ -21,12 +22,17 @@ import com.tpuquest.utils.Level;
 import com.haxepunk.graphics.Image;
 import com.tpuquest.utils.TileGrid;
 import flash.geom.Point;
+import com.tpuquest.utils.CLocals;
+import openfl.Assets;
+
+#if android
+import openfl.utils.SystemPath;
+#end
+
+#if !flash
 import sys.io.File;
 import sys.FileSystem;
-import com.tpuquest.utils.CLocals;
-
-import openfl.Assets;
-import openfl.utils.SystemPath;
+#end
 
 class GameScreen extends Screen
 {
@@ -76,33 +82,28 @@ class GameScreen extends Screen
 
 		LoadCFG();
 		
-#if android
 		if(itsContinue)
-			LoadMap(SystemPath.applicationStorageDirectory + cfgContinueMap, false);
+			LoadMap(cfgContinueMap, false, false);
 		else
 		{
+#if android
 			if(!FileSystem.exists(SystemPath.applicationStorageDirectory + "levels/continue/"))
 					FileSystem.createDirectory(SystemPath.applicationStorageDirectory + "levels/continue/");
 			
 			for (x in FileSystem.readDirectory(SystemPath.applicationStorageDirectory + "levels/continue/"))
 				FileSystem.deleteFile(SystemPath.applicationStorageDirectory + "levels/continue/" + x);
-
-			LoadMap(cfgStartMap, true);
-		}
+#elseif flash
+			Data.load("empty");
+			Data.save("tpuquuest_levels", true);
 #else
-		if(itsContinue)
-			LoadMap(cfgContinueMap, false);
-		else
-		{
 			if(!FileSystem.exists("levels/continue/"))
 					FileSystem.createDirectory("levels/continue/");
 			
 			for (x in FileSystem.readDirectory("levels/continue/"))
 					FileSystem.deleteFile("levels/continue/" + x);
-			
-			LoadMap(cfgStartMap, true);
-		}
 #end
+			LoadMap(cfgStartMap, true, true);
+		}
 		
 		background.scrollX = background.scrollY = 0;
         addGraphic(background).layer = 101;
@@ -134,13 +135,14 @@ class GameScreen extends Screen
 		addGraphic(coinImg, -5, 670, 53);
 		addGraphic(heartImg, -5, 670, 23);
 		addGraphic(weaponImg, -5, 685, 90);
-		
+#if flash
+		music = new Sfx("music/MightandMagic_Book1__ShopTheme.mp3");
+#else
 		music = new Sfx("music/MightandMagic_Book1__ShopTheme.ogg");
+#end
 		music.play(SettingsMenu.musicVolume / 10, 0, true);
 		
 		//add(new TileGrid(0, 0));
-		
-		//androidOverlay = new Image("graphics/androidOverlay_game.png");
 		
 		super.begin();
 	}
@@ -181,19 +183,18 @@ class GameScreen extends Screen
 				if (notInstantlyMapLoadingBackground.alpha == 1)
 				{
 					removeList( lvl.getEntities() );
-#if android
-					lvl.SaveLevel(SystemPath.applicationStorageDirectory + "levels/continue/" + lvl.levelName + ".xml");
-					if (FileSystem.exists(SystemPath.applicationStorageDirectory + "levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]))
-						LoadMap(SystemPath.applicationDirectory + "levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1], false);
-					else
-						LoadMap(mapPathFromHelper, false);
-#else
 					lvl.SaveLevel("levels/continue/" + lvl.levelName + ".xml");
+#if android
+					if (FileSystem.exists(SystemPath.applicationStorageDirectory + "levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]))
+#elseif flash
+					Data.load("tpuquuest_levels");
+					if (Data.read("levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]) != null)
+#else
 					if (FileSystem.exists("levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]))
-						LoadMap("levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1], false);
-					else
-						LoadMap(mapPathFromHelper, false);
 #end
+						LoadMap("levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1], false, false);
+					else
+						LoadMap(mapPathFromHelper, false, true);
 					notInstantlyMapLoadingUp = false;
 				}
 			}
@@ -229,10 +230,10 @@ class GameScreen extends Screen
 		}
 	}
 	
-	public function LoadMap( mapPath:String, newPlayer:Bool = false)
+	public function LoadMap( mapPath:String, newPlayer:Bool = false, fromAssets:Bool = true)
 	{
 
-		lvl = Level.LoadLevel( mapPath );
+		lvl = Level.LoadLevel( mapPath, fromAssets );
 		
 		var isExsist = false;
 
@@ -298,19 +299,18 @@ class GameScreen extends Screen
 		if (instantly)
 		{
 			removeList( lvl.getEntities() );
-#if android
-			lvl.SaveLevel(SystemPath.applicationStorageDirectory + "levels/continue/" + lvl.levelName + ".xml");
-			if (FileSystem.exists(SystemPath.applicationStorageDirectory + "levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1]))
-				LoadMap(SystemPath.applicationStorageDirectory + "levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1], !currentPlayer );
-			else
-				LoadMap(mapPath, !currentPlayer);
-#else
 			lvl.SaveLevel("levels/continue/" + lvl.levelName + ".xml");
+#if android
+			if (FileSystem.exists(SystemPath.applicationStorageDirectory + "levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1]))
+#elseif flash
+			Data.load("tpuquuest_levels");
+			if (Data.read("levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1]) != null)
+#else
 			if (FileSystem.exists("levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1]))
-				LoadMap("levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1], !currentPlayer);
-			else
-				LoadMap(mapPath, !currentPlayer);
 #end
+				LoadMap("levels/continue/" + mapPath.split("/")[mapPath.split("/").length - 1], !currentPlayer, false );
+			else
+				LoadMap(mapPath, !currentPlayer, true);
 		}
 		else
 		{

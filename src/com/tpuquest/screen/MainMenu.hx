@@ -1,6 +1,7 @@
 package com.tpuquest.screen;
 import com.haxepunk.HXP;
 import com.haxepunk.Sfx;
+import com.haxepunk.utils.Data;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Touch;
 import com.tpuquest.dialog.TradeBox;
@@ -12,9 +13,15 @@ import com.haxepunk.Entity;
 import com.haxepunk.utils.Key;
 import com.tpuquest.utils.CLocals;
 import openfl.Assets;
-import sys.FileSystem;
 
+#if android
 import openfl.utils.SystemPath;
+#end
+
+#if !flash
+import sys.io.File;
+import sys.FileSystem;
+#end
 
 class MainMenu extends Screen
 {
@@ -41,7 +48,7 @@ class MainMenu extends Screen
 		textMenuElements.push(new DrawText(CLocals.text.mainMenu_settings, GameFont.Molot, 32, HXP.halfWidth, 320, passiveColor, true));
 		textMenuElements.push(new DrawText(CLocals.text.mainMenu_score, GameFont.Molot, 32, HXP.halfWidth, 360, passiveColor, true));
 		textMenuElements.push(new DrawText(CLocals.text.mainMenu_authors, GameFont.Molot, 32, HXP.halfWidth, 400, passiveColor, true));
-#if !android
+#if windows
 		textMenuElements.push(new DrawText(CLocals.text.mainMenu_exit, GameFont.Molot, 32, HXP.halfWidth, 440, passiveColor, true));
 #end
 		
@@ -81,6 +88,9 @@ class MainMenu extends Screen
 			case 1:
 #if android
 				if (FileSystem.exists(SystemPath.applicationStorageDirectory + "levels/continuePlay_map.xml"))
+#elseif flash
+				Data.load("tpuquuest_levels");
+				if (Data.read("levels/continuePlay_map.xml") != null)
 #else
 				if (FileSystem.exists("levels/continuePlay_map.xml"))
 #end

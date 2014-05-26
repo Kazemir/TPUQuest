@@ -20,8 +20,11 @@ class SplashScreen extends Screen
 	public override function begin()
 	{
 		super.begin();
-		
+#if flash
+		MainMenu.menuMusic = new Sfx("music/KineticLaw_HardcoreMode.mp3");
+#else
 		MainMenu.menuMusic = new Sfx("music/KineticLaw_HardcoreMode.ogg");
+#end
 		MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
 		
 		base = Image.createRect(HXP.width, HXP.height, 0, 0.99);

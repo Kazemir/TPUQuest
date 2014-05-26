@@ -3,6 +3,7 @@ import com.haxepunk.graphics.Backdrop;
 import com.haxepunk.graphics.Image;
 import com.haxepunk.graphics.Text;
 import com.haxepunk.Scene;
+import com.haxepunk.utils.Data;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
 import com.tpuquest.utils.DrawText;
@@ -12,8 +13,11 @@ import haxe.Utf8;
 import flash.system.System;
 
 import haxe.xml.*;
+
+#if !flash
 import sys.io.File;
 import sys.FileSystem;
+#end
 
 import com.haxepunk.utils.Joystick;
 import com.haxepunk.utils.Touch;
@@ -75,31 +79,33 @@ class Screen extends Scene
 			ifNotBoxUpdate();*/
 	}
 	
-	private function ExitGame()
+	public function SaveSettings()
 	{
 		var config:Xml = Xml.createElement("settings");
-#if android
-		if ( FileSystem.exists(SystemPath.applicationStorageDirectory + "/config.xml") )
-#else
-		if ( FileSystem.exists("config.xml") )
-#end
-		{
-			config.set("sound", Std.string(SettingsMenu.soudVolume));
-			config.set("music", Std.string(SettingsMenu.musicVolume));
-			config.set("language", SettingsMenu.language);
+
+		config.set("sound", Std.string(SettingsMenu.soudVolume));
+		config.set("music", Std.string(SettingsMenu.musicVolume));
+		config.set("language", SettingsMenu.language);
 			
 #if android
-			File.saveContent(SystemPath.applicationStorageDirectory + "/config.xml", config.toString());
+		File.saveContent(SystemPath.applicationStorageDirectory + "/config.xml", config.toString());
+#elseif flash
+		Data.load("tpuquuest_data");
+		Data.write("settings", config.toString());
+		Data.save("tpuquuest_data", true);
 #else
-			File.saveContent("config.xml", config.toString());
+		File.saveContent("config.xml", config.toString());
 #end
-		}
+	}
+	
+	private function ExitGame()
+	{
+		SaveSettings();
 #if android
 		//System.resume();
 		//var aaa:op
 		
-		System.exit(0);
-		
+		//System.exit(0);
 #else
 		System.exit(0);
 #end

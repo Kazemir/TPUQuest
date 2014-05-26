@@ -1,6 +1,7 @@
 package com.tpuquest.utils;
 import com.haxepunk.graphics.Text;
 import com.haxepunk.Entity;
+import flash.text.TextFormatAlign;
 
 enum GameFont {
         Imperial;
@@ -39,10 +40,17 @@ class DrawText
 			label = new Text(str, x, y);
 		else
 		{
+#if !flash
 			if(centredAligm)
 				label = new Text(str, x, y, width, height, { wordWrap:true, align:"center", size:size, font:fnt, resizable:false });
 			else
 				label = new Text(str, x, y, width, height, { wordWrap:true, align:"left", size:size, font:fnt, resizable:false });
+#else
+			if(centredAligm)
+				label = new Text(str, x, y, width, height, { wordWrap:true, align:TextFormatAlign.CENTER, size:size, font:fnt, resizable:false });
+			else
+				label = new Text(str, x, y, width, height, { wordWrap:true, align:TextFormatAlign.LEFT, size:size, font:fnt, resizable:false });
+#end
 		}
 
 		label.color = color;
