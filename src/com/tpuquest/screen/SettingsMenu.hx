@@ -154,7 +154,7 @@ class SettingsMenu extends Screen
 	{
 		if (Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B") || Screen.touchPressed("esc"))
 		{
-			SaveSettings();
+			Screen.SaveSettings();
 			HXP.scene = new MainMenu();
 		}
 		if (Input.pressed("up") || Screen.joyPressed("DPAD_UP") || Screen.touchPressed("up"))

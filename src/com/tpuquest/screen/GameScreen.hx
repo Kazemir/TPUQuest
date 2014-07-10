@@ -1,16 +1,19 @@
 package com.tpuquest.screen;
+
 import com.haxepunk.graphics.Tilemap;
 import com.haxepunk.masks.SlopedGrid;
 import com.haxepunk.Sfx;
 import com.haxepunk.utils.Data;
+import com.haxepunk.graphics.Image;
+import com.haxepunk.utils.Input;
+import com.haxepunk.HXP;
+
 import com.tpuquest.dialog.DialogBox;
 import com.tpuquest.dialog.GameMenu;
 import com.tpuquest.dialog.TradeBox;
 import com.tpuquest.entity.character.Enemy;
 import com.tpuquest.entity.character.Player;
 import com.tpuquest.entity.character.Talker;
-import com.haxepunk.utils.Input;
-import com.haxepunk.HXP;
 import com.tpuquest.entity.helper.ChangeMap;
 import com.tpuquest.entity.helper.Helper;
 import com.tpuquest.entity.item.Coin;
@@ -18,11 +21,12 @@ import com.tpuquest.entity.item.Item;
 import com.tpuquest.entity.item.Potion;
 import com.tpuquest.utils.DrawText;
 import com.tpuquest.utils.PointXY;
-import com.tpuquest.utils.Level;
-import com.haxepunk.graphics.Image;
-import com.tpuquest.utils.TileGrid;
-import flash.geom.Point;
 import com.tpuquest.utils.CLocals;
+import com.tpuquest.utils.TileGrid;
+import com.tpuquest.utils.TileGridLevel;
+
+import flash.geom.Point;
+
 import openfl.Assets;
 
 #if android
@@ -36,7 +40,7 @@ import sys.FileSystem;
 
 class GameScreen extends Screen
 {
-	public var lvl:Level;
+	public var lvl:TileGridLevel;
 	
 	private var coinsText:DrawText;
 	private var hpText:DrawText;
@@ -142,8 +146,6 @@ class GameScreen extends Screen
 #end
 		music.play(SettingsMenu.musicVolume / 10, 0, true);
 		
-		//add(new TileGrid(0, 0));
-		
 		super.begin();
 	}
 	
@@ -153,6 +155,9 @@ class GameScreen extends Screen
 		{
 			gameMenu = new GameMenu(HXP.halfWidth, HXP.halfHeight);
 			add(gameMenu);
+			
+			for (x in lvl.characters)
+				x.behaviorOn = false;
 		}
 		
 		var t:String = Std.string(player.money);
@@ -233,7 +238,7 @@ class GameScreen extends Screen
 	public function LoadMap( mapPath:String, newPlayer:Bool = false, fromAssets:Bool = true)
 	{
 
-		lvl = Level.LoadLevel( mapPath, fromAssets );
+		lvl = TileGridLevel.LoadLevel( mapPath, fromAssets );
 		
 		var isExsist = false;
 

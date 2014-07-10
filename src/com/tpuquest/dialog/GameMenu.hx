@@ -36,7 +36,7 @@ class GameMenu extends Dialog
 		var sprite:Sprite = new Sprite();
         var g:Graphics = sprite.graphics;
 		
-		captionText = new DrawText("Пауза", GameFont.PixelCyr, 20, 150, 12, 0, true);
+		captionText = new DrawText(CLocals.text.gameMenu_pause, GameFont.PixelCyr, 20, 150, 12, 0, true);
 		
 		var frameW:Int = minW;
 		if (captionText.label.width + 10 > minW)
@@ -163,6 +163,12 @@ class GameMenu extends Dialog
 		switch(currentMenuElement)
 		{
 			case 0:
+				if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
+				{
+					for (x in cast(scene,GameScreen).lvl.characters)
+						x.behaviorOn = true;
+				}
+				
 				Screen.overrideControlByBox = false;
 				this.scene.remove(this);
 			case 1:
@@ -214,6 +220,12 @@ class GameMenu extends Dialog
 		{
 			if (!settingsOn)
 			{
+				if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
+				{
+					for (x in cast(scene,GameScreen).lvl.characters)
+						x.behaviorOn = true;
+				}
+				
 				Screen.overrideControlByBox = false;
 				this.scene.remove(this);
 			}
@@ -231,7 +243,7 @@ class GameMenu extends Dialog
 		
 				currentMenuElement = 0;
 				changeMenu();
-				cast(currentScene, Screen).SaveSettings();
+				Screen.SaveSettings();
 			}
 		}
 		if (Input.pressed("up") || Screen.joyPressed("DPAD_UP") || Screen.touchPressed("up"))

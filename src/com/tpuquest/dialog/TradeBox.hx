@@ -1,4 +1,5 @@
 package com.tpuquest.dialog;
+
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Stamp;
 import com.haxepunk.Sfx;
@@ -138,6 +139,10 @@ class TradeBox extends Dialog
 		if ( Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B"))
 		{
 			Screen.overrideControlByBox = false;
+			
+			for (x in currentScene.lvl.characters)
+				x.behaviorOn = true;
+			
 			this.scene.remove(this);
 		}
 		if (Input.pressed("action") || Screen.joyPressed("A"))

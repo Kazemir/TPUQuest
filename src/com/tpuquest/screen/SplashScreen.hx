@@ -31,10 +31,13 @@ class SplashScreen extends Screen
         base.scrollX = base.scrollY = 0;
         addGraphic(base).layer = -5; 
 		
-		var base2 = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
-        base2.scrollX = base2.scrollY = 0;
-        addGraphic(base2).layer = 10; 
+		//var base2 = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
+        //base2.scrollX = base2.scrollY = 0;
+        //addGraphic(base2).layer = 10; 
 		
+		var img:Image = new Image("graphics/controls.jpg");
+		addGraphic(img).layer = 10;
+		/*
 		addGraphic(DrawText.CreateTextEntity("Курсовой проект по дисциплине", GameFont.PixelCyr, 36, HXP.width / 2, HXP.height / 2 - 25 - 50, 0, true));
 		addGraphic(DrawText.CreateTextEntity("«Технология разработки программного обеспечения»", GameFont.PixelCyr, 26, HXP.width / 2, HXP.height / 2 + 25 - 50, 0, true));
 	
@@ -49,7 +52,7 @@ class SplashScreen extends Screen
 		var img:Image = new Image("graphics/gerbtpu.jpg"); 
 		img.centerOrigin();
 		img.scale = 0.35;
-		addGraphic(img, 10, HXP.width / 2, 100);
+		addGraphic(img, 10, HXP.width / 2, 100);*/
 	}
 	
 	public override function update()
