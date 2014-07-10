@@ -1,9 +1,15 @@
 package com.tpuquest.entity.character;
+
+import haxe.Timer;
+
 import com.haxepunk.Entity;
+import com.haxepunk.graphics.Emitter;
 import com.haxepunk.graphics.Spritemap;
 import com.haxepunk.Scene;
 import com.haxepunk.utils.Input;
 import com.haxepunk.HXP;
+import com.haxepunk.Sfx;
+
 import com.tpuquest.dialog.DialogBox;
 import com.tpuquest.dialog.TradeBox;
 import com.tpuquest.entity.helper.ChangeMap;
@@ -19,10 +25,11 @@ import com.tpuquest.screen.LevelEditor;
 import com.tpuquest.screen.LoseScreen;
 import com.tpuquest.screen.Screen;
 import com.tpuquest.screen.SettingsMenu;
+import com.tpuquest.utils.DrawText;
 import com.tpuquest.utils.PointXY;
-import flash.geom.Point;
-import com.haxepunk.Sfx;
 import com.tpuquest.utils.CLocals;
+
+import flash.geom.Point;
 
 class Player extends Character
 {
@@ -32,14 +39,17 @@ class Player extends Character
 	public var weaponized:Bool;
 	
 	private var sprite:Spritemap;
+	private var emitter:Emitter;
+	private var helpText:DrawText;
+	
+	public var eyesToTheRight:Bool;
+	public var isDead:Bool;
+	public var controlOn:Bool;
+	private var godMode:Bool;
 
 	public static inline var kMoveSpeed:Float = 5;
 	public static inline var kJumpForce:Int = 23;
 	public var hasTouchTheGround(default, null) : Bool;
-	public var isDead:Bool;
-	public var attack:Bool;
-	
-	public var controlOn:Bool;
 	
 	private var currentScene:GameScreen;
 	
@@ -47,13 +57,14 @@ class Player extends Character
 	{
 		super(point, spritePath, name, behavior);
 		
+		eyesToTheRight = true;
 		hasTouchTheGround = true;
 		
 		sprite = new Spritemap(spritePath, 32, 32);
 		sprite.add("idle", [8, 8, 8, 9], 3, true);
 		sprite.add("walk", [0, 1, 2, 3, 4, 5, 6, 7], 19, true);
 		sprite.add("jump", [10]);
-		sprite.add("attack", [16, 15, 14, 13], 20, false);
+		sprite.add("attack", [16, 15, 14, 13, 13, 13, 13], 30, false);
 
 		sprite.play("idle");
 	 
@@ -70,10 +81,34 @@ class Player extends Character
 		friction.x = 0.82;
 		friction.y = 0.99;
 		
+		emitter = new Emitter("graphics/particle.png", 10, 10);
+		addGraphic(emitter);
+				
+		emitter.newType("landingL", [2]);
+		emitter.setMotion("landingL", 150, 40, 0.1, 40, 5, 0.05);
+		emitter.setAlpha("landingL", 1, 0);
+		emitter.setGravity("landingL", -2, 0.5);
+		
+		emitter.newType("landingR", [2]);
+		emitter.setMotion("landingR", 30, 40, 0.1, -40, 5, 0.05);
+		emitter.setAlpha("landingR", 1, 0);
+		emitter.setGravity("landingR", -2, 0.5);
+		
+		emitter.newType("blood", [1]);
+		emitter.setMotion("blood", 0, 30, 0.2, 360, 5, 0.05);
+		emitter.setAlpha("blood", 1, 0);
+		emitter.setGravity("blood", -2, 0.5);
+		emitter.setColor("blood", 0xFF0000, 0xFF0000);
+		
+		helpText = new DrawText("TRADE", GameFont.PixelCyr, 14, 23, -15, 0, true);
+		addGraphic(helpText.label);
+		helpText.label.visible = false;
+		
 		this.money = money;
 		this.life = hp;
 		this.isDead = false;
 		this.controlOn = true;
+		this.godMode = false;
 		
 		if (weaponDamage > 0)
 		{
@@ -95,14 +130,12 @@ class Player extends Character
 	
 	private function setAnimations()
 	{
-		if (attack || sprite.currentAnim == "attack")
+		if (sprite.currentAnim == "attack")
 		{
-			if (sprite.complete)
-			{
-				attack = false;
-				setHitbox(40, 80, 0, 0);
+			//attack = false;
+			//setHitbox(40, 80, 0, 0);
+			if(sprite.complete)
 				sprite.play("idle");
-			}
 		}
 		else if (!_onGround)
 		{
@@ -110,10 +143,12 @@ class Player extends Character
 			
 			if (velocity.x < 0) // left
 			{
+				eyesToTheRight = false;
 				sprite.flipped = true;
 			}
 			else if(velocity.x > 0) // right
 			{
+				eyesToTheRight = true;
 				sprite.flipped = false;	
 			}
 		}
@@ -127,10 +162,12 @@ class Player extends Character
 
 			if (velocity.x < 0) // left
 			{
+				eyesToTheRight = false;
 				sprite.flipped = true;
 			}
 			else // right
 			{
+				eyesToTheRight = true;
 				sprite.flipped = false;	
 			}
 		}
@@ -140,6 +177,8 @@ class Player extends Character
 	{
 		if (behaviorOn)
 		{
+			sprite.resume();
+			
 			acceleration.x = acceleration.y = 0;
 
 			if (!_onGround)
@@ -151,7 +190,15 @@ class Player extends Character
 				controlOn = true;
 				var sound = new Sfx("audio/player_soundJumpStop.wav");
 				sound.play(SettingsMenu.soudVolume / 10);
+				
+				for (x in 0...10)
+				{
+					emitter.emit("landingL", 20, 80);
+					emitter.emit("landingR", 20, 80);
+				}
 			}
+			
+			var ent:Entity;
 			
 			if (controlOn && !Screen.overrideControlByBox)
 			{
@@ -163,36 +210,111 @@ class Player extends Character
 				{
 					acceleration.x = kMoveSpeed;
 				}
-				if ((Input.pressed("jump") || Screen.joyPressed("X") || Screen.touchPressed("up") || Screen.touchPressed("jump")) && _onGround)
+				if ((Input.pressed("jump") || Screen.joyPressed("A") || Screen.touchPressed("jump")) && _onGround)
 				{
 					acceleration.y = -HXP.sign(gravity.y) * kJumpForce;
 					
 					var sound = new Sfx("audio/player_soundJumpStart.wav");
 					sound.play(SettingsMenu.soudVolume / 10);
 				}
-				if ((Input.pressed("action") || Screen.joyPressed("A") || Screen.touchPressed("action")) && weaponized)
+				if (Input.pressed("action") || Screen.joyPressed("X") || Screen.touchPressed("action"))
 				{
-					attack = true;
-					sprite.play("attack", true);
-					
-					if (sprite.flipped) //left
+					if((ent = collide("trader", x, y)) != null)
 					{
-						setHitbox(70, 80, 30);
+						var traderList:Array<Item> = new Array<Item>();
+						traderList.push(new Potion(new PointXY(0, 0), 25, "graphics/items/potion_red_small.png"));
+						traderList.push(new Potion(new PointXY(0, 0), 50, "graphics/items/potion_red.png"));
+						traderList.push(new Potion(new PointXY(0, 0), 100, "graphics/items/heart.png"));
+						var t:TradeBox = new TradeBox(HXP.halfWidth, HXP.halfHeight, CLocals.text.game_traderBox_caption, traderList, [5, 10, 15]);
+						currentScene.add(t);
+						
+						for (x in currentScene.lvl.characters)
+							x.behaviorOn = false;
 					}
-					else
+					else if((ent = collide("talker", x, y)) != null)
 					{
-						setHitbox(70, 80, 0);
+						var t:DialogBox = new DialogBox(HXP.halfWidth, HXP.halfHeight, CLocals.text.game_talkerBox_caption);
+						currentScene.add(t);
+						
+						for (x in currentScene.lvl.characters)
+							x.behaviorOn = false;
 					}
-					
-					//setAnimations();
-					var sound = new Sfx("audio/player_attack.wav");
-					sound.play(SettingsMenu.soudVolume / 10);
+					else if ((ent = collide("helper", x, y)) != null)
+					{
+						if (Type.getClassName(Type.getClass(ent)) == "com.tpuquest.entity.helper.ChangeMap")
+						{
+							var cm:ChangeMap = cast(ent, ChangeMap);
+							if (cm.removeAfterUsing)
+							{
+								currentScene.lvl.helpers.remove(cm);
+								currentScene.remove(cm);
+							}
+							currentScene.NextMap(cm.nextMapPath, cm.keepPlayer, cm.instantly);
+						}
+					}
+					else if (weaponized && sprite.currentAnim != "attack")
+					{
+						sprite.play("attack", true);
+						
+						var sword:Entity = new Entity(0, 0);
+						var swordLength:Int = 70;
+						sword.setHitbox(swordLength, 40);
+
+						if (sprite.flipped) //left
+							sword.x = this.x + 40 - swordLength - 5;
+						else
+							sword.x = this.x + 5;
+						
+						sword.y = this.y + 30;
+						sword.type = "sword";
+						currentScene.add(sword);
+						
+						var tm:Timer = new Timer(10);
+						tm.run = function() 
+						{
+							if (sprite.currentAnim != "attack")
+							{
+								tm.stop();
+								currentScene.remove(sword);
+							}
+							else
+							{
+								if (sprite.flipped) //left
+									sword.x = this.x + 40 - swordLength - 5;
+								else
+									sword.x = this.x + 5;
+								sword.y = this.y + 30;
+							}
+						};
+							
+						var sound = new Sfx("audio/player_attack.wav");
+						sound.play(SettingsMenu.soudVolume / 10);
+					}
 				}
 			}
 			
-			super.update();
+			helpText.label.visible = false;
+			if ((ent = collide("trader", x, y)) != null)
+			{
+				helpText = new DrawText(CLocals.text.gameHelp_trade, GameFont.PixelCyr, 14, 23, -15, 0, true);
+				addGraphic(helpText.label);
+				//addGraphic(new DrawText2(CLocals.text.gameHelp_trade, 23, -15, GameFont2.PixelCyr, 14));
+			}
+			else if ((ent = collide("talker", x, y)) != null)
+			{
+				helpText = new DrawText(CLocals.text.gameHelp_talk, GameFont.PixelCyr, 14, 23, -15, 0, true);
+				addGraphic(helpText.label);
+			}
+			else if ((ent = collide("helper", x, y)) != null)
+			{
+				if (Type.getClassName(Type.getClass(ent)) == "com.tpuquest.entity.helper.ChangeMap")
+				{
+					helpText = new DrawText(CLocals.text.gameHelp_enter, GameFont.PixelCyr, 14, 23, -15, 0, true);
+					addGraphic(helpText.label);
+				}
+			}
 			
-			var ent:Entity = collide("coin", x, y);
+			ent = collide("coin", x, y);
 			if(ent != null)
 			{
 				var cn:Coin = cast(ent, Coin);
@@ -224,32 +346,15 @@ class Player extends Character
 			if(ent != null)
 			{
 				var cn:Enemy = cast(ent, Enemy);
-				if (attack && controlOn)
-				{
-					cn.life -= weaponDamage;
-					if (cn.enemyType == 1)
-					{
-						if (cn.velocity.x < 0)
-						{
-							cn.velocity.x = Enemy.kMoveSpeed * 5;
-						}
-						else
-						{
-							cn.velocity.x = -Enemy.kMoveSpeed * 5;
-						}
-						cn.velocity.y = -HXP.sign(cn.gravity.y) * Enemy.kJumpForce * 0.5;
-					}
-					
-					var sound = new Sfx("audio/enemy_pain.wav");
-					if(cn.enemyType < 2 || cn.enemyType > 7)
-						sound.play(SettingsMenu.soudVolume / 10);
-						
-					attack = false;
-					setHitbox(40, 80, 0, 0);
-				}
-				else if(controlOn)
+				if(controlOn && !godMode)
 				{
 					controlOn = false;
+					godMode = true;
+					
+					var timer:Timer = new Timer(1500);
+					
+					timer.run = function() { godMode = false; sprite.alpha = 1.0; timer.stop(); };
+					
 					var sound = new Sfx("audio/player_soundPain.wav");
 					sound.play(SettingsMenu.soudVolume / 10);
 					life -= 5;
@@ -262,6 +367,18 @@ class Player extends Character
 						velocity.x = -kMoveSpeed * 5;
 					}
 					velocity.y = -HXP.sign(gravity.y) * kJumpForce * 0.5;
+					
+					for (x in 0...20)
+						emitter.emit("blood", width / 2, height / 2);
+					
+					sprite.color = 0xFF0000;
+					var timer2:Timer = new Timer(150);
+					timer2.run = function() 
+					{ 
+						sprite.color = 0xFFFFFF; 
+						sprite.alpha = 0.5; 
+						timer2.stop(); 
+					};
 				}
 			}
 			
@@ -269,16 +386,14 @@ class Player extends Character
 			if (ent != null)
 			{
 				var cn:Boss = cast(ent, Boss);
-				if (attack && controlOn)
-				{
-					cn.life -= weaponDamage;
-					
-					attack = false;
-					setHitbox(40, 80, 0, 0);
-				}
-				else if(controlOn)
+				if(controlOn && !godMode)
 				{
 					controlOn = false;
+					godMode = true;
+					
+					var timer:Timer = new Timer(1500);
+					timer.run = function() { godMode = false; timer.stop(); };
+					
 					var sound = new Sfx("audio/player_soundPain.wav");
 					sound.play(SettingsMenu.soudVolume / 10);
 					life -= 5;
@@ -291,6 +406,9 @@ class Player extends Character
 						velocity.x = -kMoveSpeed * 5;
 					}
 					velocity.y = -HXP.sign(gravity.y) * kJumpForce * 0.5;
+					
+					for (x in 0...20)
+						emitter.emit("blood", width / 2, height / 2);
 				}
 			}
 			
@@ -299,11 +417,6 @@ class Player extends Character
 			{
 				switch(Type.getClassName(Type.getClass(ent)))
 				{
-					case "com.tpuquest.entity.helper.ChangeMap":
-						var cm:ChangeMap = cast(ent, ChangeMap);
-						currentScene.lvl.helpers.remove(cm);
-						currentScene.remove(cm);
-						currentScene.NextMap(cm.nextMapPath, cm.keepPlayer, cm.instantly);
 					case "com.tpuquest.entity.helper.ShowMessage":
 						var sm:ShowMessage = cast(ent, ShowMessage);
 					case "com.tpuquest.entity.helper.Spawn":
@@ -338,25 +451,6 @@ class Player extends Character
 				sound.play(SettingsMenu.soudVolume / 10);
 			}
 			
-			ent = collide("trader", x, y);
-			if(ent != null && (Input.pressed("action") || Screen.joyPressed("A") || Screen.touchPressed("action")) && !Screen.overrideControlByBox)
-			{
-				var traderList:Array<Item> = new Array<Item>();
-				traderList.push(new Potion(new PointXY(0, 0), 25, "graphics/items/potion_red_small.png"));
-				traderList.push(new Potion(new PointXY(0, 0), 50, "graphics/items/potion_red.png"));
-				//traderList.push(new Weapon(new PointXY(0, 0), 50, "graphics/items/sword.png"));
-				traderList.push(new Potion(new PointXY(0, 0), 100, "graphics/items/heart.png"));
-				var t:TradeBox = new TradeBox(HXP.halfWidth, HXP.halfHeight, CLocals.text.game_traderBox_caption, traderList, [5, 10, 15]);
-				currentScene.add(t);
-			}
-			
-			ent = collide("talker", x, y);
-			if(ent != null && (Input.pressed("action") || Screen.joyPressed("A") || Screen.touchPressed("action")) && !Screen.overrideControlByBox)
-			{
-				var t:DialogBox = new DialogBox(HXP.halfWidth, HXP.halfHeight, CLocals.text.game_talkerBox_caption);
-				currentScene.add(t);
-			}
-			
 			if (life <= 0)
 			{
 				life = 0;
@@ -370,15 +464,17 @@ class Player extends Character
 			if (life > 100)
 				life = 100;
 			
+			super.update();
 			setAnimations();
+			
 			HXP.camera.x = x - 400 + 20;
 			HXP.camera.y = y - 300 + 40;
 		}
 		else
 		{
 			super.update();
-			setAnimations();
+			//setAnimations();
+			sprite.pause();
 		}
-	}
-	
+	}	
 }

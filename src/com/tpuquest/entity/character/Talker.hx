@@ -83,6 +83,7 @@ class Talker extends Character
 	{
 		if (behaviorOn)
 		{
+			sprite.resume();
 			acceleration.x = acceleration.y = 0;
 			
 			super.update();
@@ -91,6 +92,11 @@ class Talker extends Character
 				sprite.play("speak");
 			else
 				setAnimations();
+		}
+		else
+		{
+			super.update();
+			sprite.pause();
 		}
 	}
 }

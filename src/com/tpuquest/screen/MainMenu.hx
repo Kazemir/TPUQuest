@@ -1,18 +1,23 @@
 package com.tpuquest.screen;
+
 import com.haxepunk.HXP;
 import com.haxepunk.Sfx;
 import com.haxepunk.utils.Data;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Touch;
-import com.tpuquest.dialog.TradeBox;
-import com.tpuquest.utils.DrawText;
-import flash.geom.Point;
-import flash.system.System;
 import com.haxepunk.graphics.Image;
 import com.haxepunk.Entity;
 import com.haxepunk.utils.Key;
+
+import com.tpuquest.dialog.TradeBox;
+import com.tpuquest.dialog.YesNoBox;
+import com.tpuquest.utils.DrawText;
 import com.tpuquest.utils.CLocals;
+
 import openfl.Assets;
+
+import flash.geom.Point;
+import flash.system.System;
 
 #if android
 import openfl.utils.SystemPath;
@@ -105,40 +110,43 @@ class MainMenu extends Screen
 			case 4:
 				HXP.scene = new AuthorsMenu();
 			case 5:
-				menuMusic.stop();
-				ExitGame();
+#if windows
+			var yesNoBox:YesNoBox = new YesNoBox(HXP.halfWidth, HXP.halfHeight, CLocals.text.mainMenu_exit, CLocals.text.mainMenu_exitSure);
+			add(yesNoBox);
+#end
 		}
 	}
 	
 	public override function update()
 	{
-		if (Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B") || Screen.touchPressed("esc"))
+		if ((Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B") || Screen.touchPressed("esc")) && !Screen.overrideControlByBox)
 		{
-#if !android
-			menuMusic.stop();
+#if windows
+			var yesNoBox:YesNoBox = new YesNoBox(HXP.halfWidth, HXP.halfHeight, CLocals.text.mainMenu_exit, CLocals.text.mainMenu_exitSure);
+			add(yesNoBox);
 #end
-			ExitGame();
 		}
-		if (Input.pressed("up") || Screen.joyPressed("DPAD_UP") || Screen.touchPressed("up"))
+		if ((Input.pressed("up") || Screen.joyPressed("DPAD_UP") || Screen.touchPressed("up")) && !Screen.overrideControlByBox)
 		{
 			currentMenuElement--;
 			changeMenu();
 		}
-		if (Input.pressed("down") || Screen.joyPressed("DPAD_DOWN") || Screen.touchPressed("down"))
+		if ((Input.pressed("down") || Screen.joyPressed("DPAD_DOWN") || Screen.touchPressed("down")) && !Screen.overrideControlByBox)
 		{
 			currentMenuElement++;
 			changeMenu();
 		}
-		if (Input.pressed("action") || Screen.joyPressed("START") || Screen.joyPressed("A") || Screen.touchPressed("action"))
+		if ((Input.pressed("action") || Screen.joyPressed("START") || Screen.joyPressed("A") || Screen.touchPressed("action")) && !Screen.overrideControlByBox)
 		{
 			actionMenu();
 		}
-		if (Input.pressed(Key.L) || Screen.joyPressed("LS_BUTTON"))
+#if windows
+		if ((Input.pressed(Key.L) || Screen.joyPressed("LS_BUTTON")) && !Screen.overrideControlByBox)
 		{
 			menuMusic.stop();
 			HXP.scene = new LevelEditor();
 		}
-		
+#end
 		super.update();
 	}
 }

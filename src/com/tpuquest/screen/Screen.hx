@@ -1,27 +1,23 @@
 package com.tpuquest.screen;
+
 import com.haxepunk.graphics.Backdrop;
 import com.haxepunk.graphics.Image;
 import com.haxepunk.graphics.Text;
-import com.haxepunk.Scene;
 import com.haxepunk.utils.Data;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
-import com.tpuquest.utils.DrawText;
-import flash.Lib;
-import haxe.Utf8;
-//import nme.system.System;
-import flash.system.System;
+import com.haxepunk.utils.Joystick.XBOX_GAMEPAD;
+import com.haxepunk.utils.Joystick;
+import com.haxepunk.utils.Touch;
+import com.haxepunk.HXP;
+import com.haxepunk.Scene;
 
-import haxe.xml.*;
+import flash.system.System;
 
 #if !flash
 import sys.io.File;
 import sys.FileSystem;
 #end
-
-import com.haxepunk.utils.Joystick;
-import com.haxepunk.utils.Touch;
-import com.haxepunk.HXP;
 
 #if android
 import openfl.Assets;
@@ -57,29 +53,15 @@ class Screen extends Scene
 		super.begin();
 	}
 	
-	/*public function ifBoxUpdate()
-	{
-		
-	}
-	public function ifNotBoxUpdate()
-	{
-		
-	}*/
-	
 	public override function update()
 	{
 		super.update();
 		
 		prevHatX = Input.joystick(0).hat.x;
 		prevHatY = Input.joystick(0).hat.y;
-		
-		/*if (overrideControlByBox)
-			ifBoxUpdate();
-		else
-			ifNotBoxUpdate();*/
 	}
 	
-	public function SaveSettings()
+	public static function SaveSettings()
 	{
 		var config:Xml = Xml.createElement("settings");
 
@@ -98,17 +80,10 @@ class Screen extends Scene
 #end
 	}
 	
-	private function ExitGame()
+	public static function ExitGame()
 	{
 		SaveSettings();
-#if android
-		//System.resume();
-		//var aaa:op
-		
-		//System.exit(0);
-#else
 		System.exit(0);
-#end
 	}
 	
 	public static function joyCheck(key:String):Bool
@@ -116,45 +91,33 @@ class Screen extends Scene
 		switch(key)
 		{
 			case "A":
-				return Input.joystick(0).check(0);
+				return Input.joystick(0).check(XBOX_GAMEPAD.A_BUTTON);
 			case "B":
-				return Input.joystick(0).check(1);
+				return Input.joystick(0).check(XBOX_GAMEPAD.B_BUTTON);
 			case "Y":
-				return Input.joystick(0).check(3);
+				return Input.joystick(0).check(XBOX_GAMEPAD.Y_BUTTON);
 			case "X":
-				return Input.joystick(0).check(2);
+				return Input.joystick(0).check(XBOX_GAMEPAD.X_BUTTON);
 			case "LB":
-				return Input.joystick(0).check(4);
+				return Input.joystick(0).check(XBOX_GAMEPAD.LB_BUTTON);
 			case "RB":
-				return Input.joystick(0).check(5);
+				return Input.joystick(0).check(XBOX_GAMEPAD.RB_BUTTON);
 			case "DPAD_UP":
-				if (Input.joystick(0).hat.y == -1)
-					return true;
-				else
-					return false;
+				return Input.joystick(0).check(XBOX_GAMEPAD.DPAD_UP);
 			case "DPAD_DOWN":
-				if (Input.joystick(0).hat.y == 1)
-					return true;
-				else
-					return false;
+				return Input.joystick(0).check(XBOX_GAMEPAD.DPAD_DOWN);
 			case "DPAD_LEFT":
-				if (Input.joystick(0).hat.x == -1)
-					return true;
-				else
-					return false;
+				return Input.joystick(0).check(XBOX_GAMEPAD.DPAD_LEFT);
 			case "DPAD_RIGHT":
-				if (Input.joystick(0).hat.x == 1)
-					return true;
-				else
-					return false;
+				return Input.joystick(0).check(XBOX_GAMEPAD.DPAD_RIGHT);
 			case "BACK":
-				return Input.joystick(0).check(6);
+				return Input.joystick(0).check(XBOX_GAMEPAD.BACK_BUTTON);
 			case "START":
-				return Input.joystick(0).check(7);
+				return Input.joystick(0).check(XBOX_GAMEPAD.START_BUTTON);
 			case "LS_BUTTON":
-				return Input.joystick(0).check(8);
+				return Input.joystick(0).check(XBOX_GAMEPAD.LEFT_ANALOGUE_BUTTON);
 			case "RS_BUTTON":
-				return Input.joystick(0).check(9);
+				return Input.joystick(0).check(XBOX_GAMEPAD.RIGHT_ANALOGUE_BUTTON);
 		}
 		return false;
 	}
@@ -167,45 +130,33 @@ class Screen extends Scene
 		switch(key)
 		{
 			case "A":
-				return Input.joystick(0).pressed(0);
+				return Input.joystick(0).pressed(XBOX_GAMEPAD.A_BUTTON);
 			case "B":
-				return Input.joystick(0).pressed(1);
+				return Input.joystick(0).pressed(XBOX_GAMEPAD.B_BUTTON);
 			case "Y":
-				return Input.joystick(0).pressed(3);
+				return Input.joystick(0).pressed(XBOX_GAMEPAD.Y_BUTTON);
 			case "X":
-				return Input.joystick(0).pressed(2);
+				return Input.joystick(0).pressed(XBOX_GAMEPAD.X_BUTTON);
 			case "LB":
-				return Input.joystick(0).pressed(4);
+				return Input.joystick(0).pressed(XBOX_GAMEPAD.LB_BUTTON);
 			case "RB":
-				return Input.joystick(0).pressed(5);
+				return Input.joystick(0).pressed(XBOX_GAMEPAD.RB_BUTTON);
 			case "DPAD_UP":
-				if (Input.joystick(0).hat.y == -1 && prevHatY != -1)
-					return true;
-				else
-					return false;
+				return Input.joystick(0).pressed(XBOX_GAMEPAD.DPAD_UP);
 			case "DPAD_DOWN":
-				if (Input.joystick(0).hat.y == 1 && prevHatY != 1)
-					return true;
-				else
-					return false;
+				return Input.joystick(0).pressed(XBOX_GAMEPAD.DPAD_DOWN);
 			case "DPAD_LEFT":
-				if (Input.joystick(0).hat.x == -1  && prevHatX != -1)
-					return true;
-				else
-					return false;
+				return Input.joystick(0).pressed(XBOX_GAMEPAD.DPAD_LEFT);
 			case "DPAD_RIGHT":
-				if (Input.joystick(0).hat.x == 1 && prevHatX != 1)
-					return true;
-				else
-					return false;
+				return Input.joystick(0).pressed(XBOX_GAMEPAD.DPAD_RIGHT);
 			case "BACK":
-				return Input.joystick(0).pressed(6);
+				return Input.joystick(0).pressed(XBOX_GAMEPAD.BACK_BUTTON);
 			case "START":
-				return Input.joystick(0).pressed(7);
+				return Input.joystick(0).pressed(XBOX_GAMEPAD.START_BUTTON);
 			case "LS_BUTTON":
-				return Input.joystick(0).pressed(8);
+				return Input.joystick(0).pressed(XBOX_GAMEPAD.LEFT_ANALOGUE_BUTTON);
 			case "RS_BUTTON":
-				return Input.joystick(0).pressed(9);
+				return Input.joystick(0).pressed(XBOX_GAMEPAD.RIGHT_ANALOGUE_BUTTON);
 		}
 		return false;
 	}

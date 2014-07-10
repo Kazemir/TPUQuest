@@ -2,6 +2,7 @@ package com.tpuquest.entity.character;
 import com.haxepunk.Sfx;
 import com.tpuquest.utils.PointXY;
 import com.tpuquest.entity.Tile;
+import com.tpuquest.utils.TileGrid;
 import flash.geom.Point;
 import com.haxepunk.Entity;
 import com.haxepunk.HXP;
@@ -91,19 +92,45 @@ class Character extends Entity
 		{
 			if (walkSound == null)
 			{
-				if (Type.getClassName(Type.getClass(e)) == "com.tpuquest.entity.Tile")
+				if (Type.getClassName(Type.getClass(e)) == "com.tpuquest.utils.TileGrid")
 				{
-					var t:Tile = cast(e, Tile);
-					walkSound = new Sfx(t.soundPath);
+					var t:TileGrid = cast(e, TileGrid);
+					
+					var tId:Int = t.getTile(Std.int((x / 40) - 9), Std.int((y / 40) - 7) + 2);
+					var snd:String = "audio/wood.ogg";
+					
+					if ( (tId >= 0 && tId <= 13) || (tId >= 17 && tId <= 20))
+						snd = "audio/stone.ogg";
+					
+					if ( tId == 16 || tId == 24)
+						snd = "audio/gravel2.ogg";
+					
+					if ( tId == 14 || tId == 15)
+						snd = "audio/grass1.ogg";
+						
+					walkSound = new Sfx(snd);
 					walkSound.play(SettingsMenu.soudVolume / 10, 1);
 				}
 			}
-			if (!walkSound.playing)
+			else if (!walkSound.playing)
 			{
-				if (Type.getClassName(Type.getClass(e)) == "com.tpuquest.entity.Tile")
+				if (Type.getClassName(Type.getClass(e)) == "com.tpuquest.utils.TileGrid")
 				{
-					var t:Tile = cast(e, Tile);
-					walkSound = new Sfx(t.soundPath);
+					var t:TileGrid = cast(e, TileGrid);
+					
+					var tId:Int = t.getTile(Std.int((x / 40) - 9), Std.int((y / 40) - 7) + 2);
+					var snd:String = "audio/wood.ogg";
+					
+					if ( (tId >= 0 && tId <= 13) || (tId >= 17 && tId <= 20))
+						snd = "audio/stone.ogg";
+					
+					if ( tId == 16 || tId == 24)
+						snd = "audio/gravel2.ogg";
+					
+					if ( tId == 14 || tId == 15)
+						snd = "audio/grass1.ogg";
+						
+					walkSound = new Sfx(snd);
 					walkSound.play(SettingsMenu.soudVolume / 10, 1);
 				}
 			}

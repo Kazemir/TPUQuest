@@ -18,10 +18,12 @@ class AuthorsMenu extends Screen
 		var img:Image = new Image("graphics/bg.jpg");
 		addGraphic(img);
 		
-		addGraphic(DrawText.CreateTextEntity(CLocals.text.mainMenu_authors, GameFont.Molot, 32, 400, 220, 0x0, true));
-		addGraphic(DrawText.CreateTextEntity(CLocals.text.authorsMenu_dasha, GameFont.Imperial, 24, 400, 320, 0x0, true));
-		addGraphic(DrawText.CreateTextEntity(CLocals.text.authorsMenu_vova, GameFont.Imperial, 24, 400, 360, 0x0, true));
-		addGraphic(DrawText.CreateTextEntity(CLocals.text.authorsMenu_misha, GameFont.Imperial, 24, 400, 400, 0x0, true));
+		addGraphic(DrawText.CreateTextEntity(CLocals.text.mainMenu_authors, GameFont.Molot, 32, HXP.halfWidth, 220, 0x0, true));
+
+		addGraphic(DrawText.CreateTextEntity(CLocals.text.authorsMenu_misha, GameFont.Imperial, 24, HXP.halfWidth, 320, 0x0, true));
+		addGraphic(DrawText.CreateTextEntity(CLocals.text.authorsMenu_info, GameFont.Imperial, 14, HXP.halfWidth, 380, 0x0, true));
+		addGraphic(DrawText.CreateTextEntity(CLocals.text.authorsMenu_dasha, GameFont.Imperial, 20, HXP.halfWidth, 440, 0x0, true));
+		addGraphic(DrawText.CreateTextEntity(CLocals.text.authorsMenu_vova, GameFont.Imperial, 20, HXP.halfWidth, 480, 0x0, true));
 		
 		super.begin();
 	}

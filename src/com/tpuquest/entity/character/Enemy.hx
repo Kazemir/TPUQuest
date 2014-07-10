@@ -1,5 +1,6 @@
 package com.tpuquest.entity.character;
 import com.haxepunk.Entity;
+import com.haxepunk.graphics.Emitter;
 import com.tpuquest.screen.GameScreen;
 import com.tpuquest.screen.SettingsMenu;
 import com.haxepunk.graphics.Spritemap;
@@ -8,6 +9,7 @@ import com.haxepunk.HXP;
 import com.haxepunk.Sfx;
 import com.tpuquest.utils.PointXY;
 import flash.geom.Point;
+import haxe.Timer;
 
 class Enemy extends Character
 {
@@ -15,22 +17,49 @@ class Enemy extends Character
 	public var enemyType:Int; //0 - кусака, 1 - набигака
 	
 	private var sprite:Spritemap;
+	private var emitter:Emitter;
 	
 	public static inline var kMoveSpeed:Float = 5;
 	public static inline var kJumpForce:Int = 20;
 	public var hasTouchTheGround(default, null) : Bool;
 	public var isDead:Bool;
 	
+	public var wasAttacked:Bool;
+	public var canAttack:Bool;
+	
+	private var godMode:Bool;
+	
 	public function new(point:Point, spritePath:String, hp:Int = 50, enemyType:Int = 0, name:String = "", behavior:Bool = true)
 	{
 		super(point, spritePath, name, behavior);
 		
+		wasAttacked = false;
+		canAttack = true;
 		hasTouchTheGround = true;
 		this.enemyType = enemyType;
 		this.life = hp;
 		this.isDead = false;
+		godMode = false;
 		type = "enemy";
-				
+		
+		emitter = new Emitter("graphics/particle.png", 10, 10);
+		
+		emitter.newType("landingL", [2]);
+		emitter.setMotion("landingL", 150, 60, 0.1, 40, 5, 0.05);
+		emitter.setAlpha("landingL", 1, 0);
+		emitter.setGravity("landingL", -2, 0.5);
+		
+		emitter.newType("landingR", [2]);
+		emitter.setMotion("landingR", 30, 60, 0.1, -40, 5, 0.05);
+		emitter.setAlpha("landingR", 1, 0);
+		emitter.setGravity("landingR", -2, 0.5);
+		
+		emitter.newType("blood", [1]);
+		emitter.setAlpha("blood", 1, 0);
+		emitter.setGravity("blood", -2, 0.5);
+		emitter.setMotion("blood", 0, 30, 0.2, 360, 5, 0.05);
+		emitter.setColor("blood", 0xFF0000, 0xFF0000);
+		
 		switch(enemyType)
 		{
 			case 0:	//Biter
@@ -41,6 +70,9 @@ class Enemy extends Character
 				life = 30;
 				//sprite.x = -40;
 				setHitbox(81, 80);
+				
+				emitter.setMotion("blood", 0, 60, 0.2, 360, 5, 0.05);
+				emitter.setColor("blood", 0x00FF00, 0x00FF00);
 			case 1:	//Goblin
 				sprite = new Spritemap("graphics/characters/gremlins.png", 30, 30);
 				sprite.add("idle", [0, 0, 0, 0, 0, 10], 3, true);
@@ -49,6 +81,9 @@ class Enemy extends Character
 				sprite.scale = 2.7;
 				life = 60;
 				setHitbox(81, 80);
+				
+				emitter.setMotion("blood", 0, 60, 0.2, 360, 5, 0.05);
+				emitter.setColor("blood", 0x00FF00, 0x00FF00);
 			case 2:	//LAV
 				sprite = new Spritemap("graphics/characters/lav.png", 303, 152);
 				sprite.add("idle", [0], 3, false);
@@ -107,6 +142,8 @@ class Enemy extends Character
 		
 		graphic = sprite;
 
+		addGraphic(emitter);
+		
 		gravity.y = 1.8;
 		maxVelocity.y = kJumpForce;
 		maxVelocity.x = kMoveSpeed;
@@ -154,33 +191,65 @@ class Enemy extends Character
 	{
 		if (behaviorOn)
 		{
+			sprite.resume();
+			
 			acceleration.x = acceleration.y = 0;
  
 			if (!_onGround)
 				hasTouchTheGround = false;
 			
-			if ( !hasTouchTheGround && _onGround) 
+			if ( !hasTouchTheGround && _onGround && enemyType == 1) 
 			{
 				hasTouchTheGround = true;
 				var sound = new Sfx("audio/player_soundJumpStop.wav");
 				sound.play(SettingsMenu.soudVolume / 10);
+				
+				for (x in 0...10)
+				{
+					emitter.emit("landingL", 40, 80);
+					emitter.emit("landingR", 40, 80);
+				}
+			}
+			
+			var ent:Entity = collide("sword", x, y);
+			if(ent != null && Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen" && !godMode)
+			{
+				var currentScene:GameScreen = cast(scene, GameScreen);
+				
+				godMode = true;
+				
+				var timer:Timer = new Timer(300);
+				timer.run = function() { godMode = false; timer.stop(); };
+				
+				life -= currentScene.player.weaponDamage;
+				if (enemyType == 1)
+				{
+					if (currentScene.player.eyesToTheRight)
+					{
+						velocity.x = kMoveSpeed * 5;
+					}
+					else
+					{
+						velocity.x = -kMoveSpeed * 5;
+					}
+					velocity.y = -HXP.sign(gravity.y) * kJumpForce * 0.5;
+				}
+				
+				var sound = new Sfx("audio/enemy_pain.wav");
+				if(enemyType < 2 || enemyType > 7)
+					sound.play(SettingsMenu.soudVolume / 10);
+				
+				wasAttacked = true;
+				
+				for (x in 0...20)
+					emitter.emit("blood", width / 2, height / 2);
+				
+				sprite.color = 0xFF0000;
+				var timer2:Timer = new Timer(150);
+				timer2.run = function() { sprite.color = 0xFFFFFF; timer2.stop(); };
 			}
 			
 			super.update();
-			
-			var ent:Entity = collide("player", x, y);
-			if(ent != null)
-			{
-				var pl:Player = cast(ent, Player);
-				
-				if (pl.attack)
-				{
-					var sound = new Sfx("audio/enemy_pain.wav");
-					
-					if(enemyType < 2 || enemyType > 7)
-						sound.play(SettingsMenu.soudVolume / 10);
-				}
-			}
 			
 			if (life <= 0)
 			{
@@ -211,10 +280,19 @@ class Enemy extends Character
 					sound.play(SettingsMenu.soudVolume / 10);
 			}
 				
-			if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen" && enemyType == 1)
+			if (wasAttacked)
+			{
+				wasAttacked = false;
+				canAttack = false;
+				
+				var timer:Timer = new Timer(500);
+				timer.run = function() { canAttack = true; timer.stop(); };
+			}
+		
+			if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen" && enemyType == 1 && canAttack)
 			{
 				var pl:Player = cast(scene, GameScreen).player;
-				if (pl.distanceFrom(this, false) < 7*40)
+				if (pl.distanceFrom(this, false) < 7*40 && pl.distanceFrom(this, false) > 40)
 				{
 					if (pl.x < this.x)
 						velocity.x = -kMoveSpeed;
@@ -230,12 +308,13 @@ class Enemy extends Character
 			
 			if(enemyType == 1)
 				setAnimations();
-				
+			
 			prevPoint = new Point(x, y);
 		}
 		else
 		{
 			super.update();
+			sprite.pause();
 		}
 	}
 }

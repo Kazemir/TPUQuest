@@ -32,6 +32,8 @@ class DialogBox extends Dialog
 	{
 		super(x, y);
 		
+		currentDialog = 0;
+		
 		listOfAnswers = new Array<String>();
 		listOfQuestions = new Array<String>();
 		
@@ -163,6 +165,10 @@ class DialogBox extends Dialog
 		if ( Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B") || Screen.touchPressed("esc"))
 		{
 			Screen.overrideControlByBox = false;
+			
+			for (x in currentScene.lvl.characters)
+				x.behaviorOn = true;
+			
 			this.scene.remove(this);
 		}
 		if (Input.pressed("action") || Screen.joyPressed("START") || Screen.joyPressed("A") || Screen.touchPressed("action"))

@@ -1,8 +1,8 @@
 ﻿<dialog>
 
-<element type="-1" answer_ru="Туда не ходи, сюда ходи! Здесь опасно, незнакомец!" />
-<element question_ru="По какому поводу паника?" answer_ru="Мутироваашие бандеровцы не только требуют непонятного, так ещё и кусаются!" />
-<element question_ru="Туда охота, не поверишь!" answer_ru="Без сабли там делать нечего. Ещё лучше - идти сразу с двумя наперевес." />
-<element question_ru="А вы, собственно, чьих будете?" answer_ru="Да я немношк)))" />
+<element type="-1" answer_ru="Туда не ходи, сюда ходи! Здесь опасно, незнакомец!" answer_en="GREAT SCOTT! MARTY, DON'T GO THIS WAY!" />
+<element question_ru="По какому поводу паника?" answer_ru="Мутироваашие бандеровцы не только требуют непонятного, так ещё и кусаются!" question_en="What's wrong, doc?" answer_en="Nazi-mutants wants something special. They actually can beat you!" />
+<element question_ru="Туда охота, не поверишь!" answer_ru="Без сабли там делать нечего. Ещё лучше - идти сразу с двумя наперевес." question_en="I want to go exactly in this direction!" answer_en="Without nice sword or damn big axe... Its not safe." />
+<element question_ru="А вы, собственно, чьих будете?" answer_ru="Да я немношк)))" question_en="Who are you?" answer_en="Its just me )))" />
 
 </dialog>

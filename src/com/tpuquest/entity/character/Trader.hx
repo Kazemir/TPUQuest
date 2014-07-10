@@ -53,9 +53,16 @@ class Trader extends Character
 	{
 		if (behaviorOn)
 		{
+			sprite.resume();
+			
 			acceleration.x = acceleration.y = 0;
 			
 			super.update();
+		}
+		else
+		{
+			super.update();
+			sprite.pause();
 		}
 	}
 }

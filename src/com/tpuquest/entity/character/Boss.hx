@@ -18,6 +18,7 @@ import com.tpuquest.screen.WinScreen;
 import com.tpuquest.utils.PointXY;
 import flash.geom.Point;
 import com.haxepunk.Sfx;
+import haxe.Timer;
 
 import com.haxepunk.graphics.Emitter;
 
@@ -26,11 +27,13 @@ class Boss extends Character
 	public var life:Int;
 		
 	private var sprite:Spritemap;
+	private var emitter:Emitter;
 	
-	public static inline var kMoveSpeed:Float = 2;
+	public static inline var kMoveSpeed:Float = 3;
 	public static inline var kJumpForce:Int = 22;
 	public var hasTouchTheGround(default, null) : Bool;
 	public var isDead:Bool;
+	private var godMode:Bool;
 	
 	public function new(point:Point, spritePath:String, hp:Int = 100, name:String = "", behavior:Bool = true) 
 	{
@@ -44,20 +47,39 @@ class Boss extends Character
 		sprite.play("idle");
 		
 		sprite.scale = 5.0;
-		//sprite.x = -75;
 		
 		setHitbox(150, 150);
 		type = "boss";
 		graphic = sprite;
 
+		emitter = new Emitter("graphics/particle.png", 10, 10);
+		
+		emitter.newType("landingL", [2]);
+		emitter.setMotion("landingL", 150, 80, 0.1, 40, 5, 0.05);
+		emitter.setAlpha("landingL", 1, 0);
+		emitter.setGravity("landingL", -2, 0.5);
+		
+		emitter.newType("landingR", [2]);
+		emitter.setMotion("landingR", 30, 80, 0.1, -40, 5, 0.05);
+		emitter.setAlpha("landingR", 1, 0);
+		emitter.setGravity("landingR", -2, 0.5);
+		
+		emitter.newType("blood", [1]);
+		emitter.setAlpha("blood", 1, 0);
+		emitter.setGravity("blood", 8, 0.5);
+		emitter.setMotion("blood", 0, 80, 0.3, 360, 5, 0.05);
+		emitter.setColor("blood", 0x00FF00, 0x00FF00);
+		addGraphic(emitter);
+		
 		gravity.y = 1.8;
 		maxVelocity.y = kJumpForce;
-		maxVelocity.x = 5;//kMoveSpeed * 4;
-		friction.x = 0.82; // floor friction
-		friction.y = 0.99; // wall friction
+		maxVelocity.x = 5;
+		friction.x = 0.82; 
+		friction.y = 0.99;
 		
-		this.life = hp;
+		this.life = 300;
 		isDead = false;
+		godMode = false;
 	}
 	
 	private function setAnimations()
@@ -100,6 +122,8 @@ class Boss extends Character
 	{
 		if (behaviorOn)
 		{
+			sprite.resume();
+			
 			acceleration.x = acceleration.y = 0;
  
 			if (!_onGround)
@@ -110,6 +134,35 @@ class Boss extends Character
 				hasTouchTheGround = true;
 				var sound = new Sfx("audio/player_soundJumpStop.wav");
 				sound.play(SettingsMenu.soudVolume / 10);
+				
+				for (x in 0...10)
+				{
+					emitter.emit("landingL", 50, 150);
+					emitter.emit("landingR", 110, 150);
+				}
+			}
+			
+			var ent:Entity = collide("sword", x, y);
+			if(ent != null && Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen" && !godMode)
+			{
+				var currentScene:GameScreen = cast(scene, GameScreen);
+				
+				godMode = true;
+				
+				var timer:Timer = new Timer(300);
+				timer.run = function() { godMode = false; timer.stop(); };
+				
+				life -= currentScene.player.weaponDamage;
+				
+				var sound = new Sfx("audio/enemy_pain.wav");
+				sound.play(SettingsMenu.soudVolume / 10);
+				
+				for (x in 0...20)
+					emitter.emit("blood", width / 2, height / 2);
+				
+				sprite.color = 0xFF0000;
+				var timer2:Timer = new Timer(150);
+				timer2.run = function() { sprite.color = 0xFFFFFF; timer2.stop(); };
 			}
 			
 			super.update();
@@ -136,7 +189,7 @@ class Boss extends Character
 			if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
 			{
 				var pl:Player = cast(scene, GameScreen).player;
-				if (pl.distanceFrom(this, false) < 7*40)
+				if (pl.distanceFrom(this, false) < 7*40 && pl.distanceFrom(this, false) > 75)
 				{
 					if (pl.x < this.x)
 						velocity.x = -kMoveSpeed;
@@ -153,6 +206,11 @@ class Boss extends Character
 			setAnimations();
 			
 			prevPoint = new Point(x, y);
+		}
+		else
+		{
+			super.update();
+			sprite.pause();
 		}
 	}
 }
