@@ -146,6 +146,16 @@ class MainMenu extends Screen
 			menuMusic.stop();
 			HXP.scene = new LevelEditor();
 		}
+		if (Input.pressed(Key.S) && !Screen.overrideControlByBox)
+		{
+			menuMusic.stop();
+			HXP.scene = new MultiplayerGameScreen(true);
+		}
+		if (Input.pressed(Key.C) && !Screen.overrideControlByBox)
+		{
+			menuMusic.stop();
+			HXP.scene = new MultiplayerGameScreen(false);
+		}
 #end
 		super.update();
 	}

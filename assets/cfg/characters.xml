@@ -1,6 +1,8 @@
 ﻿<tiles>
 
 <element name="Player" type="player" spritePath="graphics/characters/character.png" hp="100" money="0" weaponDamage="0" />
+<element name="EnemyPlayer" type="enemy_player" spritePath="graphics/characters/character.png" hp="100" money="0" weaponDamage="0" />
+
 <element name="Biter" type="enemy" spritePath="graphics/characters/gremlins.png" hp="30" enemyType="0" />
 <element name="Goblin" type="enemy" spritePath="graphics/characters/gremlins.png" hp="60" enemyType="1" />
 

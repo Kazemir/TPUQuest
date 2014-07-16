@@ -6,6 +6,7 @@ import com.haxepunk.graphics.Tilemap;
 import com.haxepunk.utils.Data;
 import com.tpuquest.entity.character.Boss;
 import com.tpuquest.entity.character.Enemy;
+import com.tpuquest.entity.character.EnemyPlayer;
 import com.tpuquest.entity.character.Player;
 import com.tpuquest.entity.character.Talker;
 import com.tpuquest.entity.character.Trader;
@@ -90,7 +91,7 @@ class TileGridLevel
 		characters = new Array<Dynamic>();
 		helpers = new Array<Dynamic>();
 		
-		tilesMap = new TileGrid( 9*40, 7*40, 10, columnsW, rowsH, "graphics/tileset.png", 40, 40, true);
+		tilesMap = new TileGrid( 9*40, 7*40, 10, columnsW, rowsH, "graphics/tileset2.png", 40, 40, true);
 		stickersMapBehind = new TileGrid( 9*40, 7*40, 1, columnsW, rowsH, "graphics/stickerset.png", 40, 40, false);
 		stickersMap = new TileGrid( 9*40, 7*40, -1, columnsW, rowsH, "graphics/stickerset.png", 40, 40, false);
 		
@@ -176,6 +177,11 @@ class TileGridLevel
 								var tM = Std.parseInt(element.get("money"));
 								var tWD = Std.parseInt(element.get("weaponDamage"));
 								temp = new Player(WorldToScreenFloat(new Point(tX, tY)), tS, tHP, tM, tWD, tN, behavior);
+							case "enemy_player":
+								var tHP = Std.parseInt(element.get("hp"));
+								var tM = Std.parseInt(element.get("money"));
+								var tWD = Std.parseInt(element.get("weaponDamage"));
+								temp = new EnemyPlayer(WorldToScreenFloat(new Point(tX, tY)), tS, tHP, tM, tWD, tN, behavior);
 							case "boss":
 								var tHP = Std.parseInt(element.get("hp"));
 								temp = new Boss(WorldToScreenFloat(new Point(tX, tY)), tS, tHP, tN, behavior);
@@ -314,6 +320,11 @@ class TileGridLevel
 					temp.set("hp", x.life);
 				case "com.tpuquest.entity.character.Player":
 					temp.set("type", "player");
+					temp.set("hp", x.life);
+					temp.set("money", x.money);
+					temp.set("weaponDamage", x.weaponDamage);
+				case "com.tpuquest.entity.character.EnemyPlayer":
+					temp.set("type", "enemy_player");
 					temp.set("hp", x.life);
 					temp.set("money", x.money);
 					temp.set("weaponDamage", x.weaponDamage);

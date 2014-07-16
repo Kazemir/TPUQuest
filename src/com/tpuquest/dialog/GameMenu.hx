@@ -13,6 +13,7 @@ import flash.display.Sprite;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
 import com.tpuquest.utils.CLocals;
+import com.tpuquest.screen.MultiplayerGameScreen;
 
 class GameMenu extends Dialog
 {
@@ -163,7 +164,7 @@ class GameMenu extends Dialog
 		switch(currentMenuElement)
 		{
 			case 0:
-				if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
+				if (currentScene != null)
 				{
 					for (x in cast(scene,GameScreen).lvl.characters)
 						x.behaviorOn = true;
@@ -186,11 +187,16 @@ class GameMenu extends Dialog
 				changeMenu();
 				updateMenu();
 			case 2:
-				currentScene.music.stop();
 				MainMenu.menuMusic.play(SettingsMenu.musicVolume / 10, 0, true);
-				
-				currentScene.lvl.SaveLevel(currentScene.cfgContinueMap);
-
+				if (currentScene != null)
+				{
+					currentScene.music.stop();
+					currentScene.lvl.SaveLevel(currentScene.cfgContinueMap);
+				}
+				if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.MultiplayerGameScreen")
+				{
+					cast(scene, MultiplayerGameScreen).CloseScreen();
+				}
 				HXP.scene = new MainMenu();
 			case 5:
 				if(positive)
@@ -210,7 +216,8 @@ class GameMenu extends Dialog
 					SettingsMenu.musicVolume = 0;
 				if (SettingsMenu.musicVolume > 10)
 					SettingsMenu.musicVolume = 10;
-				currentScene.music.volume = SettingsMenu.musicVolume / 10;
+				if (currentScene != null)
+					currentScene.music.volume = SettingsMenu.musicVolume / 10;
 		}
 	}
 	

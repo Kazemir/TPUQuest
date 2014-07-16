@@ -31,7 +31,7 @@ import com.tpuquest.utils.CLocals;
 
 import flash.geom.Point;
 
-class Player extends Character
+class EnemyPlayer extends Character
 {
 	public var money:Int;
 	public var life:Int;
@@ -40,7 +40,6 @@ class Player extends Character
 	
 	private var sprite:Spritemap;
 	private var emitter:Emitter;
-	private var helpText:DrawText;
 	
 	public var eyesToTheRight:Bool;
 	public var isDead:Bool;
@@ -53,8 +52,14 @@ class Player extends Character
 	
 	private var currentScene:GameScreen;
 	
+	public var netCommand:String;
+	public var netFlag:Bool;
+	
 	public function new(point:Point, spritePath:String, hp:Int = 100, money:Int = 0, weaponDamage:Int = 0, name:String = "", behavior:Bool = true) 
 	{
+		netFlag = false;
+		netCommand = "";
+		
 		super(point, spritePath, name, behavior);
 		
 		eyesToTheRight = true;
@@ -100,10 +105,6 @@ class Player extends Character
 		emitter.setGravity("blood", -2, 0.5);
 		emitter.setColor("blood", 0xFF0000, 0xFF0000);
 		
-		helpText = new DrawText("TRADE", GameFont.PixelCyr, 14, 23, -15, 0, true);
-		addGraphic(helpText.label);
-		helpText.label.visible = false;
-		
 		this.money = money;
 		this.life = hp;
 		this.isDead = false;
@@ -132,8 +133,6 @@ class Player extends Character
 	{
 		if (sprite.currentAnim == "attack")
 		{
-			//attack = false;
-			//setHitbox(40, 80, 0, 0);
 			if(sprite.complete)
 				sprite.play("idle");
 		}
@@ -202,44 +201,24 @@ class Player extends Character
 			
 			if (controlOn && !Screen.overrideControlByBox)
 			{
-				if (Input.check("left") || Screen.joyCheck("DPAD_LEFT") || Screen.touchCheck("left"))
+				if (netCommand.charAt(0) == "l" && netFlag)
 				{
 					acceleration.x = -kMoveSpeed;
 				}
-				if (Input.check("right") || Screen.joyCheck("DPAD_RIGHT") || Screen.touchCheck("right"))
+				if (netCommand.charAt(1) == "r" && netFlag)
 				{
 					acceleration.x = kMoveSpeed;
 				}
-				if ((Input.pressed("jump") || Screen.joyPressed("A") || Screen.touchPressed("jump")) && _onGround)
+				if ((netCommand.charAt(2) == "j" && netFlag) && _onGround)
 				{
 					acceleration.y = -HXP.sign(gravity.y) * kJumpForce;
 					
 					var sound = new Sfx("audio/player_soundJumpStart.wav");
 					sound.play(SettingsMenu.soudVolume / 10);
 				}
-				if (Input.pressed("action") || Screen.joyPressed("X") || Screen.touchPressed("action"))
+				if (netCommand.charAt(3) == "a" && netFlag)
 				{
-					if((ent = collide("trader", x, y)) != null)
-					{
-						var traderList:Array<Item> = new Array<Item>();
-						traderList.push(new Potion(new PointXY(0, 0), 25, "graphics/items/potion_red_small.png"));
-						traderList.push(new Potion(new PointXY(0, 0), 50, "graphics/items/potion_red.png"));
-						traderList.push(new Potion(new PointXY(0, 0), 100, "graphics/items/heart.png"));
-						var t:TradeBox = new TradeBox(HXP.halfWidth, HXP.halfHeight, CLocals.text.game_traderBox_caption, traderList, [5, 10, 15]);
-						currentScene.add(t);
-						
-						for (x in currentScene.lvl.characters)
-							x.behaviorOn = false;
-					}
-					else if((ent = collide("talker", x, y)) != null)
-					{
-						var t:DialogBox = new DialogBox(HXP.halfWidth, HXP.halfHeight, CLocals.text.game_talkerBox_caption);
-						currentScene.add(t);
-						
-						for (x in currentScene.lvl.characters)
-							x.behaviorOn = false;
-					}
-					else if ((ent = collide("helper", x, y)) != null)
+					if ((ent = collide("helper", x, y)) != null)
 					{
 						if (Type.getClassName(Type.getClass(ent)) == "com.tpuquest.entity.helper.ChangeMap")
 						{
@@ -266,7 +245,7 @@ class Player extends Character
 							sword.x = this.x + 5;
 						
 						sword.y = this.y + 30;
-						sword.type = "sword";
+						sword.type = "enemy_sword";
 						currentScene.add(sword);
 						
 						var tm:Timer = new Timer(10);
@@ -291,27 +270,7 @@ class Player extends Character
 						sound.play(SettingsMenu.soudVolume / 10);
 					}
 				}
-			}
-			
-			helpText.label.visible = false;
-			if ((ent = collide("trader", x, y)) != null)
-			{
-				helpText = new DrawText(CLocals.text.gameHelp_trade, GameFont.PixelCyr, 14, 23, -15, 0, true);
-				addGraphic(helpText.label);
-				//addGraphic(new DrawText2(CLocals.text.gameHelp_trade, 23, -15, GameFont2.PixelCyr, 14));
-			}
-			else if ((ent = collide("talker", x, y)) != null)
-			{
-				helpText = new DrawText(CLocals.text.gameHelp_talk, GameFont.PixelCyr, 14, 23, -15, 0, true);
-				addGraphic(helpText.label);
-			}
-			else if ((ent = collide("helper", x, y)) != null)
-			{
-				if (Type.getClassName(Type.getClass(ent)) == "com.tpuquest.entity.helper.ChangeMap")
-				{
-					helpText = new DrawText(CLocals.text.gameHelp_enter, GameFont.PixelCyr, 14, 23, -15, 0, true);
-					addGraphic(helpText.label);
-				}
+				netFlag = false;
 			}
 			
 			ent = collide("coin", x, y);
@@ -342,7 +301,7 @@ class Player extends Character
 				sound.play(SettingsMenu.soudVolume / 10);
 			}
 			
-			if(collide("enemy", x, y) != null || collide("boss", x, y) != null || collide("enemy_sword", x, y) != null)
+			if(collide("enemy", x, y) != null || collide("boss", x, y) != null || collide("sword", x, y) != null)
 			{
 				if(controlOn && !godMode)
 				{
@@ -434,14 +393,10 @@ class Player extends Character
 			
 			super.update();
 			setAnimations();
-			
-			HXP.camera.x = x - 400 + 20;
-			HXP.camera.y = y - 300 + 40;
 		}
 		else
 		{
 			super.update();
-			//setAnimations();
 			sprite.pause();
 		}
 	}	

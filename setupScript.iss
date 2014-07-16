@@ -7,16 +7,17 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{C95E13CD-B9F0-4B0E-B16D-B07FE60A5716}
 AppName=TPUQuest
-AppVersion=0.32
+AppVersion=0.36
 ;AppVerName=TPUQuest 0.32
 DefaultDirName={pf}\TPUQuest
 DefaultGroupName=TPUQuest
 AllowNoIcons=yes
-LicenseFile=C:\Users\kazemir\Desktop\Документ.rtf
-OutputDir=C:\Users\kazemir\Desktop\Новая папка
+LicenseFile=.\license.rtf
+OutputDir=.\bin\setup
 OutputBaseFilename=TPUQUEST_setup
 Compression=lzma
 SolidCompression=yes
+PrivilegesRequired=none
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -48,8 +49,8 @@ Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\kazemir\Desktop\TPUQuest\bin\windows\cpp\bin\TPUQuest.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\kazemir\Desktop\TPUQuest\bin\windows\cpp\bin\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ".\bin\windows\cpp\bin\TPUQuest.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\bin\windows\cpp\bin\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

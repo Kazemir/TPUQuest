@@ -6,6 +6,7 @@ import com.haxepunk.HXP;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
 import com.haxepunk.graphics.Image;
+import com.tpuquest.entity.character.EnemyPlayer;
 
 import com.tpuquest.entity.character.Boss;
 import com.tpuquest.entity.character.Character;
@@ -648,6 +649,8 @@ class LevelEditor extends Screen
 						temp = new Enemy(new Point(tX, tY), currentCharacter.spritePath, cast(currentCharacter, Enemy).life, cast(currentCharacter, Enemy).enemyType,  currentCharacter.characterName);
 					case "com.tpuquest.entity.character.Player":
 						temp = new Player(new Point(tX, tY), currentCharacter.spritePath, cast(currentCharacter, Player).life, cast(currentCharacter, Player).money, cast(currentCharacter, Player).weaponDamage, currentCharacter.characterName);
+					case "com.tpuquest.entity.character.EnemyPlayer":
+						temp = new EnemyPlayer(new Point(tX, tY), currentCharacter.spritePath, cast(currentCharacter, EnemyPlayer).life, cast(currentCharacter, EnemyPlayer).money, cast(currentCharacter, EnemyPlayer).weaponDamage, currentCharacter.characterName);
 					case "com.tpuquest.entity.character.Boss":
 						temp = new Boss(new Point(tX, tY), currentCharacter.spritePath, cast(currentCharacter, Boss).life, currentCharacter.characterName);
 				}
@@ -796,6 +799,8 @@ class LevelEditor extends Screen
 					charactersList.push(new Enemy(new Point(0, 0), x.get("spritePath"), Std.parseInt(x.get("hp")), Std.parseInt(x.get("enemyType")), x.get("name"), false));
 				case "player":
 					charactersList.push(new Player(new Point(0, 0), x.get("spritePath"), Std.parseInt(x.get("hp")), Std.parseInt(x.get("money")), Std.parseInt(x.get("weaponDamage")), x.get("name"), false));
+				case "enemy_player":
+					charactersList.push(new EnemyPlayer(new Point(0, 0), x.get("spritePath"), Std.parseInt(x.get("hp")), Std.parseInt(x.get("money")), Std.parseInt(x.get("weaponDamage")), x.get("name"), false));
 				case "boss":
 					charactersList.push(new Boss(new Point(0, 0), x.get("spritePath"), Std.parseInt(x.get("hp")), x.get("name"), false));
 			}
