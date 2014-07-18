@@ -46,10 +46,12 @@ class MainMenu extends Screen
 	public override function begin()
 	{
 		var img:Image = new Image("graphics/bg.jpg");
+		img.scaleX = HXP.width / img.width;
+		img.scaleY = HXP.height / img.height;
 		addGraphic(img);
 		
-		textMenuElements.push(new DrawText(CLocals.text.mainMenu_newGame, GameFont.Molot, 32, HXP.halfWidth, 240, activeColor, true));
-		textMenuElements.push(new DrawText(CLocals.text.mainMenu_continue, GameFont.Molot, 32, HXP.halfWidth, 280, passiveColor, true));
+		textMenuElements.push(new DrawText("Одиночная игра", GameFont.Molot, 32, HXP.halfWidth, 240, activeColor, true));
+		textMenuElements.push(new DrawText("Сетевая игра", GameFont.Molot, 32, HXP.halfWidth, 280, passiveColor, true));
 		textMenuElements.push(new DrawText(CLocals.text.mainMenu_settings, GameFont.Molot, 32, HXP.halfWidth, 320, passiveColor, true));
 		textMenuElements.push(new DrawText(CLocals.text.mainMenu_score, GameFont.Molot, 32, HXP.halfWidth, 360, passiveColor, true));
 		textMenuElements.push(new DrawText(CLocals.text.mainMenu_authors, GameFont.Molot, 32, HXP.halfWidth, 400, passiveColor, true));
@@ -88,10 +90,11 @@ class MainMenu extends Screen
 		switch(currentMenuElement)
 		{
 			case 0:
-				menuMusic.stop();
-				HXP.scene = new GameScreen(false);
+				/*menuMusic.stop();
+				HXP.scene = new GameScreen(false);*/
+				HXP.scene = new SingleplayerMenu();
 			case 1:
-#if android
+/*#if android
 				if (FileSystem.exists(SystemPath.applicationStorageDirectory + "levels/continuePlay_map.xml"))
 #elseif flash
 				Data.load("tpuquuest_levels");
@@ -102,7 +105,8 @@ class MainMenu extends Screen
 				{
 					menuMusic.stop();
 					HXP.scene = new GameScreen(true);
-				}
+				}*/
+				HXP.scene = new MultiplayerMenu();
 			case 2:
 				HXP.scene = new SettingsMenu();
 			case 3:
@@ -119,13 +123,6 @@ class MainMenu extends Screen
 	
 	public override function update()
 	{
-		if ((Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B") || Screen.touchPressed("esc")) && !Screen.overrideControlByBox)
-		{
-#if windows
-			var yesNoBox:YesNoBox = new YesNoBox(HXP.halfWidth, HXP.halfHeight, CLocals.text.mainMenu_exit, CLocals.text.mainMenu_exitSure);
-			add(yesNoBox);
-#end
-		}
 		if ((Input.pressed("up") || Screen.joyPressed("DPAD_UP") || Screen.touchPressed("up")) && !Screen.overrideControlByBox)
 		{
 			currentMenuElement--;
@@ -141,20 +138,15 @@ class MainMenu extends Screen
 			actionMenu();
 		}
 #if windows
+		if ((Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.joyPressed("B") || Screen.touchPressed("esc")) && !Screen.overrideControlByBox)
+		{
+			var yesNoBox:YesNoBox = new YesNoBox(HXP.halfWidth, HXP.halfHeight, CLocals.text.mainMenu_exit, CLocals.text.mainMenu_exitSure);
+			add(yesNoBox);
+		}
 		if ((Input.pressed(Key.L) || Screen.joyPressed("LS_BUTTON")) && !Screen.overrideControlByBox)
 		{
 			menuMusic.stop();
 			HXP.scene = new LevelEditor();
-		}
-		if (Input.pressed(Key.S) && !Screen.overrideControlByBox)
-		{
-			menuMusic.stop();
-			HXP.scene = new MultiplayerGameScreen(true);
-		}
-		if (Input.pressed(Key.C) && !Screen.overrideControlByBox)
-		{
-			menuMusic.stop();
-			HXP.scene = new MultiplayerGameScreen(false);
 		}
 #end
 		super.update();

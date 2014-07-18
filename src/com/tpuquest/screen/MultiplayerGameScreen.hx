@@ -47,39 +47,25 @@ import sys.io.File;
 import sys.FileSystem;
 #end
 
-class MultiplayerGameScreen extends Screen
-{
-	public var lvl:TileGridLevel;
-	
-	private var coinsText:DrawText;
-	private var hpText:DrawText;
-	public var player:Player;
-
-	public var music:Sfx;
-	
-	private var background:Image;
-	private var backgroundImage:Image;
-	private var weaponImg:Image;
-	
-	private var gameMenu:GameMenu;
-	
+class MultiplayerGameScreen extends GameScreen
+{	
 	private var isServer:Bool;
 	private var sServer:Socket;
 	private var sClient:Socket;
-	private var isConnected:Bool;
+	public var isConnected:Bool;
 	private var enemyPlayer:EnemyPlayer;
 	private var netCommand:String;
 	
-	private var cfgServerHost:String;
-	private var cfgServerPort:Int;
-	private var cfgClientHost:String;
-	private var cfgClientPort:Int;
+	private var cfgHost:String;
+	private var cfgPort:Int;
 	
-	public function new( server:Bool ) 
+	public function new( server:Bool, port:Int = 65142, host:String = "80.83.192.224" ) 
 	{
-		super();
-		
+		super(false);
+		isMultiplayer = true;
 		this.isServer = server;
+		this.cfgHost = host;
+		this.cfgPort = port;
 	}
 	
 	public override function begin()
@@ -87,9 +73,8 @@ class MultiplayerGameScreen extends Screen
 		isConnected = false;
 		
 		background = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
-		
-		LoadCFG();
-		LoadMap("levels/net.xml", true);
+
+		LoadMap("levels/net.xml", false, true);
 		
 		for (x in lvl.characters)
 			x.behaviorOn = false;
@@ -100,17 +85,18 @@ class MultiplayerGameScreen extends Screen
 			{
 				trace("Starting server...");
 				sServer = new Socket();
-				sServer.bind(new Host(cfgServerHost), cfgServerPort);
+				sServer.bind(new Host(Host.localhost()), cfgPort);
 				sServer.listen(1);
 				sServer.setFastSend(true);
-				//sServer.setTimeout(0);
-				trace("Server started successfully: " + Std.string(sServer.host().host.toString()) + ":" + Std.string(sServer.host().port));
+
+				trace("Server started successfully: " + sServer.host().host.toString() + ":" + Std.string(sServer.host().port));
 				
 				Thread.create( function () 
 				{
 					try
 					{
 						sClient = sServer.accept();
+						
 						trace(Std.string(sClient.host().host.toString()) + ":" + Std.string(sClient.host().port) + ". Client connected...");
 						isConnected = true;
 						
@@ -119,21 +105,32 @@ class MultiplayerGameScreen extends Screen
 						
 						Thread.create( function ()
 						{
-							try
+							var msg:String = "";
+							while (isConnected)
 							{
-								while (isConnected)
+								try
 								{
-									trace("beep");
-									enemyPlayer.netCommand = sClient.input.readString(5);
-									trace("Input command: " + enemyPlayer.netCommand);
-									enemyPlayer.netFlag = true;
-									trace("beep");
-									
+									sClient.waitForRead();
+									if (isConnected)
+									{
+										msg = sClient.input.readString(5);
+										if (msg.charAt(4) == "e")
+										{
+											isConnected == false;
+											CloseScreen();
+											HXP.scene = new MainMenu();
+										}
+									}
+									else
+										continue;
 								}
-							}
-							catch (msg:String)
-							{
-								trace(msg);
+								catch (msg:String)
+								{
+									trace(msg);
+								}
+								trace("Input command: " + msg + ", len: " + Std.string(msg.length));
+								enemyPlayer.netCommand = msg;
+								enemyPlayer.netFlag = true;
 							}
 						});
 					}
@@ -148,15 +145,16 @@ class MultiplayerGameScreen extends Screen
 				trace("Starting client...");
 				sClient = new Socket();
 				sClient.setFastSend(true);
-				//sClient.setTimeout(0);
-				//trace("Client started successfully: " + Std.string(sClient.host().host.toString()) + ":" + Std.string(sClient.host().port));
+
+				trace("Client started successfully! Waiting for connection...");
 				
 				Thread.create( function () 
 				{
 					try
 					{
-						sClient.connect(new Host(cfgClientHost), cfgClientPort);
-						trace("Client connected...");
+						sClient.connect(new Host(cfgHost), cfgPort);
+						
+						trace("Client connected to " + sClient.peer().host.toString() + ":" + Std.string(sClient.peer().port + "!"));
 						isConnected = true;
 						
 						for (x in lvl.characters)
@@ -164,22 +162,32 @@ class MultiplayerGameScreen extends Screen
 						
 						Thread.create( function ()
 						{
-							try
+							var msg:String = "";
+							while (isConnected)
 							{
-								while (isConnected)
+								try
 								{
-									trace("beep");
-									
-									enemyPlayer.netCommand = sClient.input.readString(5);
-									trace("Input command: " + enemyPlayer.netCommand);
-									enemyPlayer.netFlag = true;
-									trace("beep");
-									
+									sClient.waitForRead();
+									if (isConnected)
+									{
+										msg = sClient.input.readString(5);
+										if (msg.charAt(4) == "e")
+										{
+											isConnected == false;
+											CloseScreen();
+											HXP.scene = new MainMenu();
+										}
+									}
+									else
+										continue;
 								}
-							}
-							catch (msg:String)
-							{
-								trace(msg);
+								catch (msg:String)
+								{
+									trace(msg);
+								}
+								trace("Input command: " + msg);
+								enemyPlayer.netCommand = msg;
+								enemyPlayer.netFlag = true;
 							}
 						});
 					}
@@ -226,57 +234,37 @@ class MultiplayerGameScreen extends Screen
 		music = new Sfx("music/MightandMagic_Book1__ShopTheme.ogg");
 #end
 		music.play(SettingsMenu.musicVolume / 10, 0, true);
-		
-		super.begin();
-	}
-	
-	private function LoadCFG()
-	{
-		var config:Xml = Xml.parse(Assets.getText( "cfg/netCFG.xml" )).firstElement();
-		for (x in config.elements())
-		{
-			if (x.nodeName == "server")
-			{
-				cfgServerHost = x.get("host");
-				cfgServerPort = Std.parseInt(x.get("port"));
-			}
-			if (x.nodeName == "client")
-			{
-				cfgClientHost = x.get("host");
-				cfgClientPort = Std.parseInt(x.get("port"));
-			}
-		}
 	}
 	
 	public function CloseScreen()
 	{
 		music.stop();
-									trace("beep");
 		
+		if (isConnected)
+		{
+			sClient.write("----e");
+		}
 		isConnected = false;
 		try
 		{
 			if (sServer != null)
 			{
+				//sServer.shutdown(true, true);
 				sServer.close();
 				trace("Server closed.");
 			}
 			if (sClient != null)
 			{
+				//sClient.shutdown(true, true);
 				sClient.close();
 				trace("Client closed.");
 			}
-									trace("beep");
 			
 		}
 		catch (msg:String)
 		{
 			trace(msg);
-									trace("beep");
-			
 		}
-									trace("beep");
-		
 	}
 	
 	public override function update()
@@ -306,7 +294,7 @@ class MultiplayerGameScreen extends Screen
 		else
 			weaponImg.visible = false;
 		
-		if (isConnected)
+		if (isConnected && !Screen.overrideControlByBox)
 		{
 			//lrjae
 			//left right jump action end
@@ -331,41 +319,26 @@ class MultiplayerGameScreen extends Screen
 				netCommand += "e";
 			else
 				netCommand += "-";
-									trace("beep");
 			
 			try
 			{
-				if (isServer && netCommand != "-----")
+				if (netCommand != "-----")
 				{
-									trace("beep");
-					
-					sClient.output.writeString(netCommand);
+					//sClient.output.writeString(netCommand);
+					sClient.write(netCommand);
 					trace("Output command: " + netCommand);
-									trace("beep");
-					
-				}
-				if (!isServer && netCommand != "-----")
-				{
-									trace("beep");
-					
-					sClient.output.writeString(netCommand);
-					trace(netCommand);
-									trace("beep");
-					
 				}
 			}
 			catch (msg:String)
 			{
 				trace(msg);
-									trace("beep");
-				
 			}
 		}
 		
 		super.update();
 	}
 	
-	public function LoadMap( mapPath:String, fromAssets:Bool = true)
+	public override function LoadMap( mapPath:String, newPlayer:Bool = false, fromAssets:Bool = true)
 	{
 
 		lvl = TileGridLevel.LoadLevel( mapPath, fromAssets );
@@ -409,8 +382,8 @@ class MultiplayerGameScreen extends Screen
 		
 		addList( lvl.getEntities() );
 		
-		HXP.camera.x = player.x - 400 + 20;
-		HXP.camera.y = player.y - 300 + 40;
+		HXP.camera.x = player.x - HXP.halfWidth + 20;
+		HXP.camera.y = player.y - HXP.halfHeight + 40;
 
 		background = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
         background.color = lvl.bgcolor;

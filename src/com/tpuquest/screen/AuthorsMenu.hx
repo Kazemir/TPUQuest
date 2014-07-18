@@ -16,6 +16,8 @@ class AuthorsMenu extends Screen
 	public override function begin()
 	{	
 		var img:Image = new Image("graphics/bg.jpg");
+		img.scaleX = HXP.width / img.width;
+		img.scaleY = HXP.height / img.height;
 		addGraphic(img);
 		
 		addGraphic(DrawText.CreateTextEntity(CLocals.text.mainMenu_authors, GameFont.Molot, 32, HXP.halfWidth, 220, 0x0, true));

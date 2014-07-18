@@ -40,6 +40,8 @@ class WinScreen extends Screen
         addGraphic(base).layer = -5; 
 	
 		var img:Image = new Image("graphics/youWin.png");
+		img.scaleX = HXP.width / img.width;
+		img.scaleY = HXP.height / img.height;
 		addGraphic(img);
 	}
 	

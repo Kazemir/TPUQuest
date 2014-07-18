@@ -1,5 +1,6 @@
 package com.tpuquest.entity.character;
 
+import com.tpuquest.screen.MultiplayerGameScreen;
 import haxe.Timer;
 
 import com.haxepunk.Entity;
@@ -127,6 +128,8 @@ class EnemyPlayer extends Character
 	{
 		if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
 			currentScene = cast(scene, GameScreen);
+		if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.MultiplayerGameScreen")
+			currentScene = cast(scene, MultiplayerGameScreen);
 	}
 	
 	private function setAnimations()
@@ -265,7 +268,6 @@ class EnemyPlayer extends Character
 								sword.y = this.y + 30;
 							}
 						};
-							
 						var sound = new Sfx("audio/player_attack.wav");
 						sound.play(SettingsMenu.soudVolume / 10);
 					}
@@ -280,7 +282,7 @@ class EnemyPlayer extends Character
 				money += cn.coinAmount;
 				scene.remove(cn);
 				
-				if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
+				if (currentScene != null)
 					currentScene.lvl.items.remove(cn);
 				
 				var sound = new Sfx("audio/player_soundMoney.wav");
@@ -294,7 +296,7 @@ class EnemyPlayer extends Character
 				life += cn.potionAmount;
 				scene.remove(cn);
 				
-				if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
+				if (currentScene != null)
 					currentScene.lvl.items.remove(cn);
 				
 				var sound = new Sfx("audio/player_soundPotion.wav");
@@ -371,7 +373,7 @@ class EnemyPlayer extends Character
 				weaponDamage = wp.weaponDamage;
 				scene.remove(wp);
 				
-				if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen")
+				if (currentScene != null)
 					currentScene.lvl.items.remove(wp);
 				
 				var sound = new Sfx("audio/player_soundSword.wav");

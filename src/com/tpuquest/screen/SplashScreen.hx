@@ -36,6 +36,8 @@ class SplashScreen extends Screen
         //addGraphic(base2).layer = 10; 
 		
 		var img:Image = new Image("graphics/controls.jpg");
+		img.scaleX = HXP.width / img.width;
+		img.scaleY = HXP.height / img.height;
 		addGraphic(img).layer = 10;
 		/*
 		addGraphic(DrawText.CreateTextEntity("Курсовой проект по дисциплине", GameFont.PixelCyr, 36, HXP.width / 2, HXP.height / 2 - 25 - 50, 0, true));

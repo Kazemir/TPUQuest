@@ -195,7 +195,9 @@ class GameMenu extends Dialog
 				}
 				if (Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.MultiplayerGameScreen")
 				{
+					trace("beep");
 					cast(scene, MultiplayerGameScreen).CloseScreen();
+					trace("beep");
 				}
 				HXP.scene = new MainMenu();
 			case 5:

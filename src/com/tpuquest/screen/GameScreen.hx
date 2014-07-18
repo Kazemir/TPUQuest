@@ -67,10 +67,12 @@ class GameScreen extends Screen
 	
 	private var gameMenu:GameMenu;
 	
+	private var isMultiplayer:Bool;
+	
 	public function new(itsContinue:Bool) 
 	{
 		super();
-		
+		this.isMultiplayer = false;
 		this.itsContinue = itsContinue;
 	}
 	
@@ -118,11 +120,11 @@ class GameScreen extends Screen
 		notInstantlyMapLoadingBackground.visible = false;
 		addGraphic(notInstantlyMapLoadingBackground, -101);
 		
-		coinsText = new DrawText("000", GameFont.PixelCyr, 20, 700, 50, 0xFFFFFF, false);
+		coinsText = new DrawText("000", GameFont.PixelCyr, 20, HXP.width - 100, 50, 0xFFFFFF, false);
 		coinsText.label.scrollX = coinsText.label.scrollY = 0;
 		addGraphic(coinsText.label, -5);
 		
-		hpText = new DrawText("100", GameFont.PixelCyr, 20, 700, 20, 0xFFFFFF, false);
+		hpText = new DrawText("100", GameFont.PixelCyr, 20, HXP.width - 100, 20, 0xFFFFFF, false);
 		hpText.label.scrollX = hpText.label.scrollY = 0;
 		addGraphic(hpText.label, -5);
 		
@@ -136,82 +138,85 @@ class GameScreen extends Screen
 		weaponImg.scrollX = weaponImg.scrollY = 0;
 		weaponImg.visible = false;
 		
-		addGraphic(coinImg, -5, 670, 53);
-		addGraphic(heartImg, -5, 670, 23);
-		addGraphic(weaponImg, -5, 685, 90);
+		addGraphic(coinImg, -5, HXP.width - 130, 53);
+		addGraphic(heartImg, -5, HXP.width - 130, 23);
+		addGraphic(weaponImg, -5, HXP.width - 115, 90);
 #if flash
 		music = new Sfx("music/MightandMagic_Book1__ShopTheme.mp3");
 #else
 		music = new Sfx("music/MightandMagic_Book1__ShopTheme.ogg");
 #end
 		music.play(SettingsMenu.musicVolume / 10, 0, true);
-		
-		super.begin();
 	}
 	
 	public override function update()
 	{
-		if ((Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.touchPressed("esc")) && !Screen.overrideControlByBox && !notInstantlyMapLoadingEngage)
+		if (!isMultiplayer)
 		{
-			gameMenu = new GameMenu(HXP.halfWidth, HXP.halfHeight);
-			add(gameMenu);
-			
-			for (x in lvl.characters)
-				x.behaviorOn = false;
-		}
-		
-		var t:String = Std.string(player.money);
-		for ( j  in 0...-t.length + 3)
-		{
-			t = "0" + t;
-		}
-		coinsText.ChangeStr(t, false);
-		
-		t = Std.string(player.life);
-		for ( j  in 0...-t.length + 3)
-		{
-			t = "0" + t;
-		}
-		hpText.ChangeStr(t, false);
-		
-		if (player.weaponized)
-			weaponImg.visible = true;
-		else
-			weaponImg.visible = false;
-		
-		if (notInstantlyMapLoadingEngage)
-		{
-			notInstantlyMapLoadingBackground.visible = true;
-			if (notInstantlyMapLoadingUp)
+			if ((Input.pressed("esc") || Screen.joyPressed("BACK") || Screen.touchPressed("esc")) && !Screen.overrideControlByBox && !notInstantlyMapLoadingEngage)
 			{
-				notInstantlyMapLoadingBackground.alpha += 0.05;
-				if (notInstantlyMapLoadingBackground.alpha == 1)
+				gameMenu = new GameMenu(HXP.halfWidth, HXP.halfHeight);
+				add(gameMenu);
+				
+				for (x in lvl.characters)
+					x.behaviorOn = false;
+			}
+			
+			var t:String = Std.string(player.money);
+			for ( j  in 0...-t.length + 3)
+			{
+				t = "0" + t;
+			}
+			coinsText.ChangeStr(t, false);
+			
+			t = Std.string(player.life);
+			for ( j  in 0...-t.length + 3)
+			{
+				t = "0" + t;
+			}
+			hpText.ChangeStr(t, false);
+			
+			if (player.weaponized)
+				weaponImg.visible = true;
+			else
+				weaponImg.visible = false;
+			
+			if (notInstantlyMapLoadingEngage)
+			{
+				notInstantlyMapLoadingBackground.visible = true;
+				if (notInstantlyMapLoadingUp)
 				{
-					removeList( lvl.getEntities() );
-					lvl.SaveLevel("levels/continue/" + lvl.levelName + ".xml");
-#if android
-					if (FileSystem.exists(SystemPath.applicationStorageDirectory + "levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]))
-#elseif flash
-					Data.load("tpuquuest_levels");
-					if (Data.read("levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]) != null)
-#else
-					if (FileSystem.exists("levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]))
-#end
-						LoadMap("levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1], false, false);
-					else
-						LoadMap(mapPathFromHelper, false, true);
-					notInstantlyMapLoadingUp = false;
+					notInstantlyMapLoadingBackground.alpha += 0.05;
+					if (notInstantlyMapLoadingBackground.alpha == 1)
+					{
+						removeList( lvl.getEntities() );
+						lvl.SaveLevel("levels/continue/" + lvl.levelName + ".xml");
+	#if android
+						if (FileSystem.exists(SystemPath.applicationStorageDirectory + "levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]))
+	#elseif flash
+						Data.load("tpuquuest_levels");
+						if (Data.read("levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]) != null)
+	#else
+						if (FileSystem.exists("levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1]))
+	#end
+							LoadMap("levels/continue/" + mapPathFromHelper.split("/")[mapPathFromHelper.split("/").length - 1], false, false);
+						else
+							LoadMap(mapPathFromHelper, false, true);
+						notInstantlyMapLoadingUp = false;
+					}
+				}
+				else
+				{
+					notInstantlyMapLoadingBackground.alpha -= 0.05;
+					if (notInstantlyMapLoadingBackground.alpha == 0)
+					{
+						notInstantlyMapLoadingEngage = false;
+						notInstantlyMapLoadingBackground.visible = false;
+					}
 				}
 			}
 			else
-			{
-				notInstantlyMapLoadingBackground.alpha -= 0.05;
-				if (notInstantlyMapLoadingBackground.alpha == 0)
-				{
-					notInstantlyMapLoadingEngage = false;
-					notInstantlyMapLoadingBackground.visible = false;
-				}
-			}
+				super.update();
 		}
 		else
 			super.update();
@@ -268,8 +273,8 @@ class GameScreen extends Screen
 			player.money = cfgStartMoney;
 		}
 		
-		HXP.camera.x = player.x - 400 + 20;
-		HXP.camera.y = player.y - 300 + 40;
+		HXP.camera.x = player.x - HXP.halfWidth + 20;
+		HXP.camera.y = player.y - HXP.halfHeight + 40;
 		
 		addList( lvl.getEntities() );
 
@@ -286,6 +291,8 @@ class GameScreen extends Screen
 			backgroundImage = new Image(lvl.bgPicturePath);
 			backgroundImage.scrollX = backgroundImage.scrollY = 0.05;
 			backgroundImage.visible = true;
+			backgroundImage.scaleX = HXP.width / 800;
+			backgroundImage.scaleY = HXP.height / 600;
 			addGraphic(backgroundImage, 100, -100);
 			if(lvl.bgPicturePath == "graphics/MonsterKnifeBG.jpg")
 				backgroundImage.y = -100;

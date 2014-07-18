@@ -34,6 +34,8 @@ class ScoresMenu extends Screen
 	public override function begin()
 	{
 		var img:Image = new Image("graphics/bg.jpg");
+		img.scaleX = HXP.width / img.width;
+		img.scaleY = HXP.height / img.height;
 		addGraphic(img);
 		
 		addGraphic(DrawText.CreateTextEntity(CLocals.text.mainMenu_score, GameFont.Molot, 32, 400, 220, 0x0, true));
