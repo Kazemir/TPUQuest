@@ -14,7 +14,7 @@ import com.tpuquest.entity.helper.ChangeMap;
 import com.tpuquest.entity.helper.Helper;
 import com.tpuquest.entity.helper.KillTheHuman;
 import com.tpuquest.entity.helper.ShowMessage;
-import com.tpuquest.entity.helper.Spawn;
+import com.tpuquest.entity.helper.SpawnPoint;
 import com.tpuquest.entity.helper.Teleporter;
 import com.tpuquest.entity.item.Coin;
 import com.tpuquest.entity.item.Item;
@@ -234,7 +234,7 @@ class TileGridLevel
 								var tRAU_b:Bool = element.get("removeAfterUsing") == "1";
 								temp = new ChangeMap(WorldToScreen(new PointXY(tX, tY)), tMP, tCP_b, tI_b, tRAU_b, tN, !behavior);
 							case "spawn":
-								temp = new Spawn(WorldToScreen(new PointXY(tX, tY)), tN, !behavior);
+								temp = new SpawnPoint(WorldToScreen(new PointXY(tX, tY)), tN, !behavior);
 							case "teleporter":
 								var tXto = Std.parseInt(element.get("xTo"));
 								var tYto = Std.parseInt(element.get("yTo"));
@@ -388,7 +388,7 @@ class TileGridLevel
 					if (x.removeAfterUsing)
 						tRAU = 1;
 					temp.set("removeAfterUsing", Std.string(tRAU));
-				case "com.tpuquest.entity.helper.Spawn":
+				case "com.tpuquest.entity.helper.SpawnPoint":
 					temp.set("type", "spawn");		
 				case "com.tpuquest.entity.helper.Teleporter":
 					temp.set("type", "teleporter");

@@ -7,7 +7,6 @@ import com.haxepunk.utils.Data;
 import com.haxepunk.graphics.Image;
 import com.haxepunk.utils.Input;
 import com.haxepunk.HXP;
-import haxe.io.Error;
 
 import com.tpuquest.dialog.DialogBox;
 import com.tpuquest.dialog.GameMenu;
@@ -47,8 +46,10 @@ import sys.io.File;
 import sys.FileSystem;
 #end
 
+typedef Spawn = { x:Float, y:Float, client: Int };
+
 class MultiplayerGameScreen extends GameScreen
-{	
+{
 	private var isServer:Bool;
 	private var sServer:Socket;
 	private var sClient:Socket;
@@ -59,10 +60,12 @@ class MultiplayerGameScreen extends GameScreen
 	private var cfgHost:String;
 	private var cfgPort:Int;
 	
-	public function new( server:Bool, port:Int = 65142, host:String = "80.83.192.224" ) 
+	public function new( server:Bool, port:Int = 65142, host:String = "80.83.192.224" )
 	{
 		super(false);
+		
 		isMultiplayer = true;
+		
 		this.isServer = server;
 		this.cfgHost = host;
 		this.cfgPort = port;
@@ -73,8 +76,8 @@ class MultiplayerGameScreen extends GameScreen
 		isConnected = false;
 		
 		background = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
-
-		LoadMap("levels/net.xml", false, true);
+		
+		LoadMap("levels/net2.xml", false, true);
 		
 		for (x in lvl.characters)
 			x.behaviorOn = false;
@@ -88,115 +91,74 @@ class MultiplayerGameScreen extends GameScreen
 				sServer.bind(new Host(Host.localhost()), cfgPort);
 				sServer.listen(1);
 				sServer.setFastSend(true);
-
-				trace("Server started successfully: " + sServer.host().host.toString() + ":" + Std.string(sServer.host().port));
 				
-				Thread.create( function () 
-				{
-					try
-					{
-						sClient = sServer.accept();
-						
-						trace(Std.string(sClient.host().host.toString()) + ":" + Std.string(sClient.host().port) + ". Client connected...");
-						isConnected = true;
-						
-						for (x in lvl.characters)
-							x.behaviorOn = true;
-						
-						Thread.create( function ()
-						{
-							var msg:String = "";
-							while (isConnected)
-							{
-								try
-								{
-									sClient.waitForRead();
-									if (isConnected)
-									{
-										msg = sClient.input.readString(5);
-										if (msg.charAt(4) == "e")
-										{
-											isConnected == false;
-											CloseScreen();
-											HXP.scene = new MainMenu();
-										}
-									}
-									else
-										continue;
-								}
-								catch (msg:String)
-								{
-									trace(msg);
-								}
-								trace("Input command: " + msg + ", len: " + Std.string(msg.length));
-								enemyPlayer.netCommand = msg;
-								enemyPlayer.netFlag = true;
-							}
-						});
-					}
-					catch (msg:String)
-					{
-						trace(msg);
-					}
-				});
+				trace("Server started successfully: " + sServer.host().host.toString() + ":" + Std.string(sServer.host().port));
 			}
 			else
 			{
 				trace("Starting client...");
 				sClient = new Socket();
 				sClient.setFastSend(true);
-
-				trace("Client started successfully! Waiting for connection...");
 				
-				Thread.create( function () 
+				trace("Client started successfully! Waiting for connection...");
+			}
+			Thread.create( function () 
+			{
+				try
 				{
-					try
+					if (isServer)
+					{
+						sClient = sServer.accept();
+						trace("Client connected from " + sClient.host().host.toString() + ":" + Std.string(sClient.host().port) + "!");
+					}
+					else
 					{
 						sClient.connect(new Host(cfgHost), cfgPort);
-						
-						trace("Client connected to " + sClient.peer().host.toString() + ":" + Std.string(sClient.peer().port + "!"));
-						isConnected = true;
-						
-						for (x in lvl.characters)
-							x.behaviorOn = true;
-						
-						Thread.create( function ()
-						{
-							var msg:String = "";
-							while (isConnected)
-							{
-								try
-								{
-									sClient.waitForRead();
-									if (isConnected)
-									{
-										msg = sClient.input.readString(5);
-										if (msg.charAt(4) == "e")
-										{
-											isConnected == false;
-											CloseScreen();
-											HXP.scene = new MainMenu();
-										}
-									}
-									else
-										continue;
-								}
-								catch (msg:String)
-								{
-									trace(msg);
-								}
-								trace("Input command: " + msg);
-								enemyPlayer.netCommand = msg;
-								enemyPlayer.netFlag = true;
-							}
-						});
+						trace("Client connected to " + sClient.peer().host.toString() + ":" + Std.string(sClient.peer().port) + "!");
 					}
-					catch (msg:String)
+					isConnected = true;
+					
+					for (x in lvl.characters)
+						x.behaviorOn = true;
+					
+					Thread.create( function ()
 					{
-						trace(msg);
-					}
-				});
-			}
+						var msg:String = "";
+						while (isConnected)
+						{
+							try
+							{
+								sClient.waitForRead();
+								if (isConnected)
+								{
+									msg = sClient.input.readString(5);
+									if (msg.charAt(4) == "e")
+									{
+										isConnected == false;
+										CloseScreen();
+										HXP.scene = new MainMenu();
+									}
+								}
+								else
+									continue;
+							}
+							catch (msg:String)
+							{
+								trace(msg);
+								CloseScreen();
+							}
+							//trace("Input command: " + msg + ", len: " + Std.string(msg.length));
+							enemyPlayer.netCommand = msg;
+							enemyPlayer.netFlag = true;
+						}
+					});
+				}
+				catch (msg:String)
+				{
+					trace(msg);
+					CloseScreen();
+				}
+			});
 		}
 		catch (err:String)
 		{
@@ -249,17 +211,14 @@ class MultiplayerGameScreen extends GameScreen
 		{
 			if (sServer != null)
 			{
-				//sServer.shutdown(true, true);
 				sServer.close();
 				trace("Server closed.");
 			}
 			if (sClient != null)
 			{
-				//sClient.shutdown(true, true);
 				sClient.close();
 				trace("Client closed.");
 			}
-			
 		}
 		catch (msg:String)
 		{
@@ -277,16 +236,14 @@ class MultiplayerGameScreen extends GameScreen
 		
 		var t:String = Std.string(player.money);
 		for ( j  in 0...-t.length + 3)
-		{
 			t = "0" + t;
-		}
+		
 		coinsText.ChangeStr(t, false);
 		
 		t = Std.string(player.life);
 		for ( j  in 0...-t.length + 3)
-		{
 			t = "0" + t;
-		}
+		
 		hpText.ChangeStr(t, false);
 		
 		if (player.weaponized)
@@ -324,9 +281,8 @@ class MultiplayerGameScreen extends GameScreen
 			{
 				if (netCommand != "-----")
 				{
-					//sClient.output.writeString(netCommand);
 					sClient.write(netCommand);
-					trace("Output command: " + netCommand);
+					//trace("Output command: " + netCommand);
 				}
 			}
 			catch (msg:String)
@@ -340,59 +296,60 @@ class MultiplayerGameScreen extends GameScreen
 	
 	public override function LoadMap( mapPath:String, newPlayer:Bool = false, fromAssets:Bool = true)
 	{
-
 		lvl = TileGridLevel.LoadLevel( mapPath, fromAssets );
-
+		
 		if (isServer)
 		{
-			for (x in lvl.characters)
+			var points:Array<Spawn> = new Array<Spawn>();
+			var a:Int = 0;
+			for (x in lvl.helpers)
 			{
-				if (Type.getClassName(Type.getClass(x)) == "com.tpuquest.entity.character.Player")
+				if (Type.getClassName(Type.getClass(x)) == "com.tpuquest.entity.helper.SpawnPoint")
 				{
-					player = x;
-				}
-				if (Type.getClassName(Type.getClass(x)) == "com.tpuquest.entity.character.EnemyPlayer")
-				{
-					enemyPlayer = x;
+					points.push( { x:x.x, y:x.y, client: a } );
+					a++;
 				}
 			}
+			
+			player = new Player(new Point(points[0].x, points[0].y), "", 100, 0, 10, "Server");
+			enemyPlayer = new EnemyPlayer(new Point(points[2].x, points[2].y), "", 100, 0, 10, "Enemy");
+			
+			lvl.characters.push(player);
+			lvl.characters.push(enemyPlayer);
 		}
 		else
 		{
-			for (x in lvl.characters)
+			var points:Array<Spawn> = new Array<Spawn>();
+			var a:Int = 0;
+			for (x in lvl.helpers)
 			{
-				if (Type.getClassName(Type.getClass(x)) == "com.tpuquest.entity.character.EnemyPlayer")
+				if (Type.getClassName(Type.getClass(x)) == "com.tpuquest.entity.helper.SpawnPoint")
 				{
-					player = new Player(new Point(x.x, x.y), x.spritePath, x.life, x.money, x.weaponDamage);
-					lvl.characters.push(player);
-					lvl.characters.remove(x);
+					points.push( { x:x.x, y:x.y, client: a } );
+					a++;
 				}
 			}
-			for (x in lvl.characters)
-			{
-				if (Type.getClassName(Type.getClass(x)) == "com.tpuquest.entity.character.Player")
-				{
-					cast(x, Player).behaviorOn = false;
-					enemyPlayer = new EnemyPlayer(new Point(x.x, x.y), x.spritePath, x.life, x.money, x.weaponDamage);
-					lvl.characters.push(enemyPlayer);
-					lvl.characters.remove(x);
-				}
-			}
+			
+			player = new Player(new Point(points[2].x, points[2].y), "", 100, 0, 10, "Server");
+			enemyPlayer = new EnemyPlayer(new Point(points[0].x, points[0].y), "", 100, 0, 10, "Enemy");
+			
+			lvl.characters.push(player);
+			lvl.characters.push(enemyPlayer);
 		}
 		
 		addList( lvl.getEntities() );
 		
 		HXP.camera.x = player.x - HXP.halfWidth + 20;
 		HXP.camera.y = player.y - HXP.halfHeight + 40;
-
+		
 		background = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
         background.color = lvl.bgcolor;
 		background.scrollX = background.scrollY = 0;
         addGraphic(background).layer = 101;
-
+		
 		if (backgroundImage != null)
 			backgroundImage.visible = false;
-
+		
 		if (lvl.bgPicturePath != null)
 		{
 			backgroundImage = new Image(lvl.bgPicturePath);
@@ -408,6 +365,5 @@ class MultiplayerGameScreen extends GameScreen
 			var enemyLAV:Sfx = new Sfx("audio/enemyLAV.wav");
 			enemyLAV.play(SettingsMenu.soudVolume / 10);
 		}
-
 	}
 }

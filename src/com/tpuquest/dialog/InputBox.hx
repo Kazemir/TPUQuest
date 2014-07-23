@@ -7,6 +7,9 @@ import com.tpuquest.screen.Screen;
 import flash.display.BitmapData;
 import flash.display.Graphics;
 import flash.display.Sprite;
+import flash.events.KeyboardEvent;
+import flash.text.TextField;
+import flash.text.TextFieldType;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
 
@@ -18,6 +21,8 @@ class InputBox extends Dialog
 	public var inputStr:String;
 	
 	private static var minW:Int = 300;
+	
+	private var _textField:TextField;
 	
 	public function new(x:Float, y:Float, caption:String, message:String) 
 	{
@@ -85,15 +90,23 @@ class InputBox extends Dialog
 		graphic.y -= 16 + msgFrameH / 2;
 		
 		layer = -50;
-		inputStr = "-1";
-		
-		Input.keyString = "";
+		inputStr = "";
 		
 		Screen.overrideControlByBox = true;
 #if android
 		HXP.stage.needsSoftKeyboard = true;
 		HXP.stage.requestSoftKeyboard();
 #end
+		_textField = new TextField();
+		
+		_textField.text = "";
+		_textField.type = TextFieldType.INPUT;
+		_textField.multiline = false;
+		_textField.selectable = true;
+		//_textField.visible = false;
+		
+		HXP.stage.addChild(_textField);
+		HXP.stage.focus = _textField;
 	}
 	
 	public function getInput():String
@@ -101,21 +114,29 @@ class InputBox extends Dialog
 		return inputStr;
 	}
 	
+	private function remove()
+	{
+		HXP.stage.focus = null;	
+		HXP.stage.removeChild(_textField);
+		Screen.overrideControlByBox = false;
+		this.scene.remove(this);
+	}
+	
 	public override function update()
 	{
 		super.update();
 		
-		if (Input.pressed(Key.ENTER) || Input.pressed(Key.ESCAPE) || Screen.joyPressed("BACK") || Screen.joyPressed("A") || Screen.joyPressed("B"))
+		if (Input.pressed(Key.ESCAPE) || Screen.joyPressed("BACK") || Screen.joyPressed("B") || Screen.touchPressed("esc"))
 		{
-			Screen.overrideControlByBox = false;
-			inputStr = inputText.label.richText;
-			this.scene.remove(this);
+			inputStr = "";
+			remove();
 		}
-		
-		inputText.label.richText = Input.keyString;
-		
-		if (Input.pressed(Key.NUMPAD_DECIMAL))
-			inputText.label.richText += ".";
-		
+		if (Input.pressed(Key.ENTER) || Screen.joyPressed("START") || Screen.joyPressed("A") || Screen.touchPressed("action"))
+		{
+			inputStr = _textField.text;
+			remove();
+		}
+
+		inputText.label.richText = _textField.text;
 	}
 }

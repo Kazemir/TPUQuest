@@ -1,6 +1,7 @@
 package com.tpuquest.entity.item;
 
 import com.haxepunk.graphics.Image;
+import com.tpuquest.screen.GameScreen;
 import com.tpuquest.utils.PointXY;
 import haxe.Timer;
 

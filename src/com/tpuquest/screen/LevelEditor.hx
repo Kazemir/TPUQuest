@@ -18,7 +18,7 @@ import com.tpuquest.entity.helper.ChangeMap;
 import com.tpuquest.entity.helper.Helper;
 import com.tpuquest.entity.helper.KillTheHuman;
 import com.tpuquest.entity.helper.ShowMessage;
-import com.tpuquest.entity.helper.Spawn;
+import com.tpuquest.entity.helper.SpawnPoint;
 import com.tpuquest.entity.helper.Teleporter;
 import com.tpuquest.entity.helper.WinGame;
 import com.tpuquest.entity.item.Coin;
@@ -687,8 +687,8 @@ class LevelEditor extends Screen
 						temp = new ChangeMap(new PointXY(tX, tY), cast(currentHelper, ChangeMap).nextMapPath, cast(currentHelper, ChangeMap).keepPlayer, cast(currentHelper, ChangeMap).instantly, cast(currentHelper, ChangeMap).removeAfterUsing, currentHelper.helperName, true);
 					case "com.tpuquest.entity.helper.ShowMessage":
 						temp = new ShowMessage(new PointXY(tX, tY), currentHelper.helperName, true);
-					case "com.tpuquest.entity.helper.Spawn":
-						temp = new Spawn(new PointXY(tX, tY), currentHelper.helperName, true);
+					case "com.tpuquest.entity.helper.SpawnPoint":
+						temp = new SpawnPoint(new PointXY(tX, tY), currentHelper.helperName, true);
 					case "com.tpuquest.entity.helper.WinGame":
 						temp = new WinGame(new PointXY(tX, tY), currentHelper.helperName, true);
 					case "com.tpuquest.entity.helper.Teleporter":
@@ -842,7 +842,7 @@ class LevelEditor extends Screen
 						tI_b = true;
 					helpersList.push(new ChangeMap(new PointXY(0, 0), x.get("mapPath"), tCP_b, tI_b, x.get("removeAfterUsing") == "1", x.get("name"), true));
 				case "spawn":
-					helpersList.push(new Spawn(new PointXY(0, 0), x.get("name"), true));
+					helpersList.push(new SpawnPoint(new PointXY(0, 0), x.get("name"), true));
 				case "teleporter":
 					helpersList.push(new Teleporter(new PointXY(0, 0), new PointXY(Std.parseInt(x.get("xTo")), Std.parseInt(x.get("yTo"))), x.get("name"), true));
 				case "killer":

@@ -62,7 +62,6 @@ class Main extends Engine
 	
 	private static function LoadConfig()
 	{
-
 		var config:Xml;
 #if android
 		if ( FileSystem.exists(SystemPath.applicationStorageDirectory + "/config.xml") )

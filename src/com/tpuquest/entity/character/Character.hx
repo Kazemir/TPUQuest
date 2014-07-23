@@ -21,9 +21,13 @@ class Character extends Entity
 	public var characterName:String;
 	public var behaviorOn:Bool;
 	public var spritePath:String;
-
+	
+	public var eyesToTheRight:Bool;
+	
 	public function new(point:Point, spritePath:String, name:String = "", behavior:Bool = true)
 	{
+		eyesToTheRight = true;
+		
 		super(point.x, point.y);
 		_onGround = false;
 

@@ -15,7 +15,6 @@ import com.tpuquest.dialog.DialogBox;
 import com.tpuquest.dialog.TradeBox;
 import com.tpuquest.entity.helper.ChangeMap;
 import com.tpuquest.entity.helper.ShowMessage;
-import com.tpuquest.entity.helper.Spawn;
 import com.tpuquest.entity.helper.Teleporter;
 import com.tpuquest.entity.item.Coin;
 import com.tpuquest.entity.item.Item;
@@ -43,7 +42,6 @@ class Player extends Character
 	private var emitter:Emitter;
 	private var helpText:DrawText;
 	
-	public var eyesToTheRight:Bool;
 	public var isDead:Bool;
 	public var controlOn:Bool;
 	private var godMode:Bool;
@@ -56,12 +54,12 @@ class Player extends Character
 	
 	public function new(point:Point, spritePath:String, hp:Int = 100, money:Int = 0, weaponDamage:Int = 0, name:String = "", behavior:Bool = true) 
 	{
-		super(point, spritePath, name, behavior);
+		super(point, "graphics/characters/character.png", name, behavior);
 		
 		eyesToTheRight = true;
 		hasTouchTheGround = true;
 		
-		sprite = new Spritemap(spritePath, 32, 32);
+		sprite = new Spritemap("graphics/characters/character.png", 32, 32);
 		sprite.add("idle", [8, 8, 8, 9], 3, true);
 		sprite.add("walk", [0, 1, 2, 3, 4, 5, 6, 7], 19, true);
 		sprite.add("jump", [10]);
@@ -259,17 +257,19 @@ class Player extends Character
 					{
 						sprite.play("attack", true);
 						
-						var sword:Entity = new Entity(0, 0);
+						/*var sword:Entity = new Entity(0, 0);
 						var swordLength:Int = 70;
 						sword.setHitbox(swordLength, 40);
-
+						
 						if (sprite.flipped) //left
 							sword.x = this.x + 40 - swordLength - 5;
 						else
 							sword.x = this.x + 5;
-
+						
 						sword.y = this.y + 30;
-						sword.type = "sword";
+						sword.type = "enemy_sword";*/
+						
+						var sword:Sword = new Sword(this);
 						currentScene.add(sword);
 						
 						var tm:Timer = new Timer(10);
@@ -280,14 +280,14 @@ class Player extends Character
 								tm.stop();
 								currentScene.remove(sword);
 							}
-							else
+							/*else
 							{
-								if (sprite.flipped) //left
+								if (this.eyesToTheRight) //left
 									sword.x = this.x + 40 - swordLength - 5;
 								else
 									sword.x = this.x + 5;
 								sword.y = this.y + 30;
-							}
+							}*/
 						};
 						
 						var sound = new Sfx("audio/player_attack.wav");
@@ -358,7 +358,15 @@ class Player extends Character
 					var sound = new Sfx("audio/player_soundPain.wav");
 					sound.play(SettingsMenu.soudVolume / 10);
 					life -= 5;
-					if (velocity.x < 0)
+					
+					var test:Bool;
+					
+					if ((ent = collide("enemy_sword", x, y)) != null)
+						test = cast(ent, Sword).father.eyesToTheRight;
+					else
+						test = velocity.x < 0;
+					
+					if (test)
 					{
 						velocity.x = kMoveSpeed * 5;
 					}
@@ -389,8 +397,6 @@ class Player extends Character
 				{
 					case "com.tpuquest.entity.helper.ShowMessage":
 						var sm:ShowMessage = cast(ent, ShowMessage);
-					case "com.tpuquest.entity.helper.Spawn":
-						var sp:Spawn = cast(ent, Spawn);
 					case "com.tpuquest.entity.helper.Teleporter":
 						var tp:Teleporter = cast(ent, Teleporter);
 						/*//controlOn = false;

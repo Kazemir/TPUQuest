@@ -214,17 +214,18 @@ class Enemy extends Character
 			var ent:Entity = collide("sword", x, y);
 			if(ent != null && Type.getClassName(Type.getClass(scene)) == "com.tpuquest.screen.GameScreen" && !godMode)
 			{
-				var currentScene:GameScreen = cast(scene, GameScreen);
+				//var currentScene:GameScreen = cast(scene, GameScreen);
+				var agressor:Player = cast(cast(ent, Sword).father, Player);
 				
 				godMode = true;
 				
 				var timer:Timer = new Timer(300);
 				timer.run = function() { godMode = false; timer.stop(); };
 				
-				life -= currentScene.player.weaponDamage;
+				life -= agressor.weaponDamage;
 				if (enemyType == 1)
 				{
-					if (currentScene.player.eyesToTheRight)
+					if (agressor.eyesToTheRight)
 					{
 						velocity.x = kMoveSpeed * 5;
 					}

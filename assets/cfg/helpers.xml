@@ -6,5 +6,6 @@
 <element name="toHOME" type="nextlevel" mapPath="levels/home.xml" keepPlayer="1" instantly="0" removeAfterUsing="0" />
 <element name="towerTrick" type="teleporter" xTo="13" yTo="2" />
 <element name="death" type="killer" />
+<element name="SpawnPoint" type="spawn" />
 
 </tiles>

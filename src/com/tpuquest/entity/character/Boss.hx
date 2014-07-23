@@ -6,7 +6,6 @@ import com.haxepunk.utils.Input;
 import com.haxepunk.HXP;
 import com.tpuquest.entity.helper.ChangeMap;
 import com.tpuquest.entity.helper.ShowMessage;
-import com.tpuquest.entity.helper.Spawn;
 import com.tpuquest.entity.item.Coin;
 import com.tpuquest.entity.item.Potion;
 import com.tpuquest.entity.item.Weapon;
