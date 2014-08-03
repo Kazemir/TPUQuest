@@ -1,19 +1,7 @@
 package com.tpuquest.entity.character;
-import com.haxepunk.Entity;
+
 import com.haxepunk.graphics.Spritemap;
-import com.haxepunk.Scene;
-import com.haxepunk.utils.Input;
-import com.haxepunk.HXP;
-import com.tpuquest.entity.item.Coin;
-import com.tpuquest.entity.item.Potion;
-import com.tpuquest.entity.item.Weapon;
-import com.tpuquest.screen.GameScreen;
-import com.tpuquest.screen.LevelEditor;
-import com.tpuquest.screen.Screen;
-import com.tpuquest.screen.SettingsMenu;
-import com.tpuquest.utils.PointXY;
-import flash.geom.Point;
-import com.haxepunk.Sfx;
+import openfl.geom.Point;
 
 class Trader extends Character
 {
@@ -32,6 +20,7 @@ class Trader extends Character
 		
 		sprite.scale = 0.48;
 		//sprite.x = -20;
+		sprite.smooth = false;
 		
 		setHitbox(38, 79);
 		type = "trader";

@@ -15,6 +15,7 @@
 	
 	<haxelib name="HaxePunk" />
 	<haxelib name="openfl" />
+	<haxelib name="dconsole" />
 	<haxelib name="openfl-native" if="android" />
 	<?haxelib name="nme" if="android" ?>
 

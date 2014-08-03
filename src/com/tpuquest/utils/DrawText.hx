@@ -1,7 +1,7 @@
 package com.tpuquest.utils;
 import com.haxepunk.graphics.Text;
 import com.haxepunk.Entity;
-import flash.text.TextFormatAlign;
+import openfl.text.TextFormatAlign;
 
 enum GameFont {
         Imperial;

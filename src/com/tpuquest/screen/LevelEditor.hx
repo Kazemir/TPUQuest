@@ -31,7 +31,7 @@ import com.tpuquest.utils.TileGridLevel;
 import com.tpuquest.dialog.InputBox;
 import com.tpuquest.dialog.MessageBox;
 
-import flash.geom.Point;
+import openfl.geom.Point;
 
 #if windows
 import sys.FileSystem;

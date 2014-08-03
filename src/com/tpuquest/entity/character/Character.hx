@@ -1,9 +1,10 @@
 package com.tpuquest.entity.character;
+
 import com.haxepunk.Sfx;
 import com.tpuquest.utils.PointXY;
 import com.tpuquest.entity.Tile;
 import com.tpuquest.utils.TileGrid;
-import flash.geom.Point;
+import openfl.geom.Point;
 import com.haxepunk.Entity;
 import com.haxepunk.HXP;
 import com.tpuquest.screen.SettingsMenu;

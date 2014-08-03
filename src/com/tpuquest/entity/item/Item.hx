@@ -1,6 +1,6 @@
 package com.tpuquest.entity.item;
 import com.tpuquest.utils.PointXY;
-import flash.geom.Point;
+import openfl.geom.Point;
 import com.haxepunk.Entity;
 
 class Item extends Entity

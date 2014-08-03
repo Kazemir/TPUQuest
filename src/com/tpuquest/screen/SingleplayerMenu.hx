@@ -1,4 +1,5 @@
 package com.tpuquest.screen;
+
 import com.tpuquest.utils.DrawText;
 import com.haxepunk.HXP;
 import com.haxepunk.utils.Input;

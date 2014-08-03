@@ -7,9 +7,9 @@ import com.haxepunk.Mask;
 import com.haxepunk.graphics.Stamp;
 import com.haxepunk.utils.Input;
 
-import flash.display.BitmapData;
-import flash.display.Graphics;
-import flash.display.Sprite;
+import openfl.display.BitmapData;
+import openfl.display.Graphics;
+import openfl.display.Sprite;
 
 import com.tpuquest.utils.DrawText;
 import com.tpuquest.screen.Screen;

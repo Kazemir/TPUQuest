@@ -1,8 +1,8 @@
 package com.tpuquest.entity.character;
-import com.haxepunk.Entity;
+
 import com.haxepunk.graphics.Spritemap;
 import com.tpuquest.screen.GameScreen;
-import flash.geom.Point;
+import openfl.geom.Point;
 
 class Talker extends Character
 {
@@ -24,6 +24,7 @@ class Talker extends Character
 		
 		sprite.scale = 1.8;
 		//sprite.x = -49.5;
+		sprite.smooth = false;
 		
 		setHitbox(99, 81);
 		type = "talker";

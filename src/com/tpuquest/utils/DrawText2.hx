@@ -2,7 +2,7 @@ package com.tpuquest.utils;
 
 import com.haxepunk.graphics.Text;
 
-import flash.text.TextFormatAlign;
+import openfl.text.TextFormatAlign;
 
 class GameFont2
 {

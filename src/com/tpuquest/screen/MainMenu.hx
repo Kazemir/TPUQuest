@@ -16,8 +16,8 @@ import com.tpuquest.utils.CLocals;
 
 import openfl.Assets;
 
-import flash.geom.Point;
-import flash.system.System;
+import openfl.geom.Point;
+import openfl.system.System;
 
 #if android
 import openfl.utils.SystemPath;

@@ -25,7 +25,7 @@ import com.tpuquest.utils.CLocals;
 import com.tpuquest.utils.TileGrid;
 import com.tpuquest.utils.TileGridLevel;
 
-import flash.geom.Point;
+import openfl.geom.Point;
 
 import openfl.Assets;
 

@@ -25,7 +25,7 @@ import com.tpuquest.utils.CLocals;
 import com.tpuquest.utils.TileGrid;
 import com.tpuquest.utils.TileGridLevel;
 
-import flash.geom.Point;
+import openfl.geom.Point;
 
 import openfl.Assets;
 
@@ -45,6 +45,8 @@ import openfl.utils.SystemPath;
 import sys.io.File;
 import sys.FileSystem;
 #end
+
+import pgr.dconsole.DC;
 
 typedef Spawn = { x:Float, y:Float, client: Int };
 
@@ -78,6 +80,12 @@ class MultiplayerGameScreen extends GameScreen
 		background = Image.createRect(HXP.width, HXP.height, 0xFFFFFF, 1);
 		
 		LoadMap("levels/net2.xml", false, true);
+		
+		DC.clearMonitor();
+		DC.monitorField(player, "x", "player.x");
+		DC.monitorField(player, "y", "player.y");
+		DC.monitorField(enemyPlayer, "x", "enemyPlayer.x");
+		DC.monitorField(enemyPlayer, "y", "enemyPlayer.y");
 		
 		for (x in lvl.characters)
 			x.behaviorOn = false;
@@ -224,6 +232,8 @@ class MultiplayerGameScreen extends GameScreen
 		{
 			trace(msg);
 		}
+		
+		DC.clearMonitor();
 	}
 	
 	public override function update()

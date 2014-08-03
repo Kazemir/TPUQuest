@@ -4,12 +4,11 @@ import com.haxepunk.graphics.Stamp;
 import com.haxepunk.HXP;
 import com.tpuquest.utils.DrawText;
 import com.tpuquest.screen.Screen;
-import flash.display.BitmapData;
-import flash.display.Graphics;
-import flash.display.Sprite;
-import flash.events.KeyboardEvent;
-import flash.text.TextField;
-import flash.text.TextFieldType;
+import openfl.display.BitmapData;
+import openfl.display.Graphics;
+import openfl.display.Sprite;
+import openfl.text.TextField;
+import openfl.text.TextFieldType;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
 
@@ -102,8 +101,7 @@ class InputBox extends Dialog
 		_textField.text = "";
 		_textField.type = TextFieldType.INPUT;
 		_textField.multiline = false;
-		_textField.selectable = true;
-		//_textField.visible = false;
+		_textField.visible = false;
 		
 		HXP.stage.addChild(_textField);
 		HXP.stage.focus = _textField;
@@ -136,7 +134,8 @@ class InputBox extends Dialog
 			inputStr = _textField.text;
 			remove();
 		}
-
+		
+		_textField.setSelection(_textField.text.length, _textField.text.length);
 		inputText.label.richText = _textField.text;
 	}
 }

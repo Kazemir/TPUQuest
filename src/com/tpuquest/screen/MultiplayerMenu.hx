@@ -1,4 +1,5 @@
 package com.tpuquest.screen;
+
 import com.tpuquest.utils.DrawText;
 import com.haxepunk.HXP;
 import com.haxepunk.utils.Input;
@@ -67,7 +68,7 @@ class MultiplayerMenu extends Screen
 				HXP.scene = new MultiplayerGameScreen(true, 65142);
 			case 1:
 				MainMenu.menuMusic.stop();
-				HXP.scene = new MultiplayerGameScreen(false, 65142, "localhost");// "80.83.192.224");
+				HXP.scene = new MultiplayerGameScreen(false);// , 65142, "localhost");// "80.83.192.224");
 		}
 	}
 	

@@ -11,9 +11,9 @@ import com.tpuquest.screen.SettingsMenu;
 import com.tpuquest.utils.DrawText;
 import com.tpuquest.screen.Screen;
 import com.tpuquest.entity.item.Item;
-import flash.display.BitmapData;
-import flash.display.Graphics;
-import flash.display.Sprite;
+import openfl.display.BitmapData;
+import openfl.display.Graphics;
+import openfl.display.Sprite;
 
 class TradeBox extends Dialog
 {

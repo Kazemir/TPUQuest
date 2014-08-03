@@ -19,6 +19,8 @@ import sys.FileSystem;
 import sys.io.File;
 #end
 
+import pgr.dconsole.DC;
+
 class Main extends Engine
 {
 	public static inline var screenWidth:Int = 800;
@@ -43,6 +45,11 @@ class Main extends Engine
 #end
 		HXP.screen.scale = 1;
 		LoadConfig();
+		
+		DC.init();
+		DC.setConsoleKey(192);
+		DC.setMonitorKey(192, true);
+		DC.log("This text will be logged.");
 		
 		HXP.scene = new SplashScreen();
 	}

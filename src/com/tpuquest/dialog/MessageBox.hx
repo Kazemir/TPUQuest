@@ -3,9 +3,9 @@ import com.haxepunk.Entity;
 import com.haxepunk.graphics.Stamp;
 import com.tpuquest.screen.Screen;
 import com.tpuquest.utils.DrawText;
-import flash.display.BitmapData;
-import flash.display.Graphics;
-import flash.display.Sprite;
+import openfl.display.BitmapData;
+import openfl.display.Graphics;
+import openfl.display.Sprite;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
 

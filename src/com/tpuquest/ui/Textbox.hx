@@ -5,8 +5,8 @@ import com.haxepunk.Graphic;
 import com.haxepunk.graphics.Spritemap;
 import com.haxepunk.Mask;
 import com.haxepunk.HXP;
-import flash.text.TextField;
-import flash.text.TextFieldType;
+import openfl.text.TextField;
+import openfl.text.TextFieldType;
 
 class Textbox extends Entity
 {

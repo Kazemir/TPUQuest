@@ -2,7 +2,7 @@ package com.tpuquest.utils;
 
 import com.haxepunk.Sfx;
 import com.haxepunk.Sfx.AudioCompleteCallback;
-import flash.geom.Point;
+import openfl.geom.Point;
 
 class Sfx3D extends Sfx
 {

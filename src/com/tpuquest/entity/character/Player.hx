@@ -29,7 +29,7 @@ import com.tpuquest.utils.DrawText;
 import com.tpuquest.utils.PointXY;
 import com.tpuquest.utils.CLocals;
 
-import flash.geom.Point;
+import openfl.geom.Point;
 
 class Player extends Character
 {
@@ -69,6 +69,7 @@ class Player extends Character
 	 
 		sprite.scale = 2.5;
 		sprite.x = -20;
+		sprite.smooth = false;
 		
 		setHitbox(40, 80);
 		type = "player";

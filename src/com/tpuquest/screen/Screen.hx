@@ -12,7 +12,7 @@ import com.haxepunk.utils.Touch;
 import com.haxepunk.HXP;
 import com.haxepunk.Scene;
 
-import flash.system.System;
+import openfl.system.System;
 
 #if !flash
 import sys.io.File;

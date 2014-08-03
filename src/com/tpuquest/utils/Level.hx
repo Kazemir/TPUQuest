@@ -24,7 +24,7 @@ import com.tpuquest.entity.Tile;
 import com.tpuquest.entity.Sticker;
 import com.haxepunk.Entity;
 import com.haxepunk.HXP;
-import flash.geom.Point;
+import openfl.geom.Point;
 
 import haxe.xml.*;
 

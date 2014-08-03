@@ -1,4 +1,5 @@
 package com.tpuquest.entity.character;
+
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Emitter;
 import com.tpuquest.screen.GameScreen;
@@ -8,7 +9,7 @@ import com.haxepunk.utils.Input;
 import com.haxepunk.HXP;
 import com.haxepunk.Sfx;
 import com.tpuquest.utils.PointXY;
-import flash.geom.Point;
+import openfl.geom.Point;
 import haxe.Timer;
 
 class Enemy extends Character
@@ -139,9 +140,9 @@ class Enemy extends Character
 				sprite.scale = 2.7;
 				setHitbox(81, 80);
 		}
-		
+		sprite.smooth = false;
 		graphic = sprite;
-
+		
 		addGraphic(emitter);
 		
 		gravity.y = 1.8;

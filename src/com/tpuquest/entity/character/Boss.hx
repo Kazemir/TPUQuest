@@ -15,7 +15,7 @@ import com.tpuquest.screen.Screen;
 import com.tpuquest.screen.SettingsMenu;
 import com.tpuquest.screen.WinScreen;
 import com.tpuquest.utils.PointXY;
-import flash.geom.Point;
+import openfl.geom.Point;
 import com.haxepunk.Sfx;
 import haxe.Timer;
 
@@ -46,11 +46,12 @@ class Boss extends Character
 		sprite.play("idle");
 		
 		sprite.scale = 5.0;
+		sprite.smooth = false;
 		
 		setHitbox(150, 150);
 		type = "boss";
 		graphic = sprite;
-
+		
 		emitter = new Emitter("graphics/particle.png", 10, 10);
 		
 		emitter.newType("landingL", [2]);
