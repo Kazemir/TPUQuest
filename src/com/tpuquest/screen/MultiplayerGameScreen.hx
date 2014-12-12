@@ -96,7 +96,8 @@ class MultiplayerGameScreen extends GameScreen
 			{
 				trace("Starting server...");
 				sServer = new Socket();
-				sServer.bind(new Host(Host.localhost()), cfgPort);
+				//sServer.bind(new Host(Host.localhost()), cfgPort);
+				sServer.bind(new Host(cfgHost), cfgPort);
 				sServer.listen(1);
 				sServer.setFastSend(true);
 				
@@ -129,6 +130,29 @@ class MultiplayerGameScreen extends GameScreen
 					for (x in lvl.characters)
 						x.behaviorOn = true;
 					
+					var tim:Timer = new Timer(10);
+					tim.run = function ()
+					{
+						try
+						{
+							if (!isConnected)
+							{
+								tim.stop();
+								return;
+							}
+							var tX:String = Std.string(player.x);
+							var tY:String = Std.string(player.y);
+							var lenX:String = Std.string(tX.length);
+							var lenY:String = Std.string(tY.length);
+							sClient.write("2" + lenX + "|" + tX + lenY +"|" + tY + "\n");
+							//trace("2" + lenX + "|" + tX + lenY +"|" + tY);
+						}
+						catch (msg:String)
+						{
+							trace(msg);
+						}
+					};
+					
 					Thread.create( function ()
 					{
 						var msg:String = "";
@@ -139,8 +163,8 @@ class MultiplayerGameScreen extends GameScreen
 								sClient.waitForRead();
 								if (isConnected)
 								{
-									msg = sClient.input.readString(5);
-									if (msg.charAt(4) == "e")
+									msg = sClient.input.readLine();// readString(5);
+									if (msg.charAt(5) == "e" && msg.charAt(0) == "1")
 									{
 										isConnected == false;
 										CloseScreen();
@@ -156,8 +180,26 @@ class MultiplayerGameScreen extends GameScreen
 								CloseScreen();
 							}
 							//trace("Input command: " + msg + ", len: " + Std.string(msg.length));
-							enemyPlayer.netCommand = msg;
-							enemyPlayer.netFlag = true;
+							if (msg.charAt(0) == "1")
+							{
+								enemyPlayer.netCommand = msg.substring(1, msg.length - 1);
+								enemyPlayer.netFlag = true;
+							}
+							else if (msg.charAt(0) == "2")
+							{
+								//trace(msg);
+								var firstB:Int = msg.indexOf("|", 1);
+								var lenX:Int = Std.parseInt(msg.substring(1, firstB));
+								var tX:Float = Std.parseFloat(msg.substr(firstB + 1, lenX));
+								msg = msg.substring(firstB + 1 + lenX, msg.length);
+								var secondB:Int = msg.indexOf("|", 0);
+								var lenY:Int = Std.parseInt(msg.substring(0, secondB));
+								var tY:Float = Std.parseFloat(msg.substr(secondB + 1, lenY));
+								//trace("firstB, lenX, tX, msg, secondB, lenY, tY");
+								//trace(firstB, lenX, tX, msg, secondB, lenY, tY);
+								enemyPlayer.x = tX;
+								enemyPlayer.y = tY;
+							}
 						}
 					});
 				}
@@ -212,7 +254,7 @@ class MultiplayerGameScreen extends GameScreen
 		
 		if (isConnected)
 		{
-			sClient.write("----e");
+			sClient.write("1----e");
 		}
 		isConnected = false;
 		try
@@ -265,7 +307,7 @@ class MultiplayerGameScreen extends GameScreen
 		{
 			//lrjae
 			//left right jump action end
-			netCommand = "";
+			netCommand = "1";
 			if (Input.check("left"))
 				netCommand += "l";
 			else
@@ -289,9 +331,9 @@ class MultiplayerGameScreen extends GameScreen
 			
 			try
 			{
-				if (netCommand != "-----")
+				if (netCommand != "1-----")
 				{
-					sClient.write(netCommand);
+					sClient.write(netCommand + "\n");
 					//trace("Output command: " + netCommand);
 				}
 			}

@@ -65,10 +65,10 @@ class MultiplayerMenu extends Screen
 		{
 			case 0:
 				MainMenu.menuMusic.stop();
-				HXP.scene = new MultiplayerGameScreen(true, 65142);
+				HXP.scene = new MultiplayerGameScreen(true, 65142, "localhost");
 			case 1:
 				MainMenu.menuMusic.stop();
-				HXP.scene = new MultiplayerGameScreen(false);// , 65142, "localhost");// "80.83.192.224");
+				HXP.scene = new MultiplayerGameScreen(false, 65142, "localhost");// "80.83.192.224");
 		}
 	}
 	
